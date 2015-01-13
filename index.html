@@ -1,1 +1,74 @@
-Hello World
+<html>
+<style>
+body { margin:0;padding:0;background: #ccc;}
+
+body {
+ /*background-image: url();*/
+
+ background-repeat: repeat;
+}
+
+canvas { border:1px solid #444;}
+</style>
+<body>
+
+	<img src='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMD…V83jv41+rjBv1cU2/VvV+Z+scOaYFwW0alaKXRRjWqRjFdlGKSSWiSSWiCiiiuM90KKKKAP//Z='>
+</body>
+<script src='js/dom.js'></script>
+<script src='js/colours.js'></script>
+<script>
+(function() {
+	var experiments = [
+		["additive"],
+		["isometric_cubes"],
+		["mining_branches"],
+		["oscillate_curtain"],
+		["pattern_check"],
+		["recursive"],
+		["spiral_even"],
+		["squaretracer"],
+		["tea"],
+		["polyhedra","3d"],
+		["polyhedra_three","THREE"],
+		["voronoi_stripes", "voronoi"],
+	];
+
+	function createScript(s) {
+		var script = dom.createElement("script");
+		script.src = s;
+		document.body.appendChild(script);
+	}
+	function loadExperiment(index) {
+		var exp = experiments[index];
+		for (var i = exp.length - 1; i > -1;i--) {
+			var src = "js/" + exp[i] +  ".js";
+			if (exp[i] == "THREE") {
+				src = "lib/three/three.min.js";
+			}
+			createScript(src);
+		}
+
+	}
+	function showButtons() {
+		for(var e in experiments) {
+			var button = dom.createElement("button");
+			button.addEventListener("click", function(event){
+				var index = event.target.index;
+				window.location = "?" + index;
+			});
+			button.index = e;
+			button.innerHTML = experiments[e][0];
+			document.body.appendChild(button);
+		}
+	}
+
+	if (window.location.search) {
+		var index = window.location.search.split("?")[1];
+		loadExperiment(index);
+	} else {
+		showButtons();
+	}
+
+}).call(this);
+</script>
+</html>
