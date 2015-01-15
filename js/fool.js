@@ -1,7 +1,7 @@
 var sw = window.innerWidth, sh = window.innerHeight;
 
 var container = dom.element("div",{className:"container", style:{width:sw+"px",height:sh+"px"}})
-var nav = dom.element("div",{innerHTML:"Hello World!", className:"nav"});
+var nav = dom.element("div",{innerHTML:"Hello World!", className:"nav open"});
 var navTab = dom.element("div",{className:"tab"});
 var navIcon = dom.element("ul",{className:"icon", innerHTML:["first","second","third"].map(function(a,i) { return "<li class='" + a + "'></li>"; }).join("") });
 var space = dom.element("div",{innerHTML:"Hello World!", className:"space"});
