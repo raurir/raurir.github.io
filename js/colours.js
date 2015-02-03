@@ -35,6 +35,46 @@ var colours = (function() {
 		colourIndex %= currentPalette.length;
 		return currentPalette[colourIndex];
 	}
+
+	function channelToHex(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+
+	function rgbToHex(r, g, b) {
+		return "#" + channelToHex(r) + channelToHex(g) + channelToHex(b);
+	}
+
+	function hexToRgb(hex) {
+		var r = parseInt(hex.substr(1,2), 16), 
+			g = parseInt(hex.substr(3,2), 16), 
+			b = parseInt(hex.substr(5,2), 16);
+		return {r:r,g:g,b:b};
+	}
+
+	function mutateChannel(channel, amount, direction) {
+		var mutation = Math.round(channel + (Math.random() - 0.5) * amount);
+		mutation = mutation > 255 ? 255 : mutation <= 0 ? 0 : mutation;
+		return mutation;
+	}
+
+	function mutateHex(hex, amount) {
+		var rgb = hexToRgb(hex), r = rgb.r, g = rgb.g, b = rgb.b;
+		r = mutateChannel(r, amount);
+		g = mutateChannel(g, amount);
+		b = mutateChannel(b, amount);
+		return rgbToHex(r,g,b);
+	}
+
+	function mutateColour(colour, amount) {
+		var mutation = mutateHex(colour, amount);
+		return mutateHex(colour, amount);
+		// TODO mutateRGB...
+	}
+
+
+
+
 	function setColourIndex(index) {
 		colourIndex = index;
 	}
@@ -236,6 +276,8 @@ var colours = (function() {
 		setColourIndex: setColourIndex,
 		showPalette: showPalette,
 		showColours: showColours,
+
+		mutateColour: mutateColour
 	}
 
 })();

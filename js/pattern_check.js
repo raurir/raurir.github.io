@@ -10,7 +10,6 @@ var size;
 var rotation = 0;
 var palettePreview;
 var preview;
-
 var title;
 
 var container = dom.element("div", {className:"container", style:{width:sw+"px",height:sh+"px"}});
@@ -24,9 +23,9 @@ function newSize() {
 function newStripes() {
   var lines = 2 + ~~(Math.random() * 5);
   widths = [0];
-  while(widths.length < lines) widths.push(Math.ceil(1 + Math.random() * size / 2) * 2); // all patternColoureds should be multiples of 2
+  while(widths.length < lines) widths.push(Math.ceil(1 + Math.random() * (size - 1) / 2) * 2); // all patternColoureds should be multiples of 2
   widths.push(size);
-
+  // con.log("widths", widths)
   var noDuplicates = [];
   widths.map(function(a,i) {
     if (widths.indexOf(a) == i) {
@@ -50,8 +49,14 @@ function newPalette() {
 }
 function newColours() {
   palette = [];
+  var attempts = 0;
+  // if the current colour scheme from colours.js has less than stripes. simple brute force check with attempts. don't tell anyone!
   while(palette.length < widths.length - 1) {
-    palette.push(colours.getRandomColour());
+    var newColour = colours.getRandomColour();
+    if (palette.indexOf(newColour) == -1 || attempts > 100) {
+      palette.push(newColour);
+    }
+    attempts++;
   }
 }
 
@@ -90,7 +95,7 @@ function changePalette() {
 
 function render() {
 
-  con.log(palette, widths)
+  // con.log(palette, widths)
 
   patternColoured = dom.canvas(size * dot, size * dot);
 
@@ -145,10 +150,26 @@ container.appendChild(patternDetails);
 patternDetails.addEventListener("click", changeStripes);
 
 
-var buttonExport = dom.button("export", {className:"button export"});
+var buttonExport = dom.button("get css", {className:"button export"});
 buttonExport.addEventListener("click", function(e) {
   var img = patternColoured.canvas.toDataURL("image/jpeg");
-  preview = dom.button("preview",{className:"preview"});
+
+  if (preview === undefined) {
+    preview = dom.element("div", {className:"preview"});
+
+    var title = dom.element("div", {className: "title", innerHTML:"And the CSS..."});
+    preview.appendChild(title);
+
+    var close = dom.button("close", {className: "close"});
+    close.addEventListener("click", function(e) {
+      container.removeChild(preview);
+    });
+    preview.appendChild(close);
+
+    preview.css = dom.element("div", {className: "css"});
+    preview.appendChild(preview.css);
+  }
+
   container.appendChild(preview);
 
   var r = "rotate(" + rotation + "rad)";
@@ -162,25 +183,49 @@ buttonExport.addEventListener("click", function(e) {
     "transform: " + r + ";",
   ];
 
-  var css = dom.element("div", {
-    className: "css",
-    innerHTML: cssArr.join("\n")//#.match(/.{1,20}/g).join("<br>")
-  });
+  preview.css.innerHTML = cssArr.join("<br>"); // wrap?? #.match(/.{1,20}/g).join("<br>")
 
-  preview.appendChild(css);
+
 });
 buttonsTop.appendChild(buttonExport);
+
+
+function save(canvas, type) {
+  var dataURL = canvas.toDataURL("image/jpeg");
+  var filename = "check_" + type + "_" + (Math.random() * 1e9 << 0).toString(16) + "-.jpg";
+  var link = dom.element("a", {"href": dataURL, "download": filename});
+  link.click();
+
+  // not on my server you don't...
+  // $.ajax({
+  //   type: "POST",
+  //   url: "/php/save.php",
+  //   data: {
+  //      imgBase64: dataURL
+  //   }
+  // }).done(function(o) {
+  //   con.log('saved', o);
+  // });
+}
+
+var buttonSaveOne = dom.button("pattern image", {className:"button"});
+buttonSaveOne.addEventListener("click", function(e) { save(patternColoured.canvas, "pattern");});
+buttonsTop.appendChild(buttonSaveOne);
+
+var buttonSaveTiled = dom.button("tiled image", {className:"button"});
+buttonSaveTiled.addEventListener("click", function(e) { save(bmp.canvas, "tiled");});
+buttonsTop.appendChild(buttonSaveTiled);
 
 
 var sizes = [1,2,3,4];
 for (var s in sizes) {
   var size = sizes[s];
-  var buttonSize = dom.button(size + "x", {className:"button size", size: size});
+  var buttonSize = dom.button(size + "x", {className:"button", size: size});
   buttonSize.addEventListener("click", function() { changeSize(this.size); });
   buttonsBottom.appendChild(buttonSize);
 }
 
-var buttonRotation = dom.button("rotation", {className:"button rotation"});
+var buttonRotation = dom.button("rotation", {className:"button"});
 buttonRotation.addEventListener("click", function() { changeRotation(); });
 buttonsBottom.appendChild(buttonRotation);
 
