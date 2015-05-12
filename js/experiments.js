@@ -1,29 +1,31 @@
-// var seed = 411930879;
-var seed = ~~(Math.random() * 1e9)
-// seed = 662718928;
-// con.log(seed);
-var same = seed;
+// // var seed = 411930879;
+// var seed = ~~(Math.random() * 1e9)
+// // seed = 662718928;
+// // con.log(seed);
+// var same = seed;
 
-var originalRand = Math.random
+// var originalRand = Math.random
 
-Math.random = function() {
-  var x = (Math.sin(seed) + 1) * 10000;
-  seed += 1;
-  return x % 1;
-}
-getRandom = Math.random;
+// Math.random = function() {
+//   var x = (Math.sin(seed) + 1) * 10000;
+//   seed += 1;
+//   return x % 1;
+// }
+// getRandom = Math.random;
+
+rand.setSeed(411930879);
 
 
-
-
-(function() {
+var experiments = (function() {
 
   var holder = dom.element("div");
   document.body.appendChild(holder);
 
 
   var experiments = [
+    ["_test"],
     ["additive"],
+    ["bezier_flow"],
     ["hexagon_tile"],
     ["isometric_cubes"],
     ["fool", "css/fool"],
@@ -36,6 +38,7 @@ getRandom = Math.random;
     ["polyhedra","3d"],
     ["polyhedra_three","THREE"],
     ["recursive"],
+    ["rectangular_fill"],
     ["spiral_even"],
     ["squaretracer"],
     ["tea"],
@@ -65,14 +68,17 @@ getRandom = Math.random;
       if (/css/.test(file)) {
         creatStyleSheet(file);
       } else {
-        var src = "js/" + file +  ".js";
+        var src = "js/" + file;// +  ".js";
         if (file == "THREE") {
           src = "lib/three/three.min.js";
         }
-        createScript(src);
+        // createScript(src);
+        require([src], function(experiment) {
+          ExperimentFactory(experiment);
+        })
       }
     }
-    // con.log("experiment", experiment);
+
   }
   function showButtons() {
     for(var e in experiments) {
@@ -99,52 +105,6 @@ getRandom = Math.random;
     loadExperiment(index);
   } else {
     showButtons();
-  }
-
-  function initRenderProgress() {
-    con.log('initRenderProgress');
-    var loader, graph, bar;
-
-    function createLoader() {
-      loader = dom.element("div", {className:"experiments-loader"});
-      graph = dom.element("div", {className:"experiments-loader-graph"});
-      bar = dom.element("div", {className:"experiments-loader-graph-bar"});
-      loader.appendChild(graph);
-      graph.appendChild(bar);
-      loader.addEventListener("click", function(e){
-        con.log("captured...");
-        e.stopPropagation();
-        e.preventDefault();
-        return false;
-      });
-    }
-
-
-    addEventListener('render:start', function (e) {
-      if (loader) {
-        bar.style.width = "0%";
-      }
-    }, false);
-    addEventListener('render:progress', function (e) {
-      // con.log("progress", e.detail);
-      if (loader == undefined) {
-        createLoader();
-      }
-      document.body.appendChild(loader);
-      loader.classList.remove("complete");
-      bar.style.width = Math.round(e.detail * 100) + "%";
-    }, false);
-    addEventListener('render:complete', function (e) {
-      if (loader) {
-        bar.style.width = "100%";
-        loader.classList.add("complete");
-        setTimeout(function() {
-          loader.classList.remove("complete");
-          bar.style.width = "0%";
-          try { document.body.removeChild(loader); } catch(e) { /* already removed? */}
-        },200);
-      }
-    }, false);
   }
 
   var currentExperiment;
@@ -183,16 +143,17 @@ getRandom = Math.random;
 
 
     holder.appendChild(currentExperiment.stage);
-    initRenderProgress();
+    initRenderProgress(); // experiments_progress
     initWindowListener();
     currentExperiment.init();
     resize();
   });
 
-
+  console.log("Experiments init");
   // document.body.appendChild(colours.showPalette());
-  // return {
-  //  load: loadExperiment,
-  //  experiments: experiments
-  // };
+  return {
+   load: loadExperiment,
+   experiments: experiments
+  };
 })();
+

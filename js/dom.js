@@ -1,7 +1,11 @@
 var con = console;
 
+var isNode = (typeof module !== 'undefined');
+if (isNode) {
+  var Canvas = require('canvas');
+}
+
 var dom = (function() {
-	var isNode = false;
 
 	function setProps(el, props) {
 		for (var p in props) {
@@ -99,4 +103,4 @@ var dom = (function() {
 
 })();
 
-if(typeof module !== 'undefined') module.exports = dom;
+if(isNode) module.exports = dom;
