@@ -1,6 +1,20 @@
 var con = console;
-if (typeof define !== 'function') { var define = require('amdefine')(module) }
-var isNode = (typeof module !== 'undefined');
+
+var amdefine;
+try {
+  amdefine = require( 'amdefine' );
+}
+catch( e ) {
+  con.log(e)
+  if ( e.code === 'MODULE_NOT_FOUND' ) {
+
+  }
+}
+
+
+// if (typeof define !== 'function') { var define = require('amdefine')(module) }
+
+/*var isNode = (typeof module !== 'undefined');
 
 if (isNode) {
   var rand = require('./rand.js');
@@ -207,3 +221,4 @@ define(function (require) {
 });
 
 // if (isNode) module.exports = bezier_flow;
+*/
