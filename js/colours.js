@@ -1,11 +1,21 @@
+var isNode = (typeof module !== 'undefined');
+if (isNode) {
+	var rand = require('./rand.js');
+}
+
+
 var colours = (function() {
+
+	var random; if (rand) { random = rand.random; } else { random = Math.random; con.warn("!!!! colours is using native random"); }
 
 	var paletteIndex = -1, currentPalette = null;
 	var colourIndex = 0;
 	var previewCSSAdded = false;
 
-	function getRandomPalette() {
-		paletteIndex = ~~(Math.random() * palettes.length);
+	function getRandomPalette(warning) {
+		// con.log("getRandomPalette");
+		if (warning) con.warn("Ensure you call getRandomPalette!");
+		paletteIndex = ~~(random() * palettes.length);
 		currentPalette = palettes[paletteIndex];
 		return currentPalette;
 	}
@@ -14,24 +24,24 @@ var colours = (function() {
 		currentPalette = palettes[paletteIndex];
 	}
 	function getRandomColour() {
-		if (currentPalette == null ) getRandomPalette();
-		colourIndex = ~~(Math.random() * currentPalette.length);
+		if (currentPalette == null) getRandomPalette(true);
+		colourIndex = ~~(random() * currentPalette.length);
 		return currentPalette[colourIndex];
 	}
 
 	function getCurrentColour() {
-		if (currentPalette == null ) getRandomPalette();
+		if (currentPalette == null ) getRandomPalette(true);
 		return currentPalette[colourIndex];
 	}
 
 	function getNextColour(offset) {
-		if (currentPalette == null ) getRandomPalette();
+		if (currentPalette == null ) getRandomPalette(true);
 		if (offset != undefined) {
 			colourIndex += offset;
 		} else {
 			colourIndex++;
 		}
-		colourIndex += currentPalette.length
+		colourIndex += currentPalette.length;
 		colourIndex %= currentPalette.length;
 		return currentPalette[colourIndex];
 	}
@@ -53,7 +63,7 @@ var colours = (function() {
 	}
 
 	function mutateChannel(channel, amount, direction) {
-		var mutation = Math.round(channel + (Math.random() - 0.5) * amount);
+		var mutation = Math.round(channel + (random() - 0.5) * amount);
 		mutation = mutation > 255 ? 255 : mutation <= 0 ? 0 : mutation;
 		return mutation;
 	}
@@ -98,7 +108,7 @@ var colours = (function() {
 	}
 
 	function showPalette() {
-		if (currentPalette == null) getRandomPalette();
+		if (currentPalette == null) getRandomPalette(true);
 		var p = dom.element("div");
 		p.className = "palette";
 		p.id = "palette-" + paletteIndex;

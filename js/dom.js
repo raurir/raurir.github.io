@@ -1,18 +1,28 @@
 var con = console;
 
-var dom = (function() {
-	var isNode = false;
+var isNode = (typeof module !== 'undefined');
+if (isNode) {
+  var Canvas = require('canvas');
+}
 
-	function setProps(el,props) {
+var dom = (function() {
+
+	function setProps(el, props) {
 		for (var p in props) {
 			if (p == "style") {
 				for (var s in props[p]) {
 					el[p][s] = props[p][s];
 				}
 			} else {
-				el.setAttribute(p,props[p]);
-				// el[p] = props[p];
+				el[p] = props[p];
 			}
+		}
+		return el;
+	}
+
+	function setAttributes(el, attrs) {
+		for (var p in attrs) {
+			el.setAttribute(p,attrs[p]);
 		}
 		return el;
 	}
@@ -21,9 +31,17 @@ var dom = (function() {
 		var el = document.createElement(element);
 		setProps(el, props);
 		el.setSize = function(w,h) {
-			el.style.width = w + "px"; // i always use pixels... oh, you don't? i don't give a fuck
+			con.log('ssretS',w,h);
+			el.style.width = w + "px"; // i always use pixels... don't you?
 			el.style.height = h + "px";
 		};
+		// el.addClass = function(className) {
+		// 	// el.classList.add(className);
+		// }
+		// el.removeClass = function(class) {
+		// 	// el.classList.remove(class);
+		// }
+
 		return el;
 	}
 
@@ -60,14 +78,15 @@ var dom = (function() {
 
 	function svg(tag, props) {
 		var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
-		setProps(el, props);
+		setAttributes(el, props);
+		el.setSize = function(w,h) {
 
-
-
-
+			// el.style.width = w + "px"; // i always use pixels... oh, you don't? i don't give a fuck
+			// el.style.height = h + "px";
+			el.setAttribute("width", w);
+			el.setAttribute("height", h);
+		};
 		return el;
-
-
 	}
 
 
@@ -84,4 +103,4 @@ var dom = (function() {
 
 })();
 
-if(typeof module !== 'undefined') module.exports = dom;
+if(isNode) module.exports = dom;
