@@ -25,6 +25,7 @@ var experiments = (function() {
   var experiments = [
     ["_test"],
     ["additive"],
+    ["anemone_three", "THREE"],
     ["bezier_flow"],
     ["hexagon_tile"],
     ["isometric_cubes"],
@@ -52,7 +53,7 @@ var experiments = (function() {
     document.body.appendChild(script);
   }
 
-  function creatStyleSheet(s) {
+  function createStyleSheet(s) {
     var link  = dom.element("link");
     // link.id = cssId;
     link.rel = "stylesheet";
@@ -64,29 +65,44 @@ var experiments = (function() {
 
   function loadExperiment(index) {
     var exp = experiments[index];
+
+    var src = [];
+
     for (var i = exp.length - 1; i > -1;i--) {
       var file = exp[i]
       if (/css/.test(file)) {
-        creatStyleSheet(file);
+        createStyleSheet(file);
       } else {
-        var src = "js/" + file;// +  ".js";
-        if (file == "THREE") {
-          src = "lib/three/three.min.js";
+        switch(file) {
+          case "THREE" :
+            src.push("lib/three/three.min");
+            break;
+          case "Matter" :
+            src.push("lib/matter/matter-0.8.0");
+            break;
+           case "P2" :
+            src.push("lib/p2/p2");//, "lib/p2/p2.renderer");
+            break;
+          default:
+            src.push("js/" + file);
         }
         // createScript(src);
-
-        con.log("loadExperiment", exp, src)
-
-        require([src], function(experiment) {
-          if (experiment) {
-            con.log("require loaded...", experiment)
-            ExperimentFactory(experiment);
-          } else {
-            con.log("require loaded... but experiment is null", experiment)
-          }
-        })
       }
     }
+
+    con.log("loadExperiment", exp);
+    con.log("loadExperiment src to load:",  src.length);
+
+    require(src, function(experiment,b,c,d,e) {
+      con.log("require loaded");
+      if (experiment) {
+        con.log("require loaded...", experiment)
+        ExperimentFactory(experiment);
+      } else {
+        con.log("require loaded... but experiment is null", experiment, arguments)
+      }
+    })
+
 
   }
   function showButtons() {
