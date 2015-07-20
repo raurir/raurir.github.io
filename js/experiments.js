@@ -13,7 +13,18 @@
 // }
 // getRandom = Math.random;
 
-rand.setSeed(411930879);
+
+
+
+
+
+
+
+
+
+
+// rand.setSeed(411930879); // this doesn't work for bezier flow
+rand.setSeed(411979);
 
 
 var experiments = (function() {
@@ -22,10 +33,25 @@ var experiments = (function() {
   document.body.appendChild(holder);
 
 
+  require.config({
+    // baseUrl: '../lib',
+    baseUrl: "js",
+    paths: {
+      // 'zetestmod': 'js/zetestmod',
+      // 'bezier_flow': 'js/bezier_flow',
+      'creature': 'creature_creator/creature',
+      'creature_creator': 'creature_creator/creature_creator',
+    },
+  });
+
+
+
   var experiments = [
     ["_test"],
     ["additive"],
+    ["anemone_three", "THREE"],
     ["bezier_flow"],
+    ["creature"],//, "creature_creator"], //, "creature_creator/creature_creator", "creature_creator/human"],
     ["hexagon_tile"],
     ["isometric_cubes"],
     ["fool", "css/fool"],
@@ -39,7 +65,6 @@ var experiments = (function() {
     ["polyhedra_three","THREE"],
     ["recursive"],
     ["rectangular_fill"],
-    ["running_man"],
     ["spiral_even"],
     ["squaretracer"],
     ["tea"],
@@ -52,7 +77,7 @@ var experiments = (function() {
     document.body.appendChild(script);
   }
 
-  function creatStyleSheet(s) {
+  function createStyleSheet(s) {
     var link  = dom.element("link");
     // link.id = cssId;
     link.rel = "stylesheet";
@@ -64,29 +89,78 @@ var experiments = (function() {
 
   function loadExperiment(index) {
     var exp = experiments[index];
+
+    var src = [];
+
+    /*
     for (var i = exp.length - 1; i > -1;i--) {
       var file = exp[i]
       if (/css/.test(file)) {
-        creatStyleSheet(file);
+        createStyleSheet(file);
       } else {
-        var src = "js/" + file;// +  ".js";
-        if (file == "THREE") {
-          src = "lib/three/three.min.js";
+        switch(file) {
+          case "THREE" :
+            src.push("lib/three/three.min");
+            break;
+          case "Matter" :
+            src.push("lib/matter/matter-0.8.0");
+            break;
+           case "P2" :
+            src.push("lib/p2/p2");//, "lib/p2/p2.renderer");
+            break;
+          default:
+
+            src.push("js/" + file);
         }
         // createScript(src);
-
-        con.log("loadExperiment", exp, src)
-
-        require([src], function(experiment) {
-          if (experiment) {
-            con.log("require loaded...", experiment)
-            ExperimentFactory(experiment);
-          } else {
-            con.log("require loaded... but experiment is null", experiment)
-          }
-        })
       }
     }
+    */
+
+    src = exp;
+
+    // con.log("loadExperiment", exp);
+    // con.log("loadExperiment src to load:",  src.length);
+
+    // require(["js/creature_creator/creature"], function(creature) {
+    //   con.log("creature!!!!!!!!", creature);
+    // })
+
+
+
+
+
+
+
+
+    // require([
+    //   "testmod",
+    //   "zetestmod",
+    //   "creature"
+    // ], function(testmod, zetestmod, creature) {
+    //     console.log("experiments:", testmod, zetestmod, creature);
+    // });
+
+
+
+
+
+
+
+
+
+
+    require(src, function(experiment) {
+      // con.log("require loaded");
+      if (experiment) {
+        con.log("require loaded...", experiment);
+        // ExperimentFactory(experiment);
+        experimentLoaded(experiment);
+      } else {
+        con.log("require loaded... but experiment is null", experiment, arguments);
+      }
+    });
+
 
   }
   function showButtons() {
@@ -119,7 +193,7 @@ var experiments = (function() {
   var currentExperiment;
 
   function resize() {
-    // con.log("resize!");
+    con.log("resize!");
     var sw = window.innerWidth, sh = window.innerHeight;
 
     currentExperiment.resize(sw,sh);
@@ -145,18 +219,25 @@ var experiments = (function() {
     window.addEventListener("resize", resize);
   }
 
-  addEventListener("load:complete", function(e) {
-    con.log("Loaded", e);
-    currentExperiment = e.detail;
-
-
-
-    holder.appendChild(currentExperiment.stage);
+  function experimentLoaded(exp) {
+    currentExperiment = exp;
+    if (currentExperiment.stage) {
+      holder.appendChild(currentExperiment.stage);
+    } else {
+      con.log("experimentLoaded, but no stage:", currentExperiment.stage);
+    }
     initRenderProgress(); // experiments_progress
     initWindowListener();
     currentExperiment.init();
     resize();
+  }
+
+  addEventListener("load:complete", function(e) {
+    con.log("Loaded", e);
+    experimentLoaded(e.detail);
   });
+
+
 
   console.log("Experiments init");
   // document.body.appendChild(colours.showPalette());
