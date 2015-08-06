@@ -1,8 +1,7 @@
 /*
 TODO
-
-sine / morph in y positions
-
+sine / morph in y positions ?
+horizontal movement euler + quarternion rotation around in between axis ?
 */
 
 var race_lines_three = function() {
@@ -11,12 +10,12 @@ var race_lines_three = function() {
 
 	var emptySlot = "emptySlot", top = "top", bottom = "bottom";
 
-	var camera, scene, projector, renderer, group;
+	var camera, scene, renderer;
 	var mouse = {x: 0, y: 0};
 	var camPos = {x: 0, y: 0, z: 10};
 
 	var sw = window.innerWidth, sh = window.innerHeight;
-	var theta = 0;
+
 	var cols = 20;
 	var rows = 16;
 	var gap = 20;
@@ -28,6 +27,11 @@ var race_lines_three = function() {
 	var planeOffset = 250;
 	var allRowsDepth = rows * (size.depth + gap);
 	var allColsWidth = cols * (size.depth + gap);
+
+	var speedNormal = 4;
+	var speedFast = 34;
+	var speed = speedNormal;
+
 	var boxes = {
 		bottom: [],
 		top: []
@@ -38,13 +42,28 @@ var race_lines_three = function() {
 	function num(min, max) { return Math.random() * (max - min) + min; }
 
 	function draw(props) {
+
+		var colours = {
+			slow: {
+				r: num(0, 0.2),
+				g: num(0.5, 0.9),
+				b: num(0.3, 0.7)
+			},
+			fast: {
+				r: num(0.9, 1.0),
+				g: num(0.1, 0.7),
+				b: num(0.2, 0.5)
+			}
+		}
+
 		var uniforms = {
-			red: { type: "f", value: num(0, 0.2) },
-			green: { type: "f", value: num(0.5, 0.9)},
-			blue: { type: "f", value: num(0.3, 0.7) },
+			r: { type: "f", value: colours.slow.r},
+			g: { type: "f", value: colours.slow.g},
+			b: { type: "f", value: colours.slow.b},
 			distanceX: { type: "f", value: 1.0},
 			distanceZ: { type: "f", value: 1.0},
 			pulse: { type: "f", value: 0},
+			speed: { type: "f", value: speed},
 		};
 
 		var material = new THREE.ShaderMaterial( {
@@ -55,6 +74,7 @@ var race_lines_three = function() {
 
 		var geometry = new THREE.BoxGeometry(props.width, props.height, props.depth);
 		var object = new THREE.Mesh(geometry, material);
+		object.colours = colours;
 		return object;
 	}
 
@@ -72,9 +92,6 @@ var race_lines_three = function() {
 		// var lightAbove = new THREE.DirectionalLight(0xff8080, 2);
 		// lightAbove.position.set(0, 1, 0.25).normalize();
 		// scene.add( lightAbove );
-
-		group = new THREE.Group();
-		scene.add(group);
 
 		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize( sw, sh );
@@ -108,7 +125,7 @@ var race_lines_three = function() {
 				boxes[yai][zai][xai] = box;
 				boxes1d.push(box);
 
-				group.add(box);
+				scene.add(box);
 			}
 		}
 
@@ -209,20 +226,11 @@ var race_lines_three = function() {
 	}
 
 
-
-	var speedNormal = 4;
-	var speedFast = 34;
-	var speed = speedNormal;
-
 	function render(time) {
-
-		// theta += 0.01;
 
 		speed -= (speed - (isMouseDown ? speedFast : speedNormal)) * 0.05;
 
 		var box;
-		// con.log(boxes);
-
 		for (var b = 0, bl = boxes1d.length; b < bl; b++) {
 			box = boxes1d[b];
 			box.posZ += speed;
@@ -235,18 +243,27 @@ var race_lines_three = function() {
 			var distanceX = 1 - (Math.abs(box.position.x)) / (allColsWidth / 3);
 			box.material.uniforms.distanceX.value = distanceX;
 
-			if (Math.random() > 0.99995) {
+			var colour = isMouseDown ? box.colours.fast : box.colours.slow;
+			box.material.uniforms.r.value -= (box.material.uniforms.r.value - colour.r) * 0.1;
+			box.material.uniforms.g.value -= (box.material.uniforms.g.value - colour.g) * 0.1;
+			box.material.uniforms.b.value -= (box.material.uniforms.b.value - colour.b) * 0.1;
+
+
+			// normalized speed
+			var currentSpeed = (speed - speedNormal) / (speedFast - speedNormal)
+			box.material.uniforms.speed.value = currentSpeed;
+
+			// pulses more with more speed... of course!
+			if (Math.random() > (0.99995 - currentSpeed * 0.005)) {
 				box.material.uniforms.pulse.value = 1;
 			}
-			box.material.uniforms.pulse.value -= box.material.uniforms.pulse.value * 0.1;
-			// if (b ==13)
-			// con.log(distanceX)
+			box.material.uniforms.pulse.value -= box.material.uniforms.pulse.value * 0.1 / (currentSpeed + 1);
+
+			// if (b ==13) con.log(box.material.uniforms.speed.value);
 		}
 
 		for (var j = 0, jl = rows; j < jl; j++) { // iterate through rows: z
 			for (var i = 0, il = cols; i < il; i++) { // iterate throw cols: x
-				// move(boxes.bottom[j][i]);
-				// move(boxes.top[j][i]);
 				move(i, bottom, j);
 				move(i, top, j);
 			};
@@ -267,8 +284,8 @@ var race_lines_three = function() {
 
 		renderer.render( scene, camera );
 
-		// if (time < 2000)
-		requestAnimationFrame( render );
+		// if (time < 800)
+			requestAnimationFrame( render );
 	}
 
 	var vertexShader = [
@@ -281,24 +298,24 @@ var race_lines_three = function() {
 	"}"].join("");
 
 	var fragmentShader = [
-	// "uniform float time;",
-	"uniform float red;",
-	"uniform float green;",
-	"uniform float blue;",
+	"uniform float r;",
+	"uniform float g;",
+	"uniform float b;",
 	"uniform float distanceZ;",
 	"uniform float distanceX;",
 	"uniform float pulse;",
+	"uniform float speed;",
 
 	"varying vec2 vUv;",
 
 	// "float checkerRows = 8.0;",
 	// "float checkerCols = 16.0;",
 
-
 	"void main( void ) {",
 	"  vec2 position = abs(-1.0 + 2.0 * vUv);",
 	"  float edging = abs((pow(position.y, 5.0) + pow(position.x, 5.0)) / 2.0);",
-	"  float perc = (0.2 + edging * 0.6) * distanceZ * distanceX;",
+	"  float perc = (0.2 * pow(speed + 1.0, 2.0) + edging * 0.8) * distanceZ * distanceX;",
+
 	// "  float perc = distanceX * distanceZ;",
 	// "  vec2 checkPosition = vUv;",
 	// "  float checkerX = ceil(mod(checkPosition.x, 1.0 / checkerCols) - 1.0 / checkerCols / 2.0);",
@@ -308,10 +325,11 @@ var race_lines_three = function() {
 	// "  float g = checker;",
 	// "  float b = checker;",
 
-	"  float r = red * perc + pulse;",
-	"  float g = green * perc + pulse;",
-	"  float b = blue * perc + pulse;",
-	"  gl_FragColor = vec4( r, g, b, 1.0 );",
+	// "  float perc = 1.0;",
+	"  float red = r * perc + pulse;",
+	"  float green = g * perc + pulse;",
+	"  float blue = b * perc + pulse;",
+	"  gl_FragColor = vec4(red, green, blue, 1.0);",
 	"}"].join("");
 
 	return {
