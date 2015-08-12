@@ -44,10 +44,9 @@ var experiments = (function() {
 
 
   var experiments = [
+    ["molecular_three", "THREE"],
+
     ["unknown"],
-
-    ["race_lines_three","THREE", "TweenMax"],
-
     ["_test"],
     ["additive"],
     ["anemone_three", "THREE"],
@@ -64,11 +63,13 @@ var experiments = (function() {
     ["pattern_circles"],
     ["polyhedra","3d"],
     ["polyhedra_three","THREE"],
+    ["race_lines_three","THREE", "TweenMax"],
     ["recursive"],
     ["rectangular_fill"],
     ["spiral_even"],
     ["squaretracer"],
     ["tea"],
+    ["tunnel_tour_three","THREE", "TweenMax"],
     ["voronoi_stripes", "voronoi"],
   ];
 
