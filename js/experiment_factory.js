@@ -1,9 +1,13 @@
+/*
 var isNode = (typeof module !== 'undefined');
 var con = console;
+
 
 function ExperimentFactory(experiment, callback) {
 
   con.log("ExperimentFactory", experiment, callback);
+
+  // TODO is this required?
 
   function progress() {
     if (isNode) {
@@ -31,3 +35,4 @@ function ExperimentFactory(experiment, callback) {
 }
 
 if (isNode) module.exports = ExperimentFactory;
+*/

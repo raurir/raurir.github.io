@@ -1,4 +1,9 @@
-function initExperiments() {
+function experiments_infinite() {
+
+  require.config({
+    baseUrl: "./experiments/",
+    urlArgs: "bust="+new Date().getTime()
+  });
 
   var currentExperiment, experimentsLoaded = {}, currentLoading = null;
   var initialised = false;
@@ -13,7 +18,7 @@ function initExperiments() {
   var experiments = {
     "bezier_flow": ["bezier_flow"],
     "hexagon_tile": ["hexagon_tile"],
-    "maze": ["maze"],
+    "rectangular_fill": ["rectangular_fill"],
 
     // "Mining_Branches": ["mining_branches"],
     // "Oscillate_Curtain": ["oscillate_curtain"],
@@ -25,16 +30,10 @@ function initExperiments() {
     // "voronoi_stripes": ["voronoi_stripes", "voronoi"],
   };
 
-  function createScript(s) {
-    var script = dom.element("script");
-    script.src = s;
-    document.body.appendChild(script);
-  }
-
   function resize() {
     // con.log("implement experiment resize!");
-    // var sw = window.innerWidth, sh = window.innerHeight;
-    // currentExperiment.resize(sw,sh);
+    var sw = window.innerWidth, sh = window.innerHeight;
+    currentExperiment.resize(sw, sh);
   }
 
   function initWindowListener() {
@@ -42,7 +41,7 @@ function initExperiments() {
   }
 
   function loadExperiment(params) {
-    con.log("! loadExperiment params:", params);
+    // con.log("! loadExperiment params:", params);
     if (params) {
 
       $(buttons).slide(false);
@@ -57,7 +56,7 @@ function initExperiments() {
       currentLoading = newLoading;
       currentRandom = newRandom;
 
-      con.log("currentExperiment set:", currentExperiment);
+      // con.log("currentExperiment set:", currentExperiment);
 
       if (currentExperiment) {
         currentExperiment.kill();
@@ -66,25 +65,22 @@ function initExperiments() {
       }
 
       if (experimentsLoaded[currentLoading]) {
-        con.log("script already loaded...");
+        // con.log("script already loaded...");
         currentExperiment = experimentsLoaded[currentLoading];
         initExperiment();
       } else {
         var exp = experiments[currentLoading];
-        con.log("do loadExperiment exp", exp );
+        // con.log("do loadExperiment exp", exp );
         require(exp, function(experiment) {
           // con.log("require loaded");
           if (experiment) {
-            con.log("require loaded...", experiment);
+            // con.log("require loaded...", experiment);
             // ExperimentFactory(experiment);
             experimentLoaded(experiment);
           } else {
-            con.log("require loaded... but experiment is null", experiment, arguments);
+            con.warn("Experiment loaded... but experiment is null", experiment, arguments);
           }
         });
-
-
-
 
       }
     } else {
@@ -101,7 +97,7 @@ function initExperiments() {
   });
 
   function experimentLoaded(_currentExperiment) {
-    con.log("Loaded", _currentExperiment);
+    // con.log("experimentLoaded", _currentExperiment);
     currentExperiment = _currentExperiment;
     if (currentExperiment.init == undefined) return con.warn("Missing property init on currentExperiment");
     if (currentExperiment.kill == undefined) return con.warn("Missing property kill on currentExperiment");
@@ -114,6 +110,7 @@ function initExperiments() {
 
   var stage;
   function initExperiment() {
+    // con.log('initExperiment');
     if (typeof currentExperiment.stage === "function") {
       stage = currentExperiment.stage();
     } else {
@@ -124,7 +121,7 @@ function initExperiments() {
     rand.setSeed(currentRandom);
 
     if (initialised === false) {
-      initRenderProgress();
+      // initRenderProgress();
       initWindowListener();
       initialised = true;
     };
@@ -136,7 +133,7 @@ function initExperiments() {
   for(var e in experiments) {
     var button = dom.element("div", {className: "button", key: e, innerHTML: e});
     button.addEventListener("click", function(event){
-      clickHandler("design:" + event.target.key + "," + Math.round(Math.random() * 1e10));
+      infinite.clickHandler("design:" + event.target.key + "," + Math.round(Math.random() * 1e10));
     });
     buttons.appendChild(button);
   }
@@ -156,3 +153,5 @@ function initExperiments() {
   };
 
 };
+
+define("experiments_infinite", experiments_infinite);

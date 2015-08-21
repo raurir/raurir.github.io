@@ -39,6 +39,7 @@ var experiments = (function() {
       "THREE": "../lib/three/three.min",
       "TweenMax": "../lib/greensock/TweenMax.min",
       "creature": "creature_creator/creature",
+      "box": "games/box"
     },
   });
 
@@ -46,6 +47,8 @@ var experiments = (function() {
 
   var experiments = [
     ["molecular_three", "THREE"],
+
+    ["box"],
 
     ["unknown"],
     ["_test"],
@@ -73,12 +76,6 @@ var experiments = (function() {
     ["tunnel_tour_three","THREE", "TweenMax"],
     ["voronoi_stripes", "voronoi"],
   ];
-
-  function createScript(s) {
-    var script = dom.element("script");
-    script.src = s;
-    document.body.appendChild(script);
-  }
 
   function createStyleSheet(s) {
     var link  = dom.element("link");
@@ -229,7 +226,7 @@ var experiments = (function() {
     } else {
       con.log("experimentLoaded, but no stage:", currentExperiment.stage);
     }
-    initRenderProgress(); // experiments_progress
+    // initRenderProgress(); // experiments_progress
     initWindowListener();
     currentExperiment.init();
     resize();
