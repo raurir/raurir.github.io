@@ -13,7 +13,7 @@ if (isNode) {
 
 var bezier_flow = function() {
 
-  var sw = sh = size = 400;
+  var sw = sh = size = 1000;
 
   // http://www.gorenje.com/karimrashid/en/products/hobs?c=280789
 
@@ -122,7 +122,7 @@ var bezier_flow = function() {
 
   function render(j) {
 
-    con.log("render ========================", lines);
+    // con.log("render ========================", lines);
 
     for (var j = 0; j < lines;j++) {
 
