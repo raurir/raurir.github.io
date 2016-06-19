@@ -1,21 +1,33 @@
+var con = console;
 var isNode = (typeof module !== 'undefined');
 if (isNode) {
 	var rand = require('./rand.js');
 }
 
-
 var colours = (function() {
 
 	var random; if (rand) { random = rand.random; } else { random = Math.random; con.warn("!!!! colours is using native random"); }
+
+	function shuffleArray(array) {
+		for (var i = array.length - 1; i > 0; i--) {
+			var j = Math.floor(random() * (i + 1));
+			var temp = array[i];
+			array[i] = array[j];
+			array[j] = temp;
+		}
+		return array;
+	}
+
+
 
 	var paletteIndex = -1, currentPalette = null;
 	var colourIndex = 0;
 	var previewCSSAdded = false;
 
 	function getRandomPalette(warning) {
-		// con.log("getRandomPalette");
 		if (warning) con.warn("Ensure you call getRandomPalette!");
 		paletteIndex = ~~(random() * palettes.length);
+		// con.log("getRandomPalette", paletteIndex, palettes.length);
 		currentPalette = palettes[paletteIndex];
 		return currentPalette;
 	}
@@ -23,7 +35,16 @@ var colours = (function() {
 		paletteIndex = _paletteIndex;
 		currentPalette = palettes[paletteIndex];
 	}
+
+	function setPaletteRange(range) {
+		if (range > currentPalette.length) return con.warn("setPaletteRange - current palette has less than", range, "colours!");
+		var palette = shuffleArray(currentPalette.slice());
+		currentPalette = palette.splice(0, range);
+		return currentPalette;
+	}
+
 	function getRandomColour() {
+		// con.log("getRandomColour", currentPalette);
 		if (currentPalette == null) getRandomPalette(true);
 		colourIndex = ~~(random() * currentPalette.length);
 		return currentPalette[colourIndex];
@@ -153,9 +174,9 @@ var colours = (function() {
 		var style = dom.element('style');
 		style.type = 'text/css';
 		if (style.styleSheet){
-		  style.styleSheet.cssText = css;
+			style.styleSheet.cssText = css;
 		} else {
-		  style.appendChild(document.createTextNode(css));
+			style.appendChild(document.createTextNode(css));
 		}
 		document.head.appendChild(style);
 		previewCSSAdded = true;
@@ -303,6 +324,7 @@ var colours = (function() {
 		setPalette: function(p) { currentPalette = p; },
 		setRandomPalette: setRandomPalette,
 		setColourIndex: setColourIndex,
+		setPaletteRange: setPaletteRange,
 		showPalette: showPalette,
 		showColours: showColours,
 
