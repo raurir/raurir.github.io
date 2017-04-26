@@ -45,6 +45,7 @@ function exps() {
       ["oscillate_curtain"],
       ["pattern_check", "css/pattern_check"],
       ["pattern_circles"],
+      ["perlin_grid", "THREE"],
       ["perlin_leaves"],
       ["perlin_noise"],
       ["polyhedra","3d"], // 3d is not moduled!
@@ -58,6 +59,7 @@ function exps() {
       ["spiral_even"],
       ["squaretracer"],
       ["tea"],
+      ["text_grid"],
       ["tunnel_tour_three","THREE", "TweenMax"],
       ["typography"],
       ["voronoi_stripes", "voronoi"],
@@ -161,7 +163,7 @@ function exps() {
       // initRenderProgress(); // experiments_progress
       // con.log("inittted!!!!!!");
       initWindowListener();
-      currentExperiment.init({size: 800});
+      currentExperiment.init({size: 700});
       resize();
     }
 
