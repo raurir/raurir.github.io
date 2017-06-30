@@ -32,6 +32,8 @@ function exps() {
       ["bezier_flow"],
       ["box", "maze"],
       ["circle_packing"],
+      ["circle_packing_zoom_loop"],
+      ["circle_sectors"],
       ["corona_sine"],
       ["creature"],//, "creature_creator"], //, "creature_creator/creature_creator", "creature_creator/human"],
       ["fool", "css/fool"],
@@ -42,6 +44,7 @@ function exps() {
       ["maze_cube", "linked_line", "THREE"],//, "https://threejs.org/examples/js/exporters/OBJExporter.js"],//  "lib/three/OBJExporter.js", "lib/three/OrbitControls.js"],
       ["meandering_polygons"],
       ["mining_branches"],
+      ["nested_rotating_polygon", "ease"],
       ["oscillate_curtain"],
       ["pattern_check", "css/pattern_check"],
       ["pattern_circles"],
@@ -49,9 +52,9 @@ function exps() {
       ["perlin_leaves"],
       ["perlin_noise"],
       ["polyhedra","3d"], // 3d is not moduled!
-      ["polyhedra_three","THREE", "../lib/stemkoski/polyhedra"],
+      ["polyhedra_three", "THREE", "../lib/stemkoski/polyhedra"],
       ["pine_three","THREE"],
-      ["race_lines_three","THREE", "TweenMax"],
+      ["race_lines_three", "THREE", "TweenMax"],
       ["rainbow_particles"],
       ["rectangular_fill"],
       ["recursive"],
@@ -163,7 +166,7 @@ function exps() {
       // initRenderProgress(); // experiments_progress
       // con.log("inittted!!!!!!");
       initWindowListener();
-      currentExperiment.init({size: 700});
+      currentExperiment.init({size: 800});
       resize();
     }
 

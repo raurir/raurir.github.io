@@ -34,6 +34,14 @@ void main( void ) {
   checkerY = abs(checkerY - 0.5) * 2.0;
   checkerY = pow(checkerY, 3.0);
 
+  float checkerMod = 0.0;
+  if (rows > 1.0 && floor(checkPosition.x * rows) == checkerMod) {
+    perc = 2.0;
+  }
+  if (cols > 1.0 && floor(checkPosition.y * cols) == checkerMod) {
+    perc = 2.0;
+  }
+
   // float checker = (checkerX * checkerY) * 2.0;
   float checker = (checkerX + checkerY) * 0.5;
   float r1 = r * checker + 0.1;
@@ -211,6 +219,7 @@ var perlin_grid = function(noise) {
 
 
 	function init() {
+		return;
 
 		scene = new THREE.Scene();
 
@@ -296,38 +305,50 @@ var perlin_grid = function(noise) {
 
 
 	function render(time) {
+
+		var breathDistance = 1 + (1 + Math.sin(time * 0.004)) * 2;
 		
-		for (var y = 0; y < gridUnits * 2; y++) { // using double high grid, first half is top, 2nd half is bottom
+
+		function renderBox(holder, value, x, z, above) {
+
+			value = value * value * value * value; // power the fuck
+
+			var scale = 1 + value * 50;
+
+			var px = (x - gridUnits / 2 + 0.5) * size.width * breathDistance;
+			var py = scale * size.height / 2 * above;
+			var pz = (z - gridUnits / 2 + 0.5) * size.depth * breathDistance;
+
+			holder.position.set(px, py, pz);
+
+			// con.log('holder', scale , size.height / 2 * above)
+			// con.log('holder', scale)
+
+			// con.log("holder", holder)
+			// for (var m = 0; m < holder.children.length; m++) {
+			// 	var mesh = holder.children[m];
+			// 	for (var n = 0; n < mesh.material.materials.length; n++) {
+			// 		var material = mesh.material.materials[n];
+			// 		if (Math.random() > 0.99) {
+			// 			material.uniforms.pulse.value = 1;
+			// 		}
+			// 		material.uniforms.pulse.value -= material.uniforms.pulse.value * 0.1 / (1 + 1);
+
+			// 	}
+			// }
+		}
+
+
+
+		for (var z = 0; z < gridUnits; z++) { // using double high grid, first half is top, 2nd half is bottom
 			for (var x = 0; x < gridUnits; x++) {
-
-				var value = (noise.perlin3(x / gridUnits, y / gridUnits, seed) + 1) / 2;
-				value = value * value * value * value; // power the fuck
-
-				var gridIndex = (x + y * gridUnits);
-				var scale = 1 + value * 50;
-
-				var holder;
-				if (y < gridUnits) {
-					holder = gridAbove[gridIndex];
-					holder.position.y = scale * size.height / 2;
-				} else {
-					holder = gridBelow[gridIndex - gridUnits * gridUnits]
-					holder.position.y = -scale * size.height / 2;
-				}
-
-				// con.log("holder", holder)
-				// for (var m = 0; m < holder.children.length; m++) {
-				// 	var mesh = holder.children[m];
-				// 	for (var n = 0; n < mesh.material.materials.length; n++) {
-				// 		var material = mesh.material.materials[n];
-				// 		if (Math.random() > 0.99) {
-				// 			material.uniforms.pulse.value = 1;
-				// 		}
-				// 		material.uniforms.pulse.value -= material.uniforms.pulse.value * 0.1 / (1 + 1);
-
-				// 	}
-				// }
-
+				var gridIndex = (x + z * gridUnits);
+				var valueAbove = (noise.perlin3(x / gridUnits, z / gridUnits, seed) + 1) / 2;
+				var valueBelow = (noise.perlin3(x / gridUnits, z + gridUnits * gridUnits / gridUnits, seed) + 1) / 2;
+				var holderAbove = gridAbove[gridIndex];
+				var holderBelow = gridBelow[gridIndex];
+				renderBox(holderAbove, valueAbove, x, z, 1);
+				renderBox(holderBelow, valueBelow, x, z, -1);
 			}
 		}
 		
