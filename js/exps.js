@@ -1,4 +1,4 @@
-var holder, progressBar;
+var progressBar;
 function progress(eventName, eventParam) {
   con.log("experiments progress", eventName, eventParam);
   switch (eventName) {
@@ -13,70 +13,44 @@ function progress(eventName, eventParam) {
   }
 }
 
-function exps() {
+function exps(experimentsDetails) {
+
+  var experiments = experimentsDetails.list;
 
   return function() {
 
-    holder = dom.element("div");
-    document.body.appendChild(holder);
+    var info;
+
     progressBar = dom.element("div", {id: "progress", style: {width: 0, height: 0}});
     document.body.appendChild(progressBar);
 
-    var experiments = [
-      ["molecular_three", "THREE"],
+    var buttonsNav = dom.element("div", {className: "exps-buttons"});
+    document.body.appendChild(buttonsNav);
 
+    var buttonClose = dom.button("X", {className: "exps-button"});
+    buttonsNav.appendChild(buttonClose);
+    dom.on(buttonClose, ["click", "touchend"], function(e) {
+      window.location = "/";
+    });
 
-      ["unknown"],
-      ["_test"],
+    var buttonInfo = dom.button("?", {className: "exps-button"});
+    buttonsNav.appendChild(buttonInfo);
+    dom.on(buttonInfo, ["click", "touchend"], showInfo);
 
+    var panelInfo = dom.element("div", {className: "exps-info"});
+    var panelInfoDetails = dom.element("div", {className: "exps-info-details"});
+    var panelNav = dom.element("div", {className: "exps-buttons interacted"});
+    var panelButtonClose = dom.button("X", {className: "exps-button"});
 
-      ["additive"],
-      ["anemone_three", "THREE"],
-      ["any_image_url"],
-      ["bezier_flow"],
-      ["box", "maze"],
-      ["circle_packing"],
-      ["circle_packing_zoom_loop"],
-      ["circle_sectors"],
-      ["corona_sine"],
-      ["creature"],//, "creature_creator"], //, "creature_creator/creature_creator", "creature_creator/human"],
-      ["cube_pixelator", "THREE", "TweenMax"],
-      ["fool", "css/fool"],
-      ["hexagon_tile"],
-      ["isometric_cubes"],
-      ["linked_line"],
-      ["mandala"],
-      ["maze"],
-      ["maze_cube", "linked_line", "THREE"],//, "https://threejs.org/examples/js/exporters/OBJExporter.js"],//  "lib/three/OBJExporter.js", "lib/three/OrbitControls.js"],
-      ["meandering_polygons"],
-      ["mining_branches"],
-      ["nested_rotating_polygon", "ease"],
-      ["oscillate_curtain"],
-      ["overflow"],
-      ["pattern_check", "css/pattern_check"],
-      ["pattern_circles"],
-      ["perlin_grid", "THREE", "TweenMax"],
-      ["perlin_leaves"],
-      ["perlin_noise"],
-      ["polyhedra","3d"], // 3d is not moduled!
-      ["polyhedra_three", "THREE", "../lib/stemkoski/polyhedra"],
-      ["pine_three","THREE"],
-      ["race_lines_three", "THREE", "TweenMax"],
-      ["rainbow_particles"],
-      ["rectangular_fill"],
-      ["recursive"],
-      ["recursive_polygon"],
-      ["spiral_even"],
-      ["squaretracer"],
-      ["synth_ambient", "Tone"],
-      ["tea"],
-      ["tetris_cube", "THREE", "TweenMax"],
-      ["text_grid"],
-      ["tunnel_tour_three", "THREE", "TweenMax"],
-      ["typography"],
-      ["voronoi_stripes", "voronoi"],
-      ["zoned_particles"],
-    ];
+    dom.on(panelButtonClose, ["click", "touchend"], hideInfo);
+
+    document.body.appendChild(panelInfo);
+    panelInfo.appendChild(panelNav);
+    panelNav.appendChild(panelButtonClose);
+    panelInfo.appendChild(panelInfoDetails);
+
+    var holder = dom.element("div");
+    document.body.appendChild(holder);
 
     function createStyleSheet(s) {
       var link  = dom.element("link");
@@ -98,13 +72,14 @@ function exps() {
           con.warn("require loaded... but experiment is null", experiment, arguments);
         }
       });
-
-
     }
+
     function showButtons() {
+      buttonClose.style.display = "none";
+      buttonInfo.style.display = "none";
       for(var e in experiments) {
         var button = dom.element("button", {className: "exp"});
-        button.addEventListener("click", function(event){
+        dom.on(button, ["click"], function(event){
           window.location = "?" + event.target.key;
         });
         var key = experiments[e][0];
@@ -112,6 +87,16 @@ function exps() {
         button.innerHTML = key;
         document.body.appendChild(button);
       }
+    }
+
+    function showInfo() {
+      panelInfo.classList.add("displayed");
+      panelInfoDetails.innerHTML = "<h1>Experimental Graphics - " + info.title + "</h1>"
+        + info.description;
+    }
+
+    function hideInfo() {
+      panelInfo.classList.remove("displayed");
     }
 
     if (window.location.search) {
@@ -134,6 +119,23 @@ function exps() {
         }
       }
       loadExperiment(index);
+
+      info = experimentsDetails.getDetails(key);
+      con.log('info', info);
+      if (!info) {
+        buttonsNav.removeChild(buttonInfo);
+      }
+      // showInfo();
+      dom.on(document.body, ["click", "touchstart"], function(e) {
+        buttonsNav.classList.add("interacted");
+        setTimeout(function() {
+          buttonsNav.classList.remove("interacted");
+        }, 3000);
+        // dom.on(document.body, ["mousemove", ], function(e) {
+        //   buttonsNav.classList.add('interacted');
+        // });
+      });
+
     } else {
       showButtons();
     }
@@ -162,7 +164,7 @@ function exps() {
     }
 
     function initWindowListener() {
-      window.addEventListener("resize", resize);
+      dom.on(window, ["resize"], resize);
     }
 
     function experimentLoaded(exp) {
@@ -181,14 +183,12 @@ function exps() {
 
     // document.body.appendChild(colours.showPalette());
 
-    con.log("executed");
-
     return {
-     load: loadExperiment,
-     experiments: experiments
+      load: loadExperiment,
+      experiments: experiments
     };
   }
 
 };
 
-define("exps", exps);
+define("exps", ["exps_details"], exps);
