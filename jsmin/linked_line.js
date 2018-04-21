@@ -1,1 +1,166 @@
-"use strict";var linked_line=function linked_line(){var generate=function generate(size,preoccupied){return new Promise(function(resolve,reject){if(Math.round(size/2)===size/2||Math.round(size)!==size){alert("linked_line - invalid size, needs to be odd integer - you supplied: "+size);return con.warn("linked_line - invalid size, needs to be odd integer - you supplied:",size)}var attempts=0;var wid=size;var hei=size;var block=2;var blockZoom=4;var sw=(wid+.5)*block;var sh=(hei+.5)*block;var swZ=(wid+.5)*block*blockZoom;var shZ=(hei+.5)*block*blockZoom;var bmp=dom.canvas(sw,sh);var bmpZ=dom.canvas(swZ,shZ);var bmpW=dom.canvas(swZ,shZ);var bmpR=dom.canvas(swZ,shZ);var ctx=bmp.ctx;var ctxZ=bmpZ.ctx;var ctxW=bmpW.ctx;var ctxR=bmpR.ctx;var debug=dom.element("div");var occupied={array:[],oneD:[],monkeys:[]};var backup={};var store=function store(){backup.array=occupied.array.slice();backup.oneD=occupied.oneD.slice()};var restore=function restore(){occupied.array=backup.array.slice();occupied.oneD=backup.oneD.slice()};var preoccupy=function preoccupy(options){var item={x:options.x,y:options.y,type:"NULL"};occupied.oneD[getIndex(item.x,item.y)]=item;occupied.array.push(item)};var makeItem=function makeItem(options){var x=options.x==undefined?rand.random():options.x;var y=options.y==undefined?rand.random():options.y;var item={x:x,y:y,type:"TUNNEL",surrounded:false,prev:options.prev,next:options.next};occupied.oneD[getIndex(x,y)]=item;occupied.array.push(item);return item};var first,last;var getIndex=function getIndex(x,y){return y*wid+x};var getXY=function getXY(index){return{x:index%sw,y:Math.floor(index/sw)}};var init=function init(){for(var y=0;y<hei;y++){for(var x=0;x<wid;x++){occupied.oneD.push(-1);ctx.fillRect(x*block-2+block/2,y*block-2+block/2,4,4)}}if(preoccupied){preoccupied.forEach(preoccupy)}var newItem,lastItem;for(var i=0;i<hei;i++){if(i<hei/2){x=i;y=hei/2-.5}else{x=wid/2-.5;y=i}if(i==0){newItem=makeItem({x:x,y:y});first=newItem}else{newItem=makeItem({x:x,y:y,prev:lastItem});lastItem.next=newItem}lastItem=newItem}last=newItem;render(0)};var checkSurrounded=function checkSurrounded(item){for(var i=-1;i<2;i++){for(var j=-1;j<2;j++){var x=item.x+i,y=item.y+j;if(x>=0&&x<wid&&y>=0&&y<hei){var index=getIndex(x,y);if(occupied.oneD[index]===-1)return false}}}item.surrounded=true;return true};var checkDir=function checkDir(x,y,dir){switch(dir){case 0:y--;break;case 1:x++;break;case 2:y++;break;case 3:x--;break}var index=getIndex(x,y);return{ok:x>=0&&x<wid&&y>=0&&y<hei&&occupied.oneD[index]===-1,x:x,y:y}};var checkPoints=function checkPoints(){for(var _len=arguments.length,points=Array(_len),_key=0;_key<_len;_key++){points[_key]=arguments[_key]}for(var i=0,il=points.length-1;i<il;i++){var p0=points[i],p1=points[i+1];if(Math.abs(p0.x-p1.x)!==0&&Math.abs(p0.y-p1.y)!==0){return false}}if(points[0].x===points[1].x&&points[1].x===points[2].x)return false;if(points[0].y===points[1].y&&points[1].y===points[2].y)return false;return true};var insertItemAnywhere=function insertItemAnywhere(){var index=rand.getInteger(0,occupied.array.length-1);var item=occupied.array[index];if(!item)return;debug.innerHTML="item "+occupied.array.length;var surrounded=checkSurrounded(item);if(surrounded){occupied.array.splice(index,1);return}if(item&&item.next&&item.prev){insertItemAfter(item)}else{}};var insertItemAfter=function insertItemAfter(afterItem){store();var prev=afterItem;var next=afterItem.next;var x=afterItem.x;var y=afterItem.y;var startDir=rand.getInteger(0,3);var nextDir=rand.getInteger(0,3);var pending0=checkDir(x,y,startDir);var pending1=checkDir(pending0.x,pending0.y,nextDir);var inline=checkPoints(prev,pending0,pending1,next);if(pending0.ok&&pending1.ok&&inline){var newItem0=makeItem({x:pending0.x,y:pending0.y});var newItem1=makeItem({x:pending1.x,y:pending1.y});prev.next=newItem0;newItem0.prev=prev;newItem0.next=newItem1;newItem1.prev=newItem0;newItem1.next=next;next.prev=newItem1}else{restore()}};var extractWalls=function extractWalls(){var pixels=ctx.getImageData(0,0,sw,sh).data;ctxW.fillStyle="#fff";ctxW.fillRect(0,0,sw,sh);var walls=[];for(var i=0,j=0,il=pixels.length;i<il;i+=4,j++){var xy=getXY(j);var r=pixels[i];if(r==255){ctxW.fillStyle="#f00";ctxW.fillRect(xy.x,xy.y,1,1);walls.push(xy)}}var wallrects=[];var row=-1;var w;for(i=0,il=walls.length;i<il;i++){w=walls[i];if(row!=w.y){row=w.y;wallrects.push({x:w.x,y:w.y,w:1,h:1})}else{if(walls[i-1].x==w.x-1){wallrects[wallrects.length-1].w++}else{wallrects.push({x:w.x,y:w.y,w:1,h:1})}}}for(i=0,il=wallrects.length;i<il;i++){var w0=wallrects[i];for(var j=i+1;j<il;j++){var w1=wallrects[j];if(w0&&w1){if(w0.x==w1.x&&w0.w==w1.w&&w0.y+w0.h==w1.y){wallrects[i].h++;wallrects[j]=null}}}}wallrects=wallrects.filter(function(item){return item});ctxR.fillStyle="#fff";ctxR.fillRect(0,0,swZ,shZ);for(i=0,il=wallrects.length;i<il;i++){w=wallrects[i];if(w){ctxR.beginPath();ctxR.rect(w.x*blockZoom+2,w.y*blockZoom+2,w.w*blockZoom-4,w.h*blockZoom-4);ctxR.lineWidth=1;ctxR.lineStyle="rgba(0,0,0,0.00)";ctxR.closePath();ctxR.stroke()}}resolve({walls:walls,wallrects:wallrects})};ctxZ.scale(blockZoom,blockZoom);ctxZ.imageSmoothingEnabled=false;ctxW.scale(blockZoom,blockZoom);ctxW.imageSmoothingEnabled=false;var arrLen=0,done=0;var render=function render(time){attempts++;ctx.fillStyle="#fff";ctx.fillRect(0,0,sw,sh);for(var i=0;i<40;i++){insertItemAnywhere()}ctx.beginPath();ctx.lineWidth=block/2*.25;var item=first;while(item){var x=(item.x+3/4)*block;var y=(item.y+3/4)*block;if(item==first){ctx.moveTo(x-block,y)}else if(!item.next){ctx.lineTo(x,y);ctx.lineTo(x,y+block)}else{ctx.lineTo(x,y)}item=item.next}ctx.stroke();for(var i=0;i<occupied.array.length;i++){var item=occupied.array[i];ctx.fillStyle=item.type=="NULL"?"#f00":"#00ff00";ctx.fillRect(item.x*2+1,item.y*2+1,1,1)}ctxZ.drawImage(bmp.canvas,0,0);if(arrLen===occupied.array.length){done++}else{arrLen=occupied.array.length;done=0}if(done<300){if(attempts%50==0){con.log("having a breather... ",done);setTimeout(render,20)}else{render()}}else{extractWalls()}};init()})};return{generate:generate}};define("linked_line",linked_line);
+"use strict";
+
+var linked_line = function() {
+    return {
+        generate: function(size, preoccupied) {
+            return new Promise(function(resolve, reject) {
+                if (Math.round(size / 2) === size / 2 || Math.round(size) !== size) return alert("linked_line - invalid size, needs to be odd integer - you supplied: " + size), 
+                con.warn("linked_line - invalid size, needs to be odd integer - you supplied:", size);
+                var first, attempts = 0, wid = size, hei = size, sw = 2 * (wid + .5), sh = 2 * (hei + .5), swZ = 2 * (wid + .5) * 4, shZ = 2 * (hei + .5) * 4, bmp = dom.canvas(sw, sh), bmpZ = dom.canvas(swZ, shZ), bmpW = dom.canvas(swZ, shZ), bmpR = dom.canvas(swZ, shZ), ctx = bmp.ctx, ctxZ = bmpZ.ctx, ctxW = bmpW.ctx, ctxR = bmpR.ctx, debug = dom.element("div"), occupied = {
+                    array: [],
+                    oneD: [],
+                    monkeys: []
+                }, backup = {}, preoccupy = function(options) {
+                    var item = {
+                        x: options.x,
+                        y: options.y,
+                        type: "NULL"
+                    };
+                    occupied.oneD[getIndex(item.x, item.y)] = item, occupied.array.push(item);
+                }, makeItem = function(options) {
+                    var x = null == options.x ? rand.random() : options.x, y = null == options.y ? rand.random() : options.y, item = {
+                        x: x,
+                        y: y,
+                        type: "TUNNEL",
+                        surrounded: !1,
+                        prev: options.prev,
+                        next: options.next
+                    };
+                    return occupied.oneD[getIndex(x, y)] = item, occupied.array.push(item), item;
+                }, getIndex = function(x, y) {
+                    return y * wid + x;
+                }, checkDir = function(x, y, dir) {
+                    switch (dir) {
+                      case 0:
+                        y--;
+                        break;
+
+                      case 1:
+                        x++;
+                        break;
+
+                      case 2:
+                        y++;
+                        break;
+
+                      case 3:
+                        x--;
+                    }
+                    var index = getIndex(x, y);
+                    return {
+                        ok: 0 <= x && x < wid && 0 <= y && y < hei && -1 === occupied.oneD[index],
+                        x: x,
+                        y: y
+                    };
+                }, insertItemAnywhere = function() {
+                    var index = rand.getInteger(0, occupied.array.length - 1), item = occupied.array[index];
+                    item && (debug.innerHTML = "item " + occupied.array.length, function(item) {
+                        for (var i = -1; i < 2; i++) for (var j = -1; j < 2; j++) {
+                            var x = item.x + i, y = item.y + j;
+                            if (0 <= x && x < wid && 0 <= y && y < hei) {
+                                var index = getIndex(x, y);
+                                if (-1 === occupied.oneD[index]) return !1;
+                            }
+                        }
+                        return item.surrounded = !0;
+                    }(item) ? occupied.array.splice(index, 1) : item && item.next && item.prev && insertItemAfter(item));
+                }, insertItemAfter = function(afterItem) {
+                    backup.array = occupied.array.slice(), backup.oneD = occupied.oneD.slice();
+                    var prev = afterItem, next = afterItem.next, x = afterItem.x, y = afterItem.y, startDir = rand.getInteger(0, 3), nextDir = rand.getInteger(0, 3), pending0 = checkDir(x, y, startDir), pending1 = checkDir(pending0.x, pending0.y, nextDir), inline = function() {
+                        for (var _len = arguments.length, points = Array(_len), _key = 0; _key < _len; _key++) points[_key] = arguments[_key];
+                        for (var i = 0, il = points.length - 1; i < il; i++) {
+                            var p0 = points[i], p1 = points[i + 1];
+                            if (0 !== Math.abs(p0.x - p1.x) && 0 !== Math.abs(p0.y - p1.y)) return !1;
+                        }
+                        return !(points[0].x === points[1].x && points[1].x === points[2].x || points[0].y === points[1].y && points[1].y === points[2].y);
+                    }(prev, pending0, pending1, next);
+                    if (pending0.ok && pending1.ok && inline) {
+                        var newItem0 = makeItem({
+                            x: pending0.x,
+                            y: pending0.y
+                        }), newItem1 = makeItem({
+                            x: pending1.x,
+                            y: pending1.y
+                        });
+                        (prev.next = newItem0).prev = prev, (newItem0.next = newItem1).prev = newItem0, 
+                        (newItem1.next = next).prev = newItem1;
+                    } else occupied.array = backup.array.slice(), occupied.oneD = backup.oneD.slice();
+                };
+                ctxZ.scale(4, 4), ctxZ.imageSmoothingEnabled = !1, ctxW.scale(4, 4), ctxW.imageSmoothingEnabled = !1;
+                var arrLen = 0, done = 0, render = function render(time) {
+                    attempts++, ctx.fillStyle = "#fff", ctx.fillRect(0, 0, sw, sh);
+                    for (var i = 0; i < 40; i++) insertItemAnywhere();
+                    ctx.beginPath(), ctx.lineWidth = .25;
+                    for (var item = first; item; ) {
+                        var x = 2 * (item.x + .75), y = 2 * (item.y + .75);
+                        item == first ? ctx.moveTo(x - 2, y) : item.next ? ctx.lineTo(x, y) : (ctx.lineTo(x, y), 
+                        ctx.lineTo(x, y + 2)), item = item.next;
+                    }
+                    for (ctx.stroke(), i = 0; i < occupied.array.length; i++) item = occupied.array[i], 
+                    ctx.fillStyle = "NULL" == item.type ? "#f00" : "#00ff00", ctx.fillRect(2 * item.x + 1, 2 * item.y + 1, 1, 1);
+                    ctxZ.drawImage(bmp.canvas, 0, 0), arrLen === occupied.array.length ? done++ : (arrLen = occupied.array.length, 
+                    done = 0), done < 300 ? attempts % 50 == 0 ? (con.log("having a breather... ", done), 
+                    setTimeout(render, 20)) : render() : function() {
+                        var pixels = ctx.getImageData(0, 0, sw, sh).data;
+                        ctxW.fillStyle = "#fff", ctxW.fillRect(0, 0, sw, sh);
+                        for (var index, walls = [], i = 0, j = 0, il = pixels.length; i < il; i += 4, j++) {
+                            var xy = {
+                                x: (index = j) % sw,
+                                y: Math.floor(index / sw)
+                            };
+                            255 == pixels[i] && (ctxW.fillStyle = "#f00", ctxW.fillRect(xy.x, xy.y, 1, 1), walls.push(xy));
+                        }
+                        var w, wallrects = [], row = -1;
+                        for (i = 0, il = walls.length; i < il; i++) row != (w = walls[i]).y ? (row = w.y, 
+                        wallrects.push({
+                            x: w.x,
+                            y: w.y,
+                            w: 1,
+                            h: 1
+                        })) : walls[i - 1].x == w.x - 1 ? wallrects[wallrects.length - 1].w++ : wallrects.push({
+                            x: w.x,
+                            y: w.y,
+                            w: 1,
+                            h: 1
+                        });
+                        for (i = 0, il = wallrects.length; i < il; i++) {
+                            var w0 = wallrects[i];
+                            for (j = i + 1; j < il; j++) {
+                                var w1 = wallrects[j];
+                                w0 && w1 && w0.x == w1.x && w0.w == w1.w && w0.y + w0.h == w1.y && (wallrects[i].h++, 
+                                wallrects[j] = null);
+                            }
+                        }
+                        for (wallrects = wallrects.filter(function(item) {
+                            return item;
+                        }), ctxR.fillStyle = "#fff", ctxR.fillRect(0, 0, swZ, shZ), i = 0, il = wallrects.length; i < il; i++) (w = wallrects[i]) && (ctxR.beginPath(), 
+                        ctxR.rect(4 * w.x + 2, 4 * w.y + 2, 4 * w.w - 4, 4 * w.h - 4), ctxR.lineWidth = 1, 
+                        ctxR.lineStyle = "rgba(0,0,0,0.00)", ctxR.closePath(), ctxR.stroke());
+                        resolve({
+                            walls: walls,
+                            wallrects: wallrects
+                        });
+                    }();
+                };
+                !function() {
+                    for (var y = 0; y < hei; y++) for (var x = 0; x < wid; x++) occupied.oneD.push(-1), 
+                    ctx.fillRect(2 * x - 2 + 1, 2 * y - 2 + 1, 4, 4);
+                    var newItem, lastItem;
+                    preoccupied && preoccupied.forEach(preoccupy);
+                    for (var i = 0; i < hei; i++) i < hei / 2 ? (x = i, y = hei / 2 - .5) : (x = wid / 2 - .5, 
+                    y = i), 0 == i ? (newItem = makeItem({
+                        x: x,
+                        y: y
+                    }), first = newItem) : (newItem = makeItem({
+                        x: x,
+                        y: y,
+                        prev: lastItem
+                    }), lastItem.next = newItem), lastItem = newItem;
+                    render(0);
+                }();
+            });
+        }
+    };
+};
+
+define("linked_line", linked_line);

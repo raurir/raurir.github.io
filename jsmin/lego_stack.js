@@ -1,1 +1,45 @@
-"use strict";define("lego_stack",["lib/schteppe/cannon.0.6.2.min.js","cannon_demo"],function(cn,CannonDemo){function go(){var demo=new CannonDemo({trackballControls:true});var world=setupWorld(demo);world.gravity.set(0,0,-10);var blocks=[];function createBlock(){var kLength=.5,kRadius=.5,wallThickness=.2;var width=2;var length=rand.getInteger(1,4)*2;var height=rand.getInteger(1,2);var knob=new CANNON.Cylinder(kRadius,kRadius,kLength,12);var roof=new CANNON.Box(new CANNON.Vec3(width,length,wallThickness));var bodyT=new CANNON.Box(new CANNON.Vec3(width,wallThickness,height));var bodyR=new CANNON.Box(new CANNON.Vec3(wallThickness,length,height));var bodyB=new CANNON.Box(new CANNON.Vec3(width,wallThickness,height));var bodyL=new CANNON.Box(new CANNON.Vec3(wallThickness,length,height));var block=new CANNON.Body({mass:.1});block.addShape(roof,new CANNON.Vec3(0,0,height));block.addShape(bodyT,new CANNON.Vec3(0,length-wallThickness,0));block.addShape(bodyR,new CANNON.Vec3(width-wallThickness,0,0));block.addShape(bodyB,new CANNON.Vec3(0,-length+wallThickness,0));block.addShape(bodyL,new CANNON.Vec3(-width+wallThickness,0,0));for(var w=0;w<width;w++){for(var l=0;l<length;l++){var knobPosition=new CANNON.Vec3((w-width/2+.5)*2,(l-length/2+.5)*2,height+kLength/2);block.addShape(knob,knobPosition)}}block.position.set(0,0,10+blocks.length*5);var colour=[14483456,17408,16759552,2237166][rand.getInteger(0,3)];world.add(block);demo.addVisual(block,new THREE.MeshPhongMaterial({color:colour}));block.linearDamping=.1;block.angularDamping=.1;blocks.push(block)}demo.create(function(){createBlock();update()});function update(time){requestAnimationFrame(update);if(blocks.length<100&&blocks.length<Math.floor(time/1e3)){createBlock()}}function setupWorld(demo){var world=demo.getWorld();world.gravity.set(0,0,-40);world.broadphase=new CANNON.NaiveBroadphase;world.solver.iterations=10;var groundShape=new CANNON.Plane;var groundBody=new CANNON.Body({mass:0});groundBody.addShape(groundShape);groundBody.position.set(0,0,1);world.addBody(groundBody);demo.addVisual(groundBody);world.quatNormalizeFast=false;world.quatNormalizeSkip=0;return world}demo.start()}function check(){con.log("check");if(typeof THREE==="undefined"){setTimeout(check,10)}else{go()}}check()});
+"use strict";
+
+define("lego_stack", [ "lib/schteppe/cannon.0.6.2.min.js", "cannon_demo" ], function(cn, CannonDemo) {
+    !function check() {
+        con.log("check"), "undefined" == typeof THREE ? setTimeout(check, 10) : function() {
+            var demo = new CannonDemo({
+                trackballControls: !0
+            }), world = function(demo) {
+                var world = demo.getWorld();
+                world.gravity.set(0, 0, -40), world.broadphase = new CANNON.NaiveBroadphase(), world.solver.iterations = 10;
+                var groundShape = new CANNON.Plane(), groundBody = new CANNON.Body({
+                    mass: 0
+                });
+                return groundBody.addShape(groundShape), groundBody.position.set(0, 0, 1), world.addBody(groundBody), 
+                demo.addVisual(groundBody), world.quatNormalizeFast = !1, world.quatNormalizeSkip = 0, 
+                world;
+            }(demo);
+            world.gravity.set(0, 0, -10);
+            var blocks = [];
+            function createBlock() {
+                var length = 2 * rand.getInteger(1, 4), height = rand.getInteger(1, 2), knob = new CANNON.Cylinder(.5, .5, .5, 12), roof = new CANNON.Box(new CANNON.Vec3(2, length, .2)), bodyT = new CANNON.Box(new CANNON.Vec3(2, .2, height)), bodyR = new CANNON.Box(new CANNON.Vec3(.2, length, height)), bodyB = new CANNON.Box(new CANNON.Vec3(2, .2, height)), bodyL = new CANNON.Box(new CANNON.Vec3(.2, length, height)), block = new CANNON.Body({
+                    mass: .1
+                });
+                block.addShape(roof, new CANNON.Vec3(0, 0, height)), block.addShape(bodyT, new CANNON.Vec3(0, length - .2, 0)), 
+                block.addShape(bodyR, new CANNON.Vec3(1.8, 0, 0)), block.addShape(bodyB, new CANNON.Vec3(0, .2 - length, 0)), 
+                block.addShape(bodyL, new CANNON.Vec3(-1.8, 0, 0));
+                for (var w = 0; w < 2; w++) for (var l = 0; l < length; l++) {
+                    var knobPosition = new CANNON.Vec3(2 * (w - 1 + .5), 2 * (l - length / 2 + .5), height + .25);
+                    block.addShape(knob, knobPosition);
+                }
+                block.position.set(0, 0, 10 + 5 * blocks.length);
+                var colour = [ 14483456, 17408, 16759552, 2237166 ][rand.getInteger(0, 3)];
+                world.add(block), demo.addVisual(block, new THREE.MeshPhongMaterial({
+                    color: colour
+                })), block.linearDamping = .1, block.angularDamping = .1, blocks.push(block);
+            }
+            function update(time) {
+                requestAnimationFrame(update), blocks.length < 100 && blocks.length < Math.floor(time / 1e3) && createBlock();
+            }
+            demo.create(function() {
+                createBlock(), update();
+            }), demo.start();
+        }();
+    }();
+});

@@ -1,1 +1,40 @@
-"use strict";var con=console;var rand=function(){var m=4294967296,a=1664525,c=1013904223,seed,z;var alphaToInteger=function alphaToInteger(s){var num=0;for(var i=0,il=s.length;i<il;i++){num+=s.charCodeAt(i)*c;num%=m}return num};return{setSeed:function setSeed(val){var valDefined=val||val===0;if(valDefined){if(/[^\d]/.test(val)){val=alphaToInteger(val)}else{val=Number(val)}}else{val=Math.round(Math.random()*m)}z=seed=val},getSeed:function getSeed(){return seed},random:function random(){if(z===undefined){console.warn("no seed set");return null}z=(a*z+c)%m;return z/m},getLastRandom:function getLastRandom(){return z/m},getNumber:function getNumber(min,max){return min+this.random()*(max-min)},getInteger:function getInteger(min,max){return Math.floor(this.getNumber(min,max+1))},alphaToInteger:alphaToInteger,shuffle:function shuffle(array){for(var i=array.length-1;i>0;i--){var j=Math.floor(rand.random()*(i+1));var temp=array[i];array[i]=array[j];array[j]=temp}return array}}}();if(typeof module!=="undefined")module.exports=rand;
+"use strict";
+
+var con = console, rand = function() {
+    var seed, z, m = 4294967296, c = 1013904223, alphaToInteger = function(s) {
+        for (var num = 0, i = 0, il = s.length; i < il; i++) num += s.charCodeAt(i) * c, 
+        num %= m;
+        return num;
+    };
+    return {
+        setSeed: function(val) {
+            val = val || 0 === val ? /[^\d]/.test(val) ? alphaToInteger(val) : Number(val) : Math.round(Math.random() * m), 
+            z = seed = val;
+        },
+        getSeed: function() {
+            return seed;
+        },
+        random: function() {
+            return void 0 === z ? (console.warn("no seed set"), null) : (z = (1664525 * z + c) % m) / m;
+        },
+        getLastRandom: function() {
+            return z / m;
+        },
+        getNumber: function(min, max) {
+            return min + this.random() * (max - min);
+        },
+        getInteger: function(min, max) {
+            return Math.floor(this.getNumber(min, max + 1));
+        },
+        alphaToInteger: alphaToInteger,
+        shuffle: function(array) {
+            for (var i = array.length - 1; 0 < i; i--) {
+                var j = Math.floor(rand.random() * (i + 1)), temp = array[i];
+                array[i] = array[j], array[j] = temp;
+            }
+            return array;
+        }
+    };
+}();
+
+"undefined" != typeof module && (module.exports = rand);

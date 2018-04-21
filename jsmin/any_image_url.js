@@ -1,1 +1,64 @@
-"use strict";var isNode=typeof module!=="undefined";if(isNode){var con=console;var rand=require("./rand.js");var Canvas=require("canvas");var Image=Canvas.Image;var dom=require("./dom.js");var http=require("http");var https=require("https")}var any_image_url=function any_image_url(){var allowed={526:{image:"https://funkyvector.com/blog/wp-content/uploads/2016/05/state_of_origin_52_6_22_d5243594_design.png",scale:isNode?1:.5},834199129:{scale:.8}};var size,sw,sh,cx,cy;var bmp=dom.canvas(1,1);var ctx=bmp.ctx;function init(options){size=options.size;sw=size;sh=size;cx=sw/2;cy=sh/2;bmp.setSize(sw,sh);render()}function render(){var ok=allowed[rand.getSeed()];if(ok&&ok.image){renderBMPFromURL(ok.image,ok.scale)}else{con.warn("Cannot find image:",rand.getSeed())}}function renderSVGFromString(data,scale,width,height){var DOMURL=window.URL||window.webkitURL||window;var img=new Image;var svg=new Blob([data],{type:"image/svg+xml;charset=utf-8"});var url=DOMURL.createObjectURL(svg);img.onload=function(){ctx.translate(cx,cy);ctx.scale(scale,scale);ctx.translate(-width/2,-height/2);ctx.drawImage(img,0,0);DOMURL.revokeObjectURL(url);progress("render:complete",bmp.canvas)};img.src=url}function renderBMPFromURL(url,scale){function drawToContext(img){var width=img.width,height=img.height;ctx.translate(cx,cy);ctx.scale(scale,scale);ctx.translate(-width/2,-height/2);ctx.drawImage(img,0,0);progress("render:complete",bmp.canvas)}if(isNode){loadImageURL(url,function(buffer){makeImage(buffer,function(img){drawToContext(img)},function(err){con.log("makeImage fail",err)})},function(err){con.log("loadImageURL fail",err)})}else{var img=new Image;img.onload=function(){drawToContext(img)};img.onerror=function(err){con.log("img.onerror error",err)};img.src=url}}function loadImageURL(url,fulfill,reject){var protocol=http;if(/https:\/\//.test(url)){protocol=https}protocol.get(url,function(res){var buffers=[],length=0;res.on("data",function(chunk){length+=chunk.length;buffers.push(chunk)});res.on("end",function(){var loaded=Buffer.concat(buffers);fulfill(loaded)});res.on("error",function(e){con.log("loadImageURL reject",e);reject(e)})})}function makeImage(data,fulfill,reject){var img=new Image;img.src=data;if(img){fulfill(img)}else{con.log("makeImage reject");reject()}}var experiment={stage:bmp.canvas,init:init};return experiment};if(isNode){module.exports=any_image_url()}else{define("any_image_url",any_image_url)}
+"use strict";
+
+var isNode = "undefined" != typeof module;
+
+if (isNode) var con = console, rand = require("./rand.js"), Canvas = require("canvas"), Image = Canvas.Image, dom = require("./dom.js"), http = require("http"), https = require("https");
+
+var any_image_url = function() {
+    var size, sw, sh, cx, cy, allowed = {
+        526: {
+            image: "https://funkyvector.com/blog/wp-content/uploads/2016/05/state_of_origin_52_6_22_d5243594_design.png",
+            scale: isNode ? 1 : .5
+        },
+        834199129: {
+            scale: .8
+        }
+    }, bmp = dom.canvas(1, 1), ctx = bmp.ctx;
+    return {
+        stage: bmp.canvas,
+        init: function(options) {
+            var ok;
+            size = options.size, cx = (sw = size) / 2, cy = (sh = size) / 2, bmp.setSize(sw, sh), 
+            (ok = allowed[rand.getSeed()]) && ok.image ? function(url, scale) {
+                function drawToContext(img) {
+                    var width = img.width, height = img.height;
+                    ctx.translate(cx, cy), ctx.scale(scale, scale), ctx.translate(-width / 2, -height / 2), 
+                    ctx.drawImage(img, 0, 0), progress("render:complete", bmp.canvas);
+                }
+                if (isNode) !function(url, fulfill, reject) {
+                    var protocol = http;
+                    /https:\/\//.test(url) && (protocol = https), protocol.get(url, function(res) {
+                        var buffers = [];
+                        res.on("data", function(chunk) {
+                            chunk.length, buffers.push(chunk);
+                        }), res.on("end", function() {
+                            var loaded = Buffer.concat(buffers);
+                            fulfill(loaded);
+                        }), res.on("error", function(e) {
+                            con.log("loadImageURL reject", e), reject(e);
+                        });
+                    });
+                }(url, function(buffer) {
+                    var data, fulfill, reject, img;
+                    data = buffer, fulfill = function(img) {
+                        drawToContext(img);
+                    }, reject = function(err) {
+                        con.log("makeImage fail", err);
+                    }, (img = new Image()).src = data, img ? fulfill(img) : (con.log("makeImage reject"), 
+                    reject());
+                }, function(err) {
+                    con.log("loadImageURL fail", err);
+                }); else {
+                    var img = new Image();
+                    img.onload = function() {
+                        drawToContext(img);
+                    }, img.onerror = function(err) {
+                        con.log("img.onerror error", err);
+                    }, img.src = url;
+                }
+            }(ok.image, ok.scale) : con.warn("Cannot find image:", rand.getSeed());
+        }
+    };
+};
+
+isNode ? module.exports = any_image_url() : define("any_image_url", any_image_url);

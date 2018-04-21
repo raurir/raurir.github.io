@@ -1,1 +1,31 @@
-"use strict";var perlin_noise=function perlin_noise(perlin){var timer=function(c){var t={},f=function f(){return(new Date).getTime()};return{start:function start(k){t[k]=f()},end:function end(k){c.log(k,f()-t[k])}}}(console);var pixel=10;var w=60;var h=60;var M=Math;var r=M.random;var c=document.createElement("canvas");c.width=w*pixel;c.height=h*pixel;var d=c.getContext("2d");var logger=document.createElement("div");document.body.appendChild(logger);var iterations=0;var channelRed=perlin.noise(w,h);var channelGreen=perlin.noise(w,h);var channelBlue=perlin.noise(w,h);var min=1e3;var max=-1e3;function drawIt(time){var t=time*.005;var scale=.01;var red=channelRed.cycle(t,scale);var green=channelGreen.cycle(t,scale);var blue=channelBlue.cycle(t,scale);for(var i=0,il=w*h;i<il;i++){var xp=i%w;var yp=Math.floor(i/w);var r=~~(red[i]*255),g=~~(green[i]*255),b=~~(blue[i]*255);d.fillStyle="rgb("+r+","+g+","+b+")";d.fillRect(xp*pixel,yp*pixel,pixel,pixel);min=M.min(r,min);max=M.max(r,max);min=M.min(g,min);max=M.max(g,max);min=M.min(b,min);max=M.max(b,max)}logger.innerHTML=min+"<br>"+max;requestAnimationFrame(drawIt)}return{init:function init(){drawIt(0)},stage:c}};define("perlin_noise",["perlin"],perlin_noise);
+"use strict";
+
+var perlin_noise = function(perlin) {
+    !function(c) {
+        var t = {}, f = function() {
+            return new Date().getTime();
+        };
+    }(console);
+    var pixel = 10, w = 60, h = 60, M = Math, c = (M.random, document.createElement("canvas"));
+    c.width = w * pixel, c.height = h * pixel;
+    var d = c.getContext("2d"), logger = document.createElement("div");
+    document.body.appendChild(logger);
+    var channelRed = perlin.noise(w, h), channelGreen = perlin.noise(w, h), channelBlue = perlin.noise(w, h), min = 1e3, max = -1e3;
+    function drawIt(time) {
+        for (var t = .005 * time, red = channelRed.cycle(t, .01), green = channelGreen.cycle(t, .01), blue = channelBlue.cycle(t, .01), i = 0, il = w * h; i < il; i++) {
+            var xp = i % w, yp = Math.floor(i / w), r = ~~(255 * red[i]), g = ~~(255 * green[i]), b = ~~(255 * blue[i]);
+            d.fillStyle = "rgb(" + r + "," + g + "," + b + ")", d.fillRect(xp * pixel, yp * pixel, pixel, pixel), 
+            min = M.min(r, min), max = M.max(r, max), min = M.min(g, min), max = M.max(g, max), 
+            min = M.min(b, min), max = M.max(b, max);
+        }
+        logger.innerHTML = min + "<br>" + max, requestAnimationFrame(drawIt);
+    }
+    return {
+        init: function() {
+            drawIt(0);
+        },
+        stage: c
+    };
+};
+
+define("perlin_noise", [ "perlin" ], perlin_noise);

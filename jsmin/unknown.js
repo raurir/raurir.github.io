@@ -1,1 +1,26 @@
-"use strict";var con=console;var isNode=typeof module!=="undefined";var unknown=function unknown(){var size=800,sw=size,sh=size;var bmp=dom.canvas(size,size);var ctx=bmp.ctx;return{stage:bmp.canvas,resize:function resize(w,h){bmp.canvas.setSize(w,h)},init:function init(){var rows=10;var y=-10;colours.getRandomPalette();var rOffset=rand.getNumber(0,2);var rBase=rand.getNumber(1,2);var rPower=rand.getNumber(1.01,1.5);var gOffset=rand.getNumber(-2,2);var gBase=rand.getNumber(8e3,1e4);var gPower=rand.getNumber(.4,.6);var yOffset=rand.getNumber(-2,2);var yBase=rand.getNumber(1.2,2);var yPower=rand.getNumber(1.2,1.6);var yMultiplier=rand.getNumber(2,3);for(var i=0;i<rows;i++){var r=Math.pow((rOffset+rows-i)*rBase,rPower);var g=Math.pow((gOffset+rows-i)*gBase,gPower);y+=Math.pow((yOffset+rows-i)*yBase,yPower)*yMultiplier;ctx.fillStyle=colours.getNextColour();var cols=i+1;for(var j=0;j<cols;j++){var x=sw/2+(j-(cols-1)/2)/cols*g;ctx.beginPath();ctx.drawCircle(x,y,r);ctx.closePath();ctx.fill()}}},kill:function kill(){}}};if(isNode){module.exports=unknown()}else{define("unknown",unknown)}
+"use strict";
+
+var con = console, isNode = "undefined" != typeof module, unknown = function() {
+    var bmp = dom.canvas(800, 800), ctx = bmp.ctx;
+    return {
+        stage: bmp.canvas,
+        resize: function(w, h) {
+            bmp.canvas.setSize(w, h);
+        },
+        init: function() {
+            var y = -10;
+            colours.getRandomPalette();
+            for (var rOffset = rand.getNumber(0, 2), rBase = rand.getNumber(1, 2), rPower = rand.getNumber(1.01, 1.5), gOffset = rand.getNumber(-2, 2), gBase = rand.getNumber(8e3, 1e4), gPower = rand.getNumber(.4, .6), yOffset = rand.getNumber(-2, 2), yBase = rand.getNumber(1.2, 2), yPower = rand.getNumber(1.2, 1.6), yMultiplier = rand.getNumber(2, 3), i = 0; i < 10; i++) {
+                var r = Math.pow((rOffset + 10 - i) * rBase, rPower), g = Math.pow((gOffset + 10 - i) * gBase, gPower);
+                y += Math.pow((yOffset + 10 - i) * yBase, yPower) * yMultiplier, ctx.fillStyle = colours.getNextColour();
+                for (var cols = i + 1, j = 0; j < cols; j++) {
+                    var x = 400 + (j - (cols - 1) / 2) / cols * g;
+                    ctx.beginPath(), ctx.drawCircle(x, y, r), ctx.closePath(), ctx.fill();
+                }
+            }
+        },
+        kill: function() {}
+    };
+};
+
+isNode ? module.exports = unknown() : define("unknown", unknown);
