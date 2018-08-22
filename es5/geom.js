@@ -9,6 +9,7 @@ var geom = function () {
   // compared algorithm: https://flupe.github.io/blog/2016/07/29/intersection-of-two-segments/
   // is the same as below including peformance.
   function intersectionBetweenPoints(p0, p1, p2, p3) {
+    // compares line p0>p1 with line p2>p3
 
     var p0_x = p0.x,
         p0_y = p0.y,
@@ -141,6 +142,32 @@ var geom = function () {
       return null;
     }
   }
+  var polygonArea = function polygonArea(points) {
+    var len = points.length;
+    var area = points.reduce(function (sum, point, index) {
+      var x = point.x,
+          y = point.y;
+      var _points = points[(index + 1) % len],
+          xn = _points.x,
+          yn = _points.y;
+
+      return sum + (xn + x) * (yn - y);
+    }, 0);
+    return Math.abs(area) / 2;
+  };
+
+  var polygonPerimeter = function polygonPerimeter(points) {
+    var len = points.length;
+    return points.reduce(function (sum, point, index) {
+      var x = point.x,
+          y = point.y;
+      var _points2 = points[(index + 1) % len],
+          xn = _points2.x,
+          yn = _points2.y;
+
+      return sum + Math.hypot(x - xn, y - yn);
+    }, 0);
+  };
 
   function linearInterpolate(a, b, ratio) {
     return {
@@ -190,12 +217,12 @@ var geom = function () {
       // con.log(i, pp0, pp1);
       parallels.push(parallelPoints(pp0, pp1, offset));
     };
-    con.log("parallels.length", parallels.length);
+    // con.log("parallels.length", parallels.length);
     for (i = 0, il = parallels.length; i < il; i++) {
       var parallel0 = parallels[i]; // start of line
       var parallel1 = parallels[(i + 1) % il]; // end of line
       var intersection = intersectionAnywhere(parallel0[0], parallel0[1], parallel1[0], parallel1[1]);
-      con.log("intersection", intersection);
+      // con.log("intersection", intersection);
       var inside = pointInPolygon(points, intersection);
       if (inside) {
         insets.push(intersection);
@@ -215,9 +242,12 @@ var geom = function () {
     intersectionBetweenPoints: intersectionBetweenPoints,
     lerp: linearInterpolate,
     linearEquationFromPoints: linearEquationFromPoints,
+    linearInterpolate: linearInterpolate,
     parallelPoints: parallelPoints,
     perpendincularPoint: perpendincularPoint,
-    pointInPolygon: pointInPolygon
+    pointInPolygon: pointInPolygon,
+    polygonArea: polygonArea,
+    polygonPerimeter: polygonPerimeter
   };
 }();
 
