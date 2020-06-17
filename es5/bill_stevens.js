@@ -8,7 +8,7 @@ define("bill_stevens", function () {
 
 	var stage = document.createElement("div");
 
-	var camera, scene, projector, renderer, holder;
+	var camera, controls, scene, projector, renderer, holder;
 	var mouse = { x: 0, y: 0 };
 	var sw = window.innerWidth,
 	    sh = window.innerHeight;
@@ -20,7 +20,6 @@ define("bill_stevens", function () {
 
 	var available = Array(Math.pow(dim, 3)).fill(0);
 	var occupied = Array(Math.pow(dim, 3)).fill(0);
-	var positions = [];
 
 	var position = function position(grid) {
 		return (
@@ -65,11 +64,17 @@ define("bill_stevens", function () {
  		]
  	]
  },
+ {
+ 	id: 1,
+ 	structure: [
+ 		[
+ 			[1,1,1],
+ 			[1,0,0],
+ 		]
+ 	]
+ },
  */
 	{
-		id: 1,
-		structure: [[[1, 1, 1], [1, 0, 0]]]
-	}, {
 		id: 3,
 		structure: [[[1, 1, 1, 1]]]
 	}].map(function (piece) {
@@ -115,54 +120,43 @@ define("bill_stevens", function () {
 		var mutated = colours.mutateColour(hex, 30);
 		var colour = Number("0x" + mutated.substr(1));
 
-		var block = new THREE.Group();
-		block.x = rand.getInteger(0, dim - piece.dimensions.w);
-		block.y = rand.getInteger(0, dim - piece.dimensions.h);
-		block.z = rand.getInteger(0, dim - piece.dimensions.d);
+		// trial container to dump blocks in and transform them
+		var containerTest = new THREE.Group();
+		// post transformation, get transformed coordinates and create blocks in here.
+		var containerReal = new THREE.Group();
 
-		block.rotation.set(rand.getInteger(-1, 1) * Math.PI / 2, rand.getInteger(-1, 1) * Math.PI / 2, rand.getInteger(-1, 1) * Math.PI / 2);
+		holder.add(containerTest);
+		holder.add(containerReal);
 
-		var positions = [],
-		    vectors = [];
+		containerTest.x = rand.getInteger(0, dim - piece.dimensions.w);
+		containerTest.y = rand.getInteger(0, dim - piece.dimensions.h);
+		containerTest.z = rand.getInteger(0, dim - piece.dimensions.d);
 
+		containerTest.rotation.set(rand.getInteger(-1, 1) * Math.PI / 2, rand.getInteger(-1, 1) * Math.PI / 2, rand.getInteger(-1, 1) * Math.PI / 2);
+
+		// create initial guess at 0,0
 		structure.forEach(function (xLayer, x) {
 			xLayer.forEach(function (yRow, y) {
 				yRow.forEach(function (piece, z) {
 					if (piece) {
-						var c = cube(1);
+						var c = cube(0.6);
 						c.position.set(p(x), p(y), p(z));
 						c.material.color.setHex(colour);
-						block.add(c);
-
-						var positionIndex = getIndexFromPosition({
-							x: x + block.x,
-							y: y + block.y,
-							z: z + block.z
-						});
-						positions.push(positionIndex);
-						populate(test, positionIndex);
+						containerTest.add(c);
 					}
 				});
 			});
 		});
 
-		if (test.some(function (item) {
-			return item > 1;
-		})) {
-			return con.log("invalid!");
-		}
+		// now shift container within bounds
+		containerTest.position.set(containerTest.x * size, containerTest.y * size, containerTest.z * size);
+		containerTest.updateMatrixWorld();
 
-		block.position.set(block.x * size, block.y * size, block.z * size);
-		// return block;
+		// calculate absolute positions using THREE's nested bodies calculation.
+		var min = { x: 10, y: 10, z: 10 };
+		var max = { x: 0, y: 0, z: 0 };
 
-		holder.add(block);
-
-		block.updateMatrixWorld();
-
-		// calculate absolute positions using THREE'S nested bodies calculation.
-		var min = { x: 0, y: 0, z: 0 };
-
-		block.children.forEach(function (c, index) {
+		var vectors = containerTest.children.map(function (c, index) {
 			var vector = new THREE.Vector3();
 			vector.setFromMatrixPosition(c.matrixWorld);
 			var cleansed = {};
@@ -171,33 +165,66 @@ define("bill_stevens", function () {
 				    key = _ref3[0],
 				    value = _ref3[1];
 
-				// remove inifitely small numbers created by matrix rotations.
+				// remove infinitely small numbers created by matrix rotations.
 				var v = value > 0 && value < 0.001 || value < 0 && value > -0.001 ? 0 : value;
 				cleansed[key] = v / size;
+				// work out if they are out of bounds.
 				min[key] = Math.min(min[key], cleansed[key]);
+				max[key] = Math.max(max[key], cleansed[key]);
 			});
-			vectors[index] = cleansed;
+			return cleansed;
 		});
 
-		//
-		TweenMax.to(block.rotation, 3.5, { x: 0, y: 0, z: 0 });
+		// con.log("min", min, "min", max);
+		var shift = function shift(newV, oldV, d) {
+			if (min[d] < 0) {
+				// con.log(`shifting ${d} up:`, - min[d]);
+				newV[d] = oldV[d] - min[d];
+			} else if (max[d] > dim - 1) {
+				// con.log(`shifting ${d} down:`, - (max[d] - dim + 1));
+				newV[d] = oldV[d] - (max[d] - dim + 1);
+			} else {
+				newV[d] = oldV[d];
+			}
+			return newV;
+		};
 
-		block.children.forEach(function (c, index) {
-			var pos = vectors[index];
-			var newPos = {
-				x: (pos.x - min.x) * size,
-				y: (pos.y - min.y) * size,
-				z: (pos.z - min.z) * size
-			};
-			TweenMax.to(c.position, 3.5, newPos);
-			con.log(pos, newPos);
+		// randomised rotation puts blocks outside of bounds,
+		// shift them back into bounds using min and max.
+		var shifted = vectors.map(function (oldV) {
+			var newV = {};
+			shift(newV, oldV, "x");
+			shift(newV, oldV, "y");
+			shift(newV, oldV, "z");
+			return newV;
 		});
 
-		positions.forEach(function (positionIndex) {
+		shifted.forEach(function (v) {
+			var positionIndex = getIndexFromPosition(v);
+			populate(test, positionIndex);
+		});
+
+		// con.log("test", test);
+
+		if (test.some(function (item) {
+			return item > 1;
+		})) {
+			return con.log("invalid!");
+		}
+
+		// populate real!
+		shifted.forEach(function (v) {
+			var x = v.x,
+			    y = v.y,
+			    z = v.z;
+
+			var c = cube(0.95);
+			c.position.set(p(x), p(y), p(z));
+			c.material.color.setHex("0x50ff50");
+			containerReal.add(c);
+			var positionIndex = getIndexFromPosition(v);
 			populate(occupied, positionIndex);
 		});
-
-		// con.log("occupied", occupied);
 	};
 
 	var init = function init() {
@@ -221,9 +248,12 @@ define("bill_stevens", function () {
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize(sw, sh);
 
+		controls = new THREE.OrbitControls(camera, renderer.domElement);
+
 		holder = new THREE.Group();
 		scene.add(holder);
 
+		// generate grid dots
 		var p = position(dim + 1);
 		for (var i = 0; i < Math.pow(dim + 1, 3); i++) {
 			var c = cube(0.1);
@@ -233,7 +263,7 @@ define("bill_stevens", function () {
 			    y = _getPositionFromIndex.y,
 			    z = _getPositionFromIndex.z;
 
-			c.position.set(p(x), p(y), p(z));
+			c.position.set(p(x) - size / 2, p(y) - size / 2, p(z) - size / 2);
 			c.material.color.setHex(0xff7700);
 			cubes.push(c);
 			holder.add(c);
@@ -241,7 +271,6 @@ define("bill_stevens", function () {
 
 		stage.appendChild(renderer.domElement);
 
-		document.addEventListener('mousemove', onDocumentMouseMove, false);
 		document.addEventListener('keydown', onKeyDown, false);
 
 		render();
@@ -261,14 +290,8 @@ define("bill_stevens", function () {
 
 		// con.log(available, occupied);
 		a++;
-		if (a > 3) return; //1e3) return;
-		setTimeout(attemptBlock, 2000);
-	};
-
-	var onDocumentMouseMove = function onDocumentMouseMove(event) {
-		event.preventDefault();
-		mouse.x = event.clientX / sw * 2 - 1;
-		mouse.y = -(event.clientY / sh) * 2 + 1;
+		if (a > 10) return; //1e3) return;
+		setTimeout(attemptBlock, 20);
 	};
 
 	var onKeyDown = function onKeyDown(event) {
@@ -298,15 +321,7 @@ define("bill_stevens", function () {
 	};
 
 	var render = function render() {
-
-		var camRadius = 300;
-
-		// theta += 0.3;// mouse.x * 4;
-		// gamma -= 0.435;//mouse.y * 2;
-
-		camera.position.x = 200; //camRadius * Math.sin( theta * Math.PI / 360 );
-		camera.position.y = 300; //mouse.y * 100;
-		camera.position.z = 400; //camRadius * Math.cos( theta * Math.PI / 360 );
+		controls.update();
 		camera.lookAt(scene.position);
 		renderer.render(scene, camera);
 	};
