@@ -11,6 +11,8 @@ if (isNode) {
 
 var circle_packing = function circle_packing() {
 	return function () {
+		var rnd = rand.instance();
+		var c = colours.instance(rnd);
 		var progress;
 		var TAU = Math.PI * 2;
 		var sw, sh;
@@ -40,43 +42,47 @@ var circle_packing = function circle_packing() {
 			console.time("process time");
 
 			progress = options.progress || function () {
-				con.log("circle_packing - no progress defined");
+				console.log("circle_packing - no progress defined");
 			};
 			var size = options.size;
 			sw = size;
 			sh = size;
 			bmp.setSize(sw, sh);
-			// rand.setSeed(4);
-			colours.getRandomPalette();
-			bmp.ctx.clearRect(0, 0, sw, sh);
+			rnd.setSeed(options.seed);
+			console.log("circle_packing setting seed.", rnd.getSeed());
+
+			c.getRandomPalette();
+			// bmp.ctx.clearRect(0, 0, sw, sh);
+			bmp.ctx.fillStyle = "#000";
+			bmp.ctx.fillRect(0, 0, sw, sh);
 
 			var threads = 0;
 			var iterations = 0;
 			var circles = 0,
 			    circlesLast = 0,
 			    circlesSame = 0;
-			var gap = rand.getNumber(0.001, 0.02);
+			var gap = rnd.getNumber(0.001, 0.02);
 			// var gap = 0.0005;
-			con.log("gap", gap);
-			var minRadius = rand.getNumber(0.001, 0.01);
+			console.log("gap", gap);
+			var minRadius = rnd.getNumber(0.001, 0.01);
 			// var minRadius = 0.0002;
-			var maxRadius = rand.getNumber(minRadius + 0.02, 0.5);
+			var maxRadius = rnd.getNumber(minRadius + 0.02, 0.5);
 			// var maxRadius = minRadius + 0.02;
-			var maxDepth = rand.getInteger(1, 10);
+			var maxDepth = rnd.getInteger(1, 10);
 			// var maxDepth = 1;
 
-			var limitMaxRadius = rand.getInteger(0, 2);
-			var powerMaxRadius = rand.getNumber(0.8, 3);
-			var limitMinRadius = rand.getInteger(0, 1);
-			con.log("limitMaxRadius", limitMaxRadius);
-			con.log("powerMaxRadius", powerMaxRadius);
-			con.log("limitMinRadius", limitMinRadius);
+			var limitMaxRadius = rnd.getInteger(0, 2);
+			var powerMaxRadius = rnd.getNumber(0.8, 3);
+			var limitMinRadius = rnd.getInteger(0, 1);
+			console.log("limitMaxRadius", limitMaxRadius);
+			console.log("powerMaxRadius", powerMaxRadius);
+			console.log("limitMinRadius", limitMinRadius);
 
-			var banding = rand.getNumber() > 0.7;
-			var bandScale = rand.getInteger(4, 20);
-			var bandModulo = rand.getInteger(2, 10);
+			var banding = rnd.getNumber() > 0.7;
+			var bandScale = rnd.getInteger(4, 20);
+			var bandModulo = rnd.getInteger(2, 10);
 
-			var alternatePunchOut = rand.getNumber() > 0.7;
+			var alternatePunchOut = rnd.getNumber() > 0.7;
 
 			// brutal seeds: 454163889, 3575304202
 			var bailed = false;
@@ -85,7 +91,7 @@ var circle_packing = function circle_packing() {
 			var progressChecker = function progressChecker() {
 				if (threads == -1) {
 					// threads
-					con.log("progressChecker", threads);
+					console.log("progressChecker", threads);
 					progress("render:complete", bmp.canvas);
 					bailed = true;
 				} else {
@@ -109,13 +115,13 @@ var circle_packing = function circle_packing() {
 					progress("render:progress", fakeProgress);
 				}
 
-				// con.log("attemptNextCircle", progressTicker / 1000, threads / 1000);
+				// console.log("attemptNextCircle", progressTicker / 1000, threads / 1000);
 
 				if (attempt < 5000) {
 					var delay = iterations % 100 ? 0 : 200;
 					// return attemptCircle(parent, attempt);
 					if (delay) {
-						// con.log("ok")
+						// console.log("ok")
 						setTimeout(function () {
 							attemptCircle(parent, attempt);
 						}, delay);
@@ -123,12 +129,12 @@ var circle_packing = function circle_packing() {
 						attemptCircle(parent, attempt);
 					}
 				} else {
-					con.log("too many attempt");
+					console.log("too many attempt");
 				}
 			}
 
 			function attemptCircle(parent, attempt, options) {
-				// con.log("attemptCircle")
+				// console.log("attemptCircle")
 				threads--;
 				iterations++;
 
@@ -142,13 +148,13 @@ var circle_packing = function circle_packing() {
 					depth = parent.depth + 1;
 
 					// distance from centre of parent
-					// distance = rand.getInteger(1, 5) / 5 * parent.r + rand.random() * 0.03;
+					// distance = rnd.getInteger(1, 5) / 5 * parent.r + rnd.random() * 0.03;
 
-					// distance = rand.random() * parent.r;
+					// distance = rnd.random() * parent.r;
 					// banding
 
 					// pick a sot
-					var index = Math.floor(rand.random() * parent.sites.length);
+					var index = Math.floor(rnd.random() * parent.sites.length);
 					site = parent.sites.splice(index, 1)[0];
 					x = site.x;
 					y = site.y;
@@ -188,8 +194,8 @@ var circle_packing = function circle_packing() {
 					}
 
 					// choose a randomised radius
-					// r = rand.random() * radius * (parent.r - distance - gap);
-					r = rand.random() * radius;
+					// r = rnd.random() * radius * (parent.r - distance - gap);
+					r = rnd.random() * radius;
 					// r = parent.r - distance - gap;
 					// r = radius;
 					// r = 0.005;
@@ -199,25 +205,25 @@ var circle_packing = function circle_packing() {
 						r = maxRadius;
 					} else if (r < minRadius) {
 						r = minRadius;
-						// con.log("fail initial radius too small");
+						// console.log("fail initial radius too small");
 						// error(site, depth, "red");
 						// return attemptNextCircle(parent, attempt);
 					}
 
 					if (options) {
 						if (options.r) {
-							/* con.log("overriding r"); */r = options.r;
+							/* console.log("overriding r"); */r = options.r;
 						}
 						if (options.x) {
-							/* con.log("overriding x"); */x = options.x;
+							/* console.log("overriding x"); */x = options.x;
 						}
 						if (options.y) {
-							/* con.log("overriding y"); */y = options.y;
+							/* console.log("overriding y"); */y = options.y;
 						}
 					}
 
 					if (r - gap < minRadius) {
-						// con.log("fail initial radius too small");
+						// console.log("fail initial radius too small");
 						error(site, depth, "blue");
 						return attemptNextCircle(parent, attempt);
 					}
@@ -238,25 +244,25 @@ var circle_packing = function circle_packing() {
 						}
 					}
 					if (ok === false) {
-						// con.log("fail can't find suitable radius", r)
+						// console.log("fail can't find suitable radius", r)
 						error(site, depth, "yellow");
 						return attemptNextCircle(parent, attempt);
 					}
 				} else {
 					// the host container, typically want it centred (cx, cy) and half of canvas (0.5)
-					x = cx; //rand.random();
-					y = cy; //rand.random();
-					r = 0.5; //rand.random() / 2;
+					x = cx; //rnd.random();
+					y = cy; //rnd.random();
+					r = 0.5; //rnd.random() / 2;
 					depth = 0;
 				}
 
 				if (options && options.colour) {
 					colour = options.colour;
 				} else {
-					colour = colours.getRandomColour(); //"#fff";//colour;
+					colour = c.getRandomColour(); //"#fff";//colour;
 					while (parent && parent.colour == colour) {
 						// don't allow same colour as parent
-						colour = colours.getNextColour();
+						colour = c.getNextColour();
 					}
 				}
 
@@ -285,9 +291,9 @@ var circle_packing = function circle_packing() {
 					var perimeter = ring * grid * TAU;
 					var segments = Math.ceil(perimeter / grid) || 6;
 					for (var segment = 0; segment < segments; segment++) {
-						// vary siteRadius and siteAngle by rand.getNumber(0, 1) for some jitter
-						var siteRadius = (ring + rand.getNumber(0, 1)) * grid,
-						    siteAngle = (segment + rand.getNumber(0, 1)) / segments * TAU,
+						// vary siteRadius and siteAngle by rnd.getNumber(0, 1) for some jitter
+						var siteRadius = (ring + rnd.getNumber(0, 1)) * grid,
+						    siteAngle = (segment + rnd.getNumber(0, 1)) / segments * TAU,
 						    siteX = x + Math.sin(siteAngle) * siteRadius,
 						    siteY = y + Math.cos(siteAngle) * siteRadius,
 						    site = {
@@ -320,7 +326,7 @@ var circle_packing = function circle_packing() {
 					children: [],
 					sites: sites
 				};
-				// con.log(r, circle.childrenMax);
+				// console.log(r, circle.childrenMax);
 
 				circles++;
 				if (parent && parent.children) {
@@ -336,7 +342,7 @@ var circle_packing = function circle_packing() {
 
 			var container = attemptCircle(null, 0, { colour: "transparent" });
 			// var inner = attemptCircle(parent, 0, {x: 0.5, y: 0.5, r: 0.3, colour: "rgba(0,0,0,0)"});
-			// var inner2 = attemptCircle(inner, 0, {x: 0.5, y: 0.5, r: 0.1, colour: colours.getNextColour()});
+			// var inner2 = attemptCircle(inner, 0, {x: 0.5, y: 0.5, r: 0.1, colour: c.getNextColour()});
 		}
 		return experiment;
 	};

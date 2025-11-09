@@ -4,7 +4,6 @@ define("cannon_demo", function () {
 	/* this is 99+% hacked from schteppe's demos */
 
 	var Demo = function Demo(options) {
-
 		options = options || {};
 		var that = this;
 
@@ -96,21 +95,20 @@ define("cannon_demo", function () {
 			}
 		}
 
-		var SHADOW_MAP_WIDTH = 512;
-		var SHADOW_MAP_HEIGHT = 512;
+		var SHADOW_MAP_WIDTH = 2048;
+		var SHADOW_MAP_HEIGHT = 2048;
 		var MARGIN = 0;
 		var SCREEN_WIDTH = window.innerWidth;
 		var SCREEN_HEIGHT = window.innerHeight - 2 * MARGIN;
 		var camera, controls, renderer;
 		var container;
 		var NEAR = 5,
-		    FAR = 2000;
+		    FAR = 500;
 
 		init();
 		animate();
 
 		function init() {
-
 			container = document.getElementById("experiment-holder");
 
 			// Camera
@@ -123,7 +121,7 @@ define("cannon_demo", function () {
 
 			// SCENE
 			scene = that.scene = new THREE.Scene();
-			scene.fog = new THREE.Fog(0x222222, 1000, FAR);
+			scene.fog = new THREE.Fog(0, 10, FAR);
 
 			camera.lookAt(scene.position);
 
@@ -138,11 +136,13 @@ define("cannon_demo", function () {
 			light.castShadow = true;
 
 			light.shadow.camera.near = 10;
-			light.shadow.camera.far = 100;
-			// light.shadow.camera.fov = 30;
+			light.shadow.camera.far = 200;
+			light.shadow.camera.left = -50;
+			light.shadow.camera.right = 50;
+			light.shadow.camera.top = 50;
+			light.shadow.camera.bottom = -50;
 
-			// light.shadowMapBias = 0.0039;
-			// light.shadowMapDarkness = 0.5;
+			light.shadow.bias = -0.0001;
 			light.shadow.mapSize.width = SHADOW_MAP_WIDTH;
 			light.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
 
@@ -155,11 +155,11 @@ define("cannon_demo", function () {
 			renderer = new THREE.WebGLRenderer({ clearColor: 0x000000, clearAlpha: 1, antialias: false });
 			renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 			renderer.domElement.style.position = "relative";
-			renderer.domElement.style.top = MARGIN + 'px';
+			renderer.domElement.style.top = MARGIN + "px";
 			container.appendChild(renderer.domElement);
 
-			document.addEventListener('mousemove', onDocumentMouseMove);
-			window.addEventListener('resize', onWindowResize);
+			document.addEventListener("mousemove", onDocumentMouseMove);
+			window.addEventListener("resize", onWindowResize);
 
 			// renderer.setClearColor( scene.fog.color, 1 );
 			// renderer.autoClear = false;
@@ -183,6 +183,7 @@ define("cannon_demo", function () {
 				//controls.keys = [ 65, 83, 68 ]; // [ rotateKey, zoomKey, panKey ]
 				controls.screen.width = SCREEN_WIDTH;
 				controls.screen.height = SCREEN_HEIGHT;
+				controls.target.set(0, 0, 10);
 			}
 		}
 
@@ -251,13 +252,13 @@ define("cannon_demo", function () {
    // Remove current bodies and visuals
    var num = visuals.length;
    for(var i=0; i<num; i++){
-   	world.remove(bodies.pop());
-   	var mesh = visuals.pop();
-   	that.scene.remove(mesh);
+   world.remove(bodies.pop());
+   var mesh = visuals.pop();
+   that.scene.remove(mesh);
    }
    // Remove all constraints
    while(world.constraints.length){
-   	world.removeConstraint(world.constraints[0]);
+   world.removeConstraint(world.constraints[0]);
    }
    */
 			demo();
@@ -278,7 +279,7 @@ define("cannon_demo", function () {
 		if (body instanceof CANNON.Body) {
 			mesh = this.shape2mesh(body, material);
 		} else {
-			con.log('custom body!!!', body);
+			con.log("custom body!!!", body);
 		}
 		if (mesh) {
 			// Add body
@@ -334,7 +335,6 @@ define("cannon_demo", function () {
 
 	var hackyMcHack = 0;
 	Demo.prototype.shape2mesh = function (body, material) {
-
 		material = material || this.currentMaterial;
 
 		var wireframe = this.settings.renderMode === "wireframe";
@@ -365,14 +365,12 @@ define("cannon_demo", function () {
 		}
 
 		if (body.custom) {
-
 			// this hack only allows for one body shape currently.
 			var shape = body.shapes[0];
 			var mesh = new THREE.Object3D();
 
 			// allow for ball_and_chain demo
 			switch (body.customType) {
-
 				case "CHAIN_LINK":
 					var box_geometry = new THREE.BoxGeometry(shape.halfExtents.x * 2, shape.halfExtents.y * 2, shape.halfExtents.z * 2);
 					var submeshFrame = new THREE.Mesh(box_geometry, this.wireframeMaterial);
@@ -412,10 +410,14 @@ define("cannon_demo", function () {
 					cylinder1.position.set(-widthHalf, 0, 0);
 					link.add(cylinder1);
 
-					linkEnd0.receiveShadow = true;linkEnd0.castShadow = true;
-					linkEnd1.receiveShadow = true;linkEnd1.castShadow = true;
-					cylinder0.receiveShadow = true;cylinder0.castShadow = true;
-					cylinder1.receiveShadow = true;cylinder1.castShadow = true;
+					linkEnd0.receiveShadow = true;
+					linkEnd0.castShadow = true;
+					linkEnd1.receiveShadow = true;
+					linkEnd1.castShadow = true;
+					cylinder0.receiveShadow = true;
+					cylinder0.castShadow = true;
+					cylinder1.receiveShadow = true;
+					cylinder1.castShadow = true;
 
 					mesh.add(link);
 
@@ -434,7 +436,6 @@ define("cannon_demo", function () {
 			var mesh;
 
 			switch (shape.type) {
-
 				case CANNON.Shape.types.SPHERE:
 					var sphere_geometry = new THREE.SphereGeometry(shape.radius, 18, 18);
 					mesh = new THREE.Mesh(sphere_geometry, material);

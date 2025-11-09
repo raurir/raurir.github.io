@@ -1,7 +1,6 @@
 "use strict";
 
 define("lego_stack", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], function (cn, CannonDemo) {
-
 	/* this is 95+% hacked from schteppe's demos */
 
 	function go() {
@@ -12,14 +11,17 @@ define("lego_stack", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], functi
 
 		var blocks = [];
 
+		var rndI = rand.instance();
+		rndI.setSeed(Math.random());
+
 		function createBlock() {
 			var kLength = 0.5,
 			    kRadius = 0.5,
 			    wallThickness = 0.2;
 
 			var width = 2;
-			var length = rand.getInteger(1, 4) * 2;
-			var height = rand.getInteger(1, 2);
+			var length = rndI.getInteger(1, 4) * 2;
+			var height = rndI.getInteger(1, 2);
 			var knob = new CANNON.Cylinder(kRadius, kRadius, kLength, 12);
 			var roof = new CANNON.Box(new CANNON.Vec3(width, length, wallThickness));
 			var bodyT = new CANNON.Box(new CANNON.Vec3(width, wallThickness, height));
@@ -43,7 +45,7 @@ define("lego_stack", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], functi
 
 			block.position.set(0, 0, 10 + blocks.length * 5);
 
-			var colour = [0xdd0000, 0x004400, 0xffbb00, 0x2222ee][rand.getInteger(0, 3)];
+			var colour = [0xdd0000, 0x004400, 0xffbb00, 0x2222ee][rndI.getInteger(0, 3)];
 
 			world.add(block);
 			demo.addVisual(block, new THREE.MeshPhongMaterial({ color: colour }));
@@ -92,7 +94,7 @@ define("lego_stack", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], functi
 			world.quatNormalizeFast = false;
 			world.quatNormalizeSkip = 0;
 			return world;
-		};
+		}
 
 		demo.start();
 	}

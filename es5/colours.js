@@ -1,11 +1,11 @@
 "use strict";
 
-var con = console;
 var isNode = typeof module !== "undefined";
 // if (isNode) {
 //   var rand = require('./rand.js');
 // }
 
+// eslint-disable-next-line no-redeclare
 var colours = function colours(rand, version) {
 	var random;
 	if (rand && rand.random) {
@@ -29,9 +29,9 @@ var colours = function colours(rand, version) {
 	var colourIndex = 0;
 
 	function getRandomPalette(warning) {
-		if (warning) con.warn("Ensure you call getRandomPalette!");
+		if (warning) console.warn("Ensure you call getRandomPalette!");
 		paletteIndex = ~~(random() * palettes.length);
-		// con.log("getRandomPalette", paletteIndex, palettes.length);
+		// console.log("getRandomPalette", paletteIndex, palettes.length);
 		// TODO surely colourIndex should be set to 0 here?
 		currentPalette = palettes[paletteIndex];
 		return currentPalette;
@@ -43,14 +43,14 @@ var colours = function colours(rand, version) {
 	}
 
 	function setPaletteRange(range) {
-		if (range > currentPalette.length) return con.warn("setPaletteRange - current palette has less than", range, "colours!");
+		if (range > currentPalette.length) return console.warn("setPaletteRange - current palette has less than", range, "colours!");
 		var palette = rand.shuffle(currentPalette.slice());
 		currentPalette = palette.splice(0, range);
 		return currentPalette;
 	}
 
 	function getRandomColour(differentToLast) {
-		// con.log("getRandomColour", currentPalette);
+		// console.log("getRandomColour", currentPalette);
 		if (currentPalette == null) getRandomPalette(true);
 		if (differentToLast) {
 			// enforce a new colour, ie. disallows 2 of the same consecutively
@@ -155,7 +155,7 @@ var colours = function colours(rand, version) {
 		var mixed = { r: 0, g: 0, b: 0 };
 		for (var c = 0, cl = colours.length; c < cl; c++) {
 			var hex = colours[c];
-			// con.log(rgb)
+			// console.log(rgb)
 			var rgb = hexToRgb(hex);
 			mixed.r += rgb.r;
 			mixed.g += rgb.g;

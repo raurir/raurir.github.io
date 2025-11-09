@@ -1,7 +1,6 @@
 "use strict";
 
 define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], function (cn, CannonDemo) {
-
 	/* this is 95+% hacked from schteppe's demos */
 
 	function go() {
@@ -18,7 +17,7 @@ define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], fu
 
 			var mass = 1;
 			var space = 0.3;
-			var N = 10,
+			var N = 20,
 			    last;
 
 			function join(body0, body1, offset) {
@@ -98,7 +97,7 @@ define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], fu
 			world.quatNormalizeFast = false;
 			world.quatNormalizeSkip = 0;
 			return world;
-		};
+		}
 
 		demo.start();
 	}

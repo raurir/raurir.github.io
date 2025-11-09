@@ -17,6 +17,11 @@ var getRotationRange = function getRotationRange(sides) {
 	return rotationRange * 3 / 180 * Math.PI;
 };
 
+// eslint-disable-next-line no-unused-vars
+// const log = (...args) => console.info(...args);
+// eslint-disable-next-line no-unused-vars
+var log = function log() {};
+
 var polygon_slice = function polygon_slice() {
 	return function () {
 		var r = rand.instance();
@@ -225,7 +230,7 @@ var polygon_slice = function polygon_slice() {
 			settings.maxDepth.cur = maxDepth;
 			settings.background.cur = r.getInteger(0, 4) > 3;
 			if (options.settings) {
-				settings = options.settings;
+				settings = JSON.parse(JSON.stringify(options.settings));
 			}
 
 			progress("settings:initialised", settings);

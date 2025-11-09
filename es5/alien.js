@@ -1,15 +1,18 @@
-'use strict';
+"use strict";
 
 var isNode = typeof module !== "undefined";
 
 if (isNode) {
 	var con = console;
-	var rand = require('./rand.js');
-	var dom = require('./dom.js');
-	var colours = require('./colours.js');
+	var rand = require("./rand.js");
+	var dom = require("./dom.js");
+	var colours = require("./colours.js");
 }
 
 var alien = function alien() {
+	var rndI = rand.instance();
+	rndI.setSeed(Math.random());
+	var c = colours.instance(rndI);
 	var stage = dom.canvas(1, 1);
 	var ctx = stage.ctx;
 	var centre, size, sw, sh;
@@ -27,12 +30,12 @@ var alien = function alien() {
 		sh = options.sh || size;
 		stage.setSize(sw, sh);
 
-		cellSize = Math.ceil(rand.getInteger(20, 60) / numberOfColumns);
+		cellSize = Math.ceil(rndI.getInteger(20, 60) / numberOfColumns);
 		canvasWidth = cellSize * (numberOfColumns + 2);
 		canvasHeight = cellSize * (numberOfRows + 2);
 
 		centre = sh / 2;
-		colours.getRandomPalette();
+		c.getRandomPalette();
 		render();
 	}
 
@@ -51,7 +54,7 @@ var alien = function alien() {
 	function oneAlien() {
 		var grid = [];
 
-		var lineSize = rand.getInteger(0, 3); // either draw no line
+		var lineSize = rndI.getInteger(0, 3); // either draw no line
 		if (lineSize) lineSize = cellSize / lineSize; // or fraction of cell size
 
 		var bmp = dom.canvas(canvasWidth, canvasHeight);
@@ -74,8 +77,8 @@ var alien = function alien() {
 		function drawGrid() {
 			var column = void 0,
 			    row = void 0;
-			var colourLine = colours.getNextColour();
-			var colourFill = colours.getNextColour();
+			var colourLine = c.getNextColour();
+			var colourFill = c.getNextColour();
 			for (row = 0; row < numberOfRows; row++) {
 				for (column = 0; column < numberOfColumns; column++) {
 					drawCell(row, column, colourLine, lineSize);
@@ -83,7 +86,7 @@ var alien = function alien() {
 			}
 			for (row = 0; row < numberOfRows; row++) {
 				for (column = 0; column < numberOfColumns; column++) {
-					drawCell(row, column, colourFill || colours.getNextColour(), 0);
+					drawCell(row, column, colourFill || c.getNextColour(), 0);
 				}
 			}
 		}
@@ -112,7 +115,7 @@ var alien = function alien() {
 	function manyAliens() {
 		function r(m) {
 			return ~~(Math.random() * m + 1);
-		};
+		}
 		function q() {
 			var l = r(11),
 			    g = r(5),

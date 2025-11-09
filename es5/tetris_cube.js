@@ -1,7 +1,7 @@
 "use strict";
 
 var tetris_cube = function tetris_cube() {
-
+	rand.setSeed(Math.random());
 	var stage = document.createElement("div");
 
 	var camera, scene, projector, renderer, holder;
@@ -24,7 +24,6 @@ var tetris_cube = function tetris_cube() {
 	}
 
 	function init() {
-
 		scene = new THREE.Scene();
 
 		camera = new THREE.PerspectiveCamera(70, sw / sh, 1, 10000);
@@ -90,7 +89,6 @@ var tetris_cube = function tetris_cube() {
 		var checkMode = MODE_GROUP_EXPAND;
 
 		function checkNeighbours(sourceIndex) {
-
 			function checkNeighbour(targetPosition) {
 				var targetIndex = getIndexFromPosition(targetPosition);
 				if (checkMode === MODE_GROUP_EXPAND && cubes[targetIndex].groupId === 0) {
@@ -98,7 +96,6 @@ var tetris_cube = function tetris_cube() {
 					setGroup(targetIndex, cubes[sourceIndex].groupId);
 					count++;
 				} else if (checkMode === MODE_LONER_UNITE && cubes[targetIndex].groupId > 0) {
-
 					setGroup(sourceIndex, cubes[targetIndex].groupId);
 					count++;
 				} else {
@@ -201,7 +198,7 @@ var tetris_cube = function tetris_cube() {
 							});
 						});
 					});
-					// 
+					//
 				}, 1700);
 			}
 		}
@@ -244,7 +241,7 @@ var tetris_cube = function tetris_cube() {
 
 		stage.appendChild(renderer.domElement);
 
-		document.addEventListener('mousemove', onDocumentMouseMove, false);
+		document.addEventListener("mousemove", onDocumentMouseMove, false);
 
 		render();
 		animate();
@@ -257,7 +254,6 @@ var tetris_cube = function tetris_cube() {
 	}
 
 	function render() {
-
 		var camRadius = 500;
 
 		// theta += mouse.x * 4;

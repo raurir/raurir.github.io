@@ -1,9 +1,8 @@
 "use strict";
 
-// eslint-disable-next-line no-console
-var con = console;
 // from https://gist.github.com/Protonk/5367430
-var rand = function rand(isInstance) {
+// eslint-disable-next-line no-redeclare
+var rand = function rand(isInstance, providedRandom) {
 	var errors = 0;
 	var instanceCount = 0;
 	var instances = {};
@@ -24,36 +23,34 @@ var rand = function rand(isInstance) {
 			num += s.charCodeAt(i) * c;
 			num %= m;
 		}
-		// console.log("string", s.length)
-		// console.log("seed", num);
 		return num;
 	};
 
 	return {
 		setSeed: function setSeed(val) {
-			// con.log("setSeed", isInstance, val);
 			var valDefined = val || val === 0;
 			if (valDefined) {
-				if (/[^\d]/.test(val)) {
-					// con.log("setting alpha seed", val);
+				// if (/[^\d]/.test(val)) {
+				if (isNaN(val)) {
 					val = alphaToInteger(val);
-					// con.log("setting alpha now", val);
+					// console.log("setting alpha now", val);
 				} else {
 					val = Number(val);
-					// con.log("setting numeric seed", val);
+					// console.log("setting numeric seed", val);
 				}
 			} else {
 				val = Math.round(Math.random() * m);
-				// con.log("setting random seed", val);
+				// console.log("setting random seed", val);
 			}
 			z = seed = val;
 		},
 		getSeed: function getSeed() {
 			return seed;
 		},
-		random: function random() {
+		random: providedRandom || function () {
+			// console.log("calling funkyvector")
 			if (z === undefined) {
-				con.warn("no seed set - are you calling rand itself or an instance of rand?");
+				console.warn("no seed set - are you calling rand itself or an instance of rand?");
 				errors++;
 				if (errors > 1000) throw new Error("rand bailing because no seed");
 				return null;
@@ -91,13 +88,14 @@ var rand = function rand(isInstance) {
 		alphaToInteger: alphaToInteger,
 
 		// instance control
-		instance: function instance(seed) {
+		// additionally you can pass in a rnd function, eg fxhash
+		instance: function instance(seed, providedRandom) {
 			instanceCount++;
-			// con.log("rand.creating new instance", instanceCount);
+			// console.log("rand.creating new instance", instanceCount);
 			// this is the preferred method, call rand.instance() for a unique instance...
 			// with this you can run multiple seeded randoms in parallel if needed.
 			// optionally set seed
-			var r = rand(true);
+			var r = rand(true, providedRandom);
 			if (typeof seed === "number" || typeof seed === "string") {
 				r.setSeed(seed);
 			}

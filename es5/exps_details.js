@@ -5,11 +5,14 @@ define("exps_details", function () {
 	// ["unknown"],
 	// ["_test"],
 
-	["additive"], ["aegean_sun"], ["alien"], ["anemone_three", "THREE"], ["any_image_url"], ["attractor"], ["ball_and_chain", "THREE"], ["bill_stevens", "THREE", "TweenMax", "lib/three/OrbitControls.js"], ["bezier_flow"], ["box", "maze"], ["circle_packing"], ["circle_packing_zoom_loop"], ["circle_sectors"], ["codevember", "THREE", "TweenMax"], ["corona_sine"], ["creature"], //, "creature_creator"], //, "creature_creator/creature_creator", "creature_creator/human"],
+	["additive"], ["aegean_sun"], ["alien"], ["anemone_three", "THREE"], ["any_image_url"], ["aristotle"], ["attractor"], ["ball_and_chain", "THREE"], ["bill_stevens", "THREE", "TweenMax", "lib/three/OrbitControls.js"], ["bezier_flow"], ["box", "maze"], ["circle_packing"],
+	// ["circle_packing_zoom_loop"],
+	["circle_sectors"], ["codevember", "THREE", "TweenMax"], ["corona_sine"], ["creature"], //, "creature_creator"], //, "creature_creator/creature_creator", "creature_creator/human"],
 	["cube_fractal_zoom", "THREE", "TweenMax"], ["cube_pixelator", "THREE", "TweenMax"],
 	// ["experiment_template_babel"],
-	["fool", "css:fool"], ["fur"], ["frame_inverse"], ["hexagon_tile"], ["hex_rounded", "THREE"], ["infinite_scrolling_cogs"], ["infinite_stairs", "THREE"], ["isometric_cubes"], ["isometric_words", "THREE", "TweenMax"], ["lego_stack", "THREE"], ["linked_line"], ["mandala"], ["maze"], ["maze_cube", "linked_line", "THREE"], //, "https://threejs.org/examples/js/exporters/OBJExporter.js"],//  "lib/three/OBJExporter.js", "lib/three/OrbitControls.js"],
-	["meandering_polygons"], ["mining_branches"], ["molecular_three", "THREE"], ["nested_rotating_polygon", "ease"], ["oscillate_curtain"], ["oscillator"], ["overflow"], ["pattern_check", "css:pattern_check"], ["pattern_circles"], ["perlin_dots"], ["perlin_grid", "THREE", "TweenMax"], ["perlin_leaves"], ["perlin_noise"], ["polygon_slice"], ["polyhedra", "3d"], // 3d is not moduled!
+	["fool", "css:fool"], ["fur"], ["frame_inverse"], ["hexagon_tile"], ["hex_rounded", "THREE"], ["infinite_scrolling_cogs"], ["infinite_stairs", "THREE"], ["isometric_cubes"], ["isometric_words", "THREE", "TweenMax"], ["interpolated", "lagrange"], ["lego_stack", "THREE"], ["linked_line"], ["mandala"], ["maze"], ["maze_cube", "linked_line", "THREE"], //, "https://threejs.org/examples/js/exporters/OBJExporter.js"],//  "lib/three/OBJExporter.js", "lib/three/OrbitControls.js"],
+	["meandering_polygons"], ["mining_branches"], ["molecular_three", "THREE"], ["nested_rotating_polygon", "ease"], ["oscillate_curtain"], ["oscillator"], ["overflow"], ["pattern_check", "css:pattern_check"], ["pattern_circles"], ["perlin_dots"], ["perlin_grid", "THREE", "TweenMax"], ["perlin_leaves"], ["perlin_noise"], ["polygon_slice"],
+	// ["polyhedra", "3d"], // 3d is not moduled!
 	["polyhedra_three", "THREE", "../lib/stemkoski/polyhedra"], ["pine_three", "THREE"], ["race_lines_three", "THREE", "TweenMax"], ["rainbow_particles"], ["rectangular_fill"], ["recursive"], ["recursive_circle"], ["recursive_polygon"], ["reddit_proc_gen"], ["seven_four_sevens"], ["spiral_even"], ["squaretracer"], ["squash_match_shirt", "fill/stripes", "fill/dither"], ["synth_ambient", "Tone"], ["tea"], ["tentacle"], ["tessellation"], ["tetris_cube", "THREE", "TweenMax"], ["text_grid"], ["triangles", "THREE", "TweenMax"], ["tunnel_tour_three", "THREE", "TweenMax"], ["typography"], ["voronoi_stripes", "voronoi", "fill/stripes", "fill/dither"], ["zoned_particles"]];
 
 	var details = {
@@ -48,6 +51,10 @@ define("exps_details", function () {
 		isometric_words: {
 			title: "Isometric Words",
 			description: "<p>Muddling up cubes by using the simplicity of Isometric projection.</p><p>Randomly offset the objects along the same axis the camera is looking down.</p>"
+		},
+		interpolated: {
+			title: "Interpolated",
+			description: "<p>FXhash exp</p>"
 		},
 		lego_stack: {
 			title: "Lego Stack",

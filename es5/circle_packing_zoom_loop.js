@@ -1,16 +1,15 @@
-'use strict';
+"use strict";
 
-var isNode = typeof module !== 'undefined';
+var isNode = typeof module !== "undefined";
 
 if (isNode) {
 	var con = console;
-	var dom = require('./dom.js');
-	var geom = require('./geom.js');
-	var rand = require('./rand.js');
+	var dom = require("./dom.js");
+	var geom = require("./geom.js");
+	var rand = require("./rand.js");
 }
 
 var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
-
 	var TAU = Math.PI * 2;
 	var cx = 0.5,
 	    cy = 0.5;
@@ -18,16 +17,21 @@ var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
 	var size;
 	var current, next;
 
+	var rndI = rand.instance();
+	console.log("expi2!");
 	var zoom = {};
 	function init(options) {
+		console.log("init...");
 		size = options.size;
 		bmp.setSize(size, size);
+		rndI.setSeed(options.seed || Math.random());
+		console.log(rndI.getSeed());
 		current = generate();
 		// var p1 = generate();
 		setTimeout(function () {
 			var p0 = current;
 			con.log("p0", p0);
-			var targetIndex = rand.getInteger(0, p0.circles.length);
+			var targetIndex = rndI.getInteger(0, p0.circles.length);
 			var target = p0.circles[targetIndex];
 
 			zoom = {
@@ -35,8 +39,9 @@ var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
 				max: 0.5 / target.r,
 				target: target,
 				targetIndex: targetIndex
-				// con.log(getBaseLog(0.5, zoom.max));
-			};con.log("zoom", zoom);
+			};
+			// con.log(getBaseLog(0.5, zoom.max));
+			con.log("zoom", zoom);
 			updateZoom(0);
 		}, 100);
 	}
@@ -121,9 +126,9 @@ var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
 		var circles = 0,
 		    circlesLast = 0,
 		    circlesSame = 0;
-		var gap = rand.getNumber(0.0001, 0.02);
-		var minRadius = rand.getNumber(0.001, 0.01);
-		var maxRadius = rand.getNumber(minRadius + 0.02, 0.5);
+		var gap = rndI.getNumber(0.0001, 0.02);
+		var minRadius = rndI.getNumber(0.001, 0.01);
+		var maxRadius = rndI.getNumber(minRadius + 0.02, 0.5);
 		var maxDepth = 1;
 
 		function attemptNextCircle(parent, attempt) {
@@ -144,7 +149,6 @@ var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
 
 			var depth, distance, dx, dy, other, r, radius, site, y, x;
 			if (parent) {
-
 				if (!parent.sites.length) {
 					// no sites left
 					return;
@@ -153,7 +157,7 @@ var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
 				depth = parent.depth + 1;
 
 				// pick a sot
-				var index = Math.floor(rand.random() * parent.sites.length);
+				var index = Math.floor(rndI.random() * parent.sites.length);
 				site = parent.sites.splice(index, 1)[0];
 				x = site.x;
 				y = site.y;
@@ -164,7 +168,7 @@ var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
 				// establish start radius
 				radius = parent.r - distance - gap;
 
-				r = rand.random() * radius;
+				r = rndI.random() * radius;
 
 				if (r > maxRadius) {
 					r = maxRadius;
@@ -214,9 +218,9 @@ var circle_packing_zoom_loop = function circle_packing_zoom_loop() {
 				var perimeter = ring * grid * TAU;
 				var segments = Math.ceil(perimeter / grid) || 6;
 				for (var segment = 0; segment < segments; segment++) {
-					// vary siteRadius and siteAngle by rand.getNumber(0, 1) for some jitter
-					var siteRadius = (ring + rand.getNumber(0, 1)) * grid,
-					    siteAngle = (segment + rand.getNumber(0, 1)) / segments * TAU,
+					// vary siteRadius and siteAngle by rndI.getNumber(0, 1) for some jitter
+					var siteRadius = (ring + rndI.getNumber(0, 1)) * grid,
+					    siteAngle = (segment + rndI.getNumber(0, 1)) / segments * TAU,
 					    siteX = x + Math.sin(siteAngle) * siteRadius,
 					    siteY = y + Math.cos(siteAngle) * siteRadius,
 					    site = {

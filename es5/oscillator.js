@@ -9,6 +9,9 @@ define("oscillator", function () {
 
 	var size = 800;
 
+	var rndI = rand.instance();
+	rndI.setSeed(Math.random());
+
 	var cols = colours.getRandomPalette();
 	var bg = colours.getRandomColour();
 	var fg = colours.getNextColour();
@@ -33,10 +36,10 @@ define("oscillator", function () {
 	function genOsc() {
 		for (var o = 0; o < oscillators; o++) {
 			oscs[o] = [];
-			oscs[o][0] = rand.getNumber(0, 0.1);
-			oscs[o][1] = rand.getNumber(0, 0.1);
-			oscs[o][2] = rand.getNumber(0, 0.1);
-			oscs[o][3] = rand.getNumber(0, 0.1);
+			oscs[o][0] = rndI.getNumber(0, 0.1);
+			oscs[o][1] = rndI.getNumber(0, 0.1);
+			oscs[o][2] = rndI.getNumber(0, 0.1);
+			oscs[o][3] = rndI.getNumber(0, 0.1);
 		}
 	}
 
@@ -49,7 +52,7 @@ define("oscillator", function () {
 		return temp; //oscillators;
 	}
 
-	var start = rand.getInteger(0, 1e6);
+	var start = rndI.getInteger(0, 1e6);
 
 	function onLoop(time) {
 		// requestAnimationFrame(onLoop);
@@ -62,7 +65,6 @@ define("oscillator", function () {
 		calcs = 0;
 		var rows = 0;
 		while (rows < range) {
-
 			for (var i = 0; i < range; i++) {
 				var t = start + i; // + time * 0.01;
 				var j = getOsc(t, 0, oscRange);

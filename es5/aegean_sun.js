@@ -1,6 +1,10 @@
 "use strict";
 
 define("aegean_sun", ["perlin"], function (perlin) {
+	var rndI = rand.instance();
+	rndI.setSeed(Math.random());
+	var c = colours.instance(rndI);
+
 	var sw = window.innerWidth;
 	var sh = window.innerHeight;
 	var w = 400,
@@ -9,10 +13,10 @@ define("aegean_sun", ["perlin"], function (perlin) {
 	var channelX = perlin.noise(w, h);
 	var channelY = perlin.noise(w, h);
 
-	var maxSize = rand.getInteger(100, 300);
-	var minSize = rand.getInteger(4, 10);
+	var maxSize = rndI.getInteger(100, 300);
+	var minSize = rndI.getInteger(4, 10);
 	var maxBoxes = Math.floor(sw * sh / 200);
-	var cols = colours.getRandomPalette();
+	var cols = c.getRandomPalette();
 	var canvas = dom.canvas(sw, sh);
 	var ctx = canvas.ctx;
 	var pixels = [];
@@ -30,13 +34,12 @@ define("aegean_sun", ["perlin"], function (perlin) {
 		// 	ctx.fillRect(x, y, 1, 1);
 		// }
 
-
 		var segments = 20;
 		var steps = 40;
 
 		function contour() {
-			var p0 = { x: rand.getNumber(0.4, 0.6) * w, y: 0 * h };
-			var p1 = { x: rand.getNumber(0.4, 0.6) * w, y: 1 * h };
+			var p0 = { x: rndI.getNumber(0.4, 0.6) * w, y: 0 * h };
+			var p1 = { x: rndI.getNumber(0.4, 0.6) * w, y: 1 * h };
 			var line = [];
 			for (var i = 0; i < segments; i++) {
 				var p = geom.lerp(p0, p1, i / segments);
@@ -92,11 +95,11 @@ define("aegean_sun", ["perlin"], function (perlin) {
 	}
 
 	function init() {
-		var bg = colours.getRandomColour();
+		var bg = c.getRandomColour();
 		cols.splice(cols.indexOf(bg), 1);
 		ctx.fillStyle = bg;
 		ctx.fillRect(0, 0, sw, sh);
-		ctx.strokeStyle = colours.getNextColour();
+		ctx.strokeStyle = c.getNextColour();
 		go(0);
 	}
 	return {

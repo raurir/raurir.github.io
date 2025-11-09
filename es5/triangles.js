@@ -1,7 +1,6 @@
 "use strict";
 
 define("triangles", function () {
-
 	var camera, scene, renderer;
 	var sw = window.innerWidth,
 	    sh = window.innerHeight;
@@ -20,6 +19,8 @@ define("triangles", function () {
 	var lenA = triSize / Math.cos(theta);
 	var lenB = lenA * Math.sin(theta);
 	var lenC = (lenA + lenB) / 2;
+
+	rand.setSeed(Math.random());
 
 	function generateShape() {
 		var shape = new THREE.Shape();
@@ -56,7 +57,6 @@ define("triangles", function () {
 	}
 
 	function init() {
-
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2(0x000000, 0.0005);
 

@@ -1,15 +1,17 @@
-'use strict';
+"use strict";
 
-var isNode = typeof module !== 'undefined';
+var isNode = typeof module !== "undefined";
 
 if (isNode) {
-	var con = console;
-	var rand = require('./rand.js');
-	var dom = require('./dom.js');
-	var colours = require('./colours.js');
+	// var con = console;
+	// var rand = require("./r.js");
+	// var dom = require("./dom.js");
+	// var colours = require("./c.js");
 }
 
 var circle_sectors = function circle_sectors() {
+	var r = rand.instance(undefined);
+	var c = colours.instance(r);
 
 	var TAU = Math.PI * 2;
 	var QUADRANT = Math.PI / 2;
@@ -20,44 +22,44 @@ var circle_sectors = function circle_sectors() {
 	function init(options) {
 		size = options.size;
 		bmp.setSize(size, size);
+		r.setSeed();
+		c.getRandomPalette();
 
-		colours.getRandomPalette();
-
-		var rings = rand.getInteger(4, 24);
-		var ringStart = rand.getInteger(0, rings - 1);
-		var sectorsStart = rand.getInteger(2, 16);
-		var sectorsPower = rand.getInteger(2, 3);
-		var padding = rand.getNumber(0, 0.01);
-		var sectorsMin = rand.getNumber(0.02, 0.2);
-		var dotty = rand.getNumber(0, 1) > 0.8;
-		var howDotty = rand.getNumber(0.1, 0.8);
+		var rings = r.getInteger(4, 24);
+		var ringStart = r.getInteger(0, rings - 1);
+		var sectorsStart = r.getInteger(2, 16);
+		var sectorsPower = r.getInteger(2, 3);
+		var padding = r.getNumber(0, 0.01);
+		var sectorsMin = r.getNumber(0.02, 0.2);
+		var dotty = r.getNumber(0, 1) > 0.8;
+		var howDotty = r.getNumber(0.1, 0.8);
 
 		var colourCycle = function () {
-			var mode = rand.getInteger(0, 2);
-			con.log("colourCycle - mode:", mode);
+			var mode = r.getInteger(0, 2);
+			console.log("colourCycle - mode:", mode);
 			// params for case 2 only.
 			var ringLast = -1;
 			// ringRegularCycle - true: it's like a rainbow, kind of like a looping gradient / false: any new colour
-			var ringRegularCycle = rand.getNumber(0, 1) > 0.6;
+			var ringRegularCycle = r.getNumber(0, 1) > 0.6;
 			switch (mode) {
 				case 0:
 					// random per block
 					return function (ring, sector) {
-						return colours.getRandomColour();
+						return c.getRandomColour();
 					};
 				case 1:
 					// each ring has it's own arbitrary logic (param ring is not correlated with)
 					return function (ring, sector) {
-						return colours.getNextColour(ring);
+						return c.getNextColour(ring);
 					};
 				case 2:
 					// make each ring have it's own colour
 					return function (ring, sector) {
 						if (ring != ringLast) {
 							ringLast = ring;
-							return colours.getNextColour(ringRegularCycle || rand.getInteger(0, 4));
+							return c.getNextColour(ringRegularCycle || r.getInteger(0, 4));
 						} else {
-							return colours.getCurrentColour();
+							return c.getCurrentColour();
 						}
 					};
 			}
@@ -66,7 +68,7 @@ var circle_sectors = function circle_sectors() {
 		bmp.ctx.lineWidth = padding * size;
 
 		for (var i = ringStart; i < rings; i++) {
-			if (dotty && rand.getNumber(0, 1) > howDotty) continue; // not sure i like this.
+			if (dotty && r.getNumber(0, 1) > howDotty) continue; // not sure i like this.
 			var ringRadiusInner = i / rings * centre;
 			var ringRadiusOuter = (i + 1) / rings * centre;
 			var perimeter = TAU * ringRadiusInner;
@@ -90,7 +92,7 @@ var circle_sectors = function circle_sectors() {
 				// draw sectors as standard colour blocks
 
 
-				if (dotty && rand.getNumber(0, 1) > howDotty) continue;
+				if (dotty && r.getNumber(0, 1) > howDotty) continue;
 				var angle0 = j / sectors * TAU;
 				var angle1 = (j + 1) / sectors * TAU;
 				var x0 = centre + Math.sin(angle0) * ringRadiusInner;

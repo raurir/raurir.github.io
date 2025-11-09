@@ -9,6 +9,9 @@ if (isNode) {
 	var colours = require("./colours.js");
 }
 
+var log = function log() {};
+// const log = (...args) => console.info(...args);
+
 var hexagon_tile = function hexagon_tile() {
 	return function () {
 		var r = rand.instance();
@@ -41,7 +44,7 @@ var hexagon_tile = function hexagon_tile() {
 		    batches,
 		    currentBatch = 0;
 
-		var settings = {
+		var initialSettings = {
 			spread: {
 				type: "Number",
 				label: "Spread",
@@ -55,6 +58,7 @@ var hexagon_tile = function hexagon_tile() {
 				cur: true
 			}
 		};
+		var settings = Object.assign({}, initialSettings);
 
 		if (vector) {
 			stage = dom.svg("svg", { width: sw, height: sh });
@@ -66,7 +70,7 @@ var hexagon_tile = function hexagon_tile() {
 
 		function init(options) {
 			progress = options.progress || function () {
-				console.log("hexagon_tile - no progress defined");
+				log("hexagon_tile - no progress defined");
 			};
 			r.setSeed(options.seed);
 			spreadSeed = r.getSeed();
@@ -78,19 +82,18 @@ var hexagon_tile = function hexagon_tile() {
 			//   max = Math.max(max, out);
 			//   min = Math.min(min, out);
 			// };
-			// console.log(min, max);
+			// log(min, max);
 
 			size = options.size;
 			sw = options.sw || size;
 			sh = options.sh || size;
 			stage.setSize(sw, sh);
 
-			settings.spread.cur = 10;
-			settings.background.cur = true;
+			// TODO all settings SHOULD NOT BE LIKE THIS!!!:
+			// settings.spread.cur = 10;
+			// settings.background.cur = true;
 
-			if (options.settings) {
-				settings = options.settings;
-			}
+			settings = JSON.parse(JSON.stringify(options.settings || initialSettings));
 
 			progress("settings:initialised", settings);
 
@@ -203,7 +206,7 @@ var hexagon_tile = function hexagon_tile() {
     if (row < rows - 2) neighbours.push(i + 6); // B
     		group.index = i;
     group.addEventListener("mouseover", function() {
-    	console.log(this.index, hexs[this.index].neighbours);
+    	log(this.index, hexs[this.index].neighbours);
     	var neighbours = hexs[this.index].neighbours;
     	for (var j = 0; j < neighbours.length; j++) {
     		var neighbour = hexs[neighbours[j]];
@@ -237,15 +240,15 @@ var hexagon_tile = function hexagon_tile() {
 			}
 			randomHexes = r.shuffle(hexs.slice());
 
-			// console.log('cols', cols, 'rows', rows, 'hexagons', hexagons);
-			// console.log('randomHexes', randomHexes.length, hexs.length);
+			// log('cols', cols, 'rows', rows, 'hexagons', hexagons);
+			// log('randomHexes', randomHexes.length, hexs.length);
 
 			render();
 		}
 
 		function batch() {
 			var shouldRender = settings.spread.cur / settings.spread.max * 10;
-			// console.log("shouldRender", shouldRender);
+			// log("shouldRender", shouldRender);
 			var maxRender = hexagons;
 			var loopStart = currentBatch * batchSize,
 			    loopEnd = loopStart + batchSize;
@@ -257,7 +260,7 @@ var hexagon_tile = function hexagon_tile() {
 				// var neighbours = [];
 				// for(var i = 0; i < item.neighbours.length; i++) {
 				//   var otherItemIndex = item.neighbours[i];
-				//   // console.log(otherItemIndex);
+				//   // log(otherItemIndex);
 				//   var otherItem = hexs[otherItemIndex];
 				//   if (otherItem.rendered) {
 				//     neighbours.push(otherItem.colour);
@@ -280,7 +283,7 @@ var hexagon_tile = function hexagon_tile() {
 					}
 				}
 
-				// console.log(neighbours.length,close.length);
+				// log(neighbours.length,close.length);
 				var colour;
 				if (close.length > 0) {
 					colour = c.mixColours(close);
@@ -316,12 +319,12 @@ var hexagon_tile = function hexagon_tile() {
 				// stage.ctx.font = "18px Helvetica";
 				// stage.ctx.fillStyle = "#FFF";
 				// stage.ctx.fillText(distanceFromCenter, item.x * size - 4, item.y * size + 4);
-				// console.log(dx, dy);
+				// log(dx, dy);
 
 				hexs[index].rendered = true;
 				hexs[index].colour = colour;
 			}
-			// console.log("doing batch", currentBatch, batches);
+			// log("doing batch", currentBatch, batches);
 
 			currentBatch++;
 			if (currentBatch == batches) {

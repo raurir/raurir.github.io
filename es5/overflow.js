@@ -1,6 +1,10 @@
 "use strict";
 
-var isNode = typeof module !== 'undefined';
+var isNode = typeof module !== "undefined";
+
+var r = rand.instance();
+r.setSeed(Math.random());
+var c = colours.instance(r);
 
 var overflow = function overflow() {
 	var TAU = Math.PI * 2;
@@ -15,7 +19,7 @@ var overflow = function overflow() {
 		sh = options.sh || size;
 		stage.setSize(sw, sh);
 
-		colours.getRandomPalette();
+		c.getRandomPalette();
 
 		createPolygon();
 		createPolygon();
@@ -33,7 +37,7 @@ var overflow = function overflow() {
 				} else {
 					ctx.moveTo(xs, ys);
 				}
-				con.log(xs, ys);
+				// con.log(xs, ys);
 			});
 			ctx.closePath();
 			ctx.stroke();
@@ -43,14 +47,14 @@ var overflow = function overflow() {
 
 	function createPolygon() {
 		var poly = {
-			colour: colours.getRandomColour(),
+			colour: c.getRandomColour(),
 			points: []
 		};
 		// geom.pointInPolygon(polygon, point)
-		var sides = rand.getInteger(3, 17);
-		var radius = rand.getNumber(0.1, 0.4);
-		var cx = rand.getNumber(0, 1);
-		var cy = rand.getNumber(0, 1);
+		var sides = r.getInteger(3, 17);
+		var radius = r.getNumber(0.1, 0.4);
+		var cx = r.getNumber(0, 1);
+		var cy = r.getNumber(0, 1);
 		for (var i = 0; i < sides; i++) {
 			var angle = i / sides * TAU;
 			var x = cx + Math.sin(angle) * radius;

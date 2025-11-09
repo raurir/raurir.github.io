@@ -1,7 +1,6 @@
 "use strict";
 
 define("infinite_stairs", function () {
-
 	var camera, scene, renderer;
 	var sw = window.innerWidth,
 	    sh = window.innerHeight;
@@ -11,6 +10,7 @@ define("infinite_stairs", function () {
 	var stepHeight = 30;
 	var textures = {};
 	var controls, holder;
+	var rndI = rand.instance();
 
 	function loadTextures(assets) {
 		var loader = new THREE.TextureLoader();
@@ -21,7 +21,7 @@ define("infinite_stairs", function () {
 	}
 
 	function createFlight(numFlight) {
-		var numSteps = 6; //rand.getInteger(10, 20);
+		var numSteps = 6; //rndI.getInteger(10, 20);
 		var treadHeight = stepHeight / 4;
 		var treadDepth = stepDepth * 1.25;
 		var numLandingSteps = Math.floor(flightWidth / treadDepth);
@@ -38,13 +38,15 @@ define("infinite_stairs", function () {
 			var uvs = geometry.faceVertexUvs[0].length;
 			for (var f = 0; f < uvs; f += 2) {
 				// 2 sets of uv triangles per face
-				var u0 = rand.getNumber(0, 0.75),
-				    u1 = u0 + rand.getNumber(0.1, 0.25);
-				var v0 = rand.getNumber(0, 0.75),
-				    v1 = v0 + rand.getNumber(0.1, 0.25);
-				geometry.faceVertexUvs[0][f] = [// triangle A: [0,1], [0,0], [1,1]
+				var u0 = rndI.getNumber(0, 0.75),
+				    u1 = u0 + rndI.getNumber(0.1, 0.25);
+				var v0 = rndI.getNumber(0, 0.75),
+				    v1 = v0 + rndI.getNumber(0.1, 0.25);
+				geometry.faceVertexUvs[0][f] = [
+				// triangle A: [0,1], [0,0], [1,1]
 				new THREE.Vector2(u0, v1), new THREE.Vector2(u0, v0), new THREE.Vector2(u1, v1)];
-				geometry.faceVertexUvs[0][f + 1] = [// triangle B: [0,0], [1,0], [1,1]
+				geometry.faceVertexUvs[0][f + 1] = [
+				// triangle B: [0,0], [1,0], [1,1]
 				new THREE.Vector2(u0, v0), new THREE.Vector2(u1, v0), new THREE.Vector2(u1, v1)];
 			}
 			return geometry;
@@ -88,14 +90,12 @@ define("infinite_stairs", function () {
 		var numWallPanels = Math.floor(wallWidth / wallPanelWidth);
 
 		function createWall(xFlip) {
-
 			var wall = new THREE.Group();
 			flight.add(wall);
 			// wall.position.set(xFlip * flightWidth / 2, wallHeight / 2 - stepHeight / 2, wallWidth / 2 - stepDepth / 2);
 			wall.position.set(xFlip * flightWidth / 2, 0, 0);
 
 			for (var i = 0; i < numWallPanels; i++) {
-
 				var wallGeom = randUV(new THREE.BoxGeometry(wallPanelDepth, wallPanelHeight, wallPanelWidth));
 				var wallPanel = new THREE.Mesh(wallGeom, materialWood);
 				wallPanel.position.set(0, 0, i * wallPanelSpacing);
@@ -150,7 +150,7 @@ define("infinite_stairs", function () {
 	}
 
 	function init() {
-
+		rndI.setSeed(Math.random());
 		loadTextures(["wood-dark.jpg"]
 		// "mouldy-white-paint.png"
 		);

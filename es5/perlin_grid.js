@@ -5,9 +5,9 @@ var vertexShader = "varying vec2 vUv;\nvoid main()\n{\n  vUv = uv;\n  vec4 mvPos
 var fragmentShader = "\nuniform float r;\nuniform float g;\nuniform float b;\nuniform float distance;\nuniform float pulse;\nuniform float rows;\nuniform float cols;\nvarying vec2 vUv;\nfloat checkerRows = 1.5;\nfloat checkerCols = 2.0;\nvoid main( void ) {\n  vec2 position = abs(-1.0 + 2.0 * vUv);\n\n  float edging = abs((pow(position.y, 5.0) + pow(position.x, 5.0)) / 1.0);\n\n  float perc = 0.25 + distance * edging * 0.75;\n  vec2 checkPosition = vUv;\n  \n  float checkerX = mod(checkPosition.x, 1.0 / rows) * rows; // loop of 0 to 1 per row: /|/|/|//\n  checkerX = abs(checkerX - 0.5) * 2.0; // make up and down: /// \n  checkerX = pow(checkerX, 3.0); // power to sharpen edges: __/__/\n\n  float checkerY = mod(checkPosition.y, 1.0 / cols) * cols;\n  checkerY = abs(checkerY - 0.5) * 2.0;\n  checkerY = pow(checkerY, 3.0);\n\n  float checkerMod = 0.0;\n  if (rows > 1.0 && floor(checkPosition.x * rows) == checkerMod) {\n    perc = 2.0;\n  }\n  if (cols > 1.0 && floor(checkPosition.y * cols) == checkerMod) {\n    perc = 2.0;\n  }\n\n  // float checker = (checkerX * checkerY) * 2.0;\n  float checker = (checkerX + checkerY) * 0.5;\n  float r1 = r * checker + 0.1;\n  float g1 = g * checker + 0.05;\n  float b1 = b * checker + 0.2;\n  float red = r1 * perc + pulse;\n  float green = g1 * perc + pulse;\n  float blue = b1 * perc + pulse + 0.05;\n\n  // float red = r;\n  // float green = g;\n  // float blue = b;\n\n  gl_FragColor = vec4(red, green, blue, 1.0);\n}";
 
 var perlin_grid = function perlin_grid(noise) {
-
 	var stage = document.createElement("div");
 
+	var isMouseDown = false;
 	var camera, scene, renderer;
 	var mouse = { x: 0, y: 0 };
 	var camPos = { x: 0, y: 0, z: 10 };
@@ -86,7 +86,6 @@ var perlin_grid = function perlin_grid(noise) {
 	}
 
 	var draw = function draw(x, z, distanceFromCentre) {
-
 		var colourRand = {
 			r: num(0, 0.5),
 			g: num(0, 0.5),
@@ -101,7 +100,8 @@ var perlin_grid = function perlin_grid(noise) {
 
 		var distance = size.width / 2 - edgeSize; // only because size.width == size.depth
 		var holder = new THREE.Group();
-		var verticalEdgeBL = cube({ // back left
+		var verticalEdgeBL = cube({
+			// back left
 			dimensions: vertProps,
 			checker: [[1, 2], [1, 2], [1, 1], [1, 1], [1, 2], [1, 2]],
 			colour: colourRand,
@@ -160,7 +160,7 @@ var perlin_grid = function perlin_grid(noise) {
 	};
 
 	function init() {
-		return;
+		// return;
 
 		scene = new THREE.Scene();
 
@@ -245,11 +245,9 @@ var perlin_grid = function perlin_grid(noise) {
 	});
 
 	function render(time) {
-
 		var breathDistance = 1 + (1 + Math.sin(time * 0.004)) * 2;
 
 		function renderBox(holder, value, x, z, above) {
-
 			value = value * value * value * value; // power the fuck
 
 			var scale = 1 + value * 50;

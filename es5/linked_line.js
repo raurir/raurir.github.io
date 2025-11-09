@@ -1,8 +1,16 @@
 "use strict";
 
 var linked_line = function linked_line() {
-	// con.log('linked_line');
+	// console.log('linked_line');
 	var TAU = Math.PI * 2;
+
+	var randomInst = rand.instance();
+	console.log("set seed");
+	randomInst.setSeed(459874);
+
+	try {} catch (e) {
+		console.warn("linked_line - failed to set seed", e);
+	}
 
 	var generate = function generate(size, preoccupied) {
 		var debug = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -14,10 +22,10 @@ var linked_line = function linked_line() {
 		return new Promise(function (resolve, reject) {
 			if (Math.round(size / 2) === size / 2 || Math.round(size) !== size) {
 				alert("linked_line - invalid size, needs to be odd integer - you supplied: " + size);
-				return con.warn("linked_line - invalid size, needs to be odd integer - you supplied:", size);
+				return console.warn("linked_line - invalid size, needs to be odd integer - you supplied:", size);
 			}
 			// size has to be odd, want the maze to start and end in the middle of a bouding wall.
-			// con.log('linked_line generate', size);
+			// console.log('linked_line generate', size);
 
 			var attempts = 0;
 
@@ -76,8 +84,8 @@ var linked_line = function linked_line() {
 			};
 
 			var makeItem = function makeItem(options) {
-				var x = options.x == undefined ? rand.random() : options.x;
-				var y = options.y == undefined ? rand.random() : options.y;
+				var x = options.x == undefined ? randomInst.random() : options.x;
+				var y = options.y == undefined ? randomInst.random() : options.y;
 				var item = {
 					x: x,
 					y: y,
@@ -85,9 +93,10 @@ var linked_line = function linked_line() {
 					surrounded: false,
 					prev: options.prev,
 					next: options.next
+				};
 
-					// occupied.twoD[y][x] = item;
-				};occupied.oneD[getIndex(x, y)] = item;
+				// occupied.twoD[y][x] = item;
+				occupied.oneD[getIndex(x, y)] = item;
 				occupied.array.push(item);
 				// occupied.neighbourless.push(item);
 
@@ -104,8 +113,7 @@ var linked_line = function linked_line() {
 			};
 
 			var start = function start() {
-
-				// con.log("linked_line init");
+				// console.log("linked_line init");
 				for (var y = 0; y < hei; y++) {
 					for (var x = 0; x < wid; x++) {
 						occupied.oneD.push(-1);
@@ -114,7 +122,7 @@ var linked_line = function linked_line() {
 				}
 
 				if (preoccupied) {
-					// con.log("preoccupied", preoccupied);
+					// console.log("preoccupied", preoccupied);
 					preoccupied.forEach(preoccupy);
 				}
 
@@ -123,7 +131,7 @@ var linked_line = function linked_line() {
 					// right angle
 					if (i < hei / 2) {
 						x = i;
-						y = hei / 2 - 0.5; //rand.getInteger(0, wid - 1);
+						y = hei / 2 - 0.5; //randomInst.getInteger(0, wid - 1);
 					} else {
 						x = wid / 2 - 0.5;
 						y = i;
@@ -131,7 +139,6 @@ var linked_line = function linked_line() {
 					// straigh down
 					// x = wid / 2 - 0.5;
 					// y = i;
-
 
 					if (i == 0) {
 						// first
@@ -144,8 +151,8 @@ var linked_line = function linked_line() {
 					lastItem = newItem;
 				}
 				last = newItem;
-				// con.log(occupied.oneD);
-				// con.log(occupied.twoD);
+				// console.log(occupied.oneD);
+				// console.log(occupied.twoD);
 				render(0);
 			};
 
@@ -157,12 +164,12 @@ var linked_line = function linked_line() {
 						    y = item.y + j;
 						if (x >= 0 && x < wid && y >= 0 && y < hei) {
 							var index = getIndex(x, y);
-							// con.log(occupied.oneD[index])
+							// console.log(occupied.oneD[index])
 							if (occupied.oneD[index] === -1) return false;
 						}
 					}
 				}
-				// con.log("surrounded")x`x``
+				// console.log("surrounded")x`x``
 				item.surrounded = true;
 				return true;
 			};
@@ -170,13 +177,17 @@ var linked_line = function linked_line() {
 			var checkDir = function checkDir(x, y, dir) {
 				switch (dir) {
 					case 0 /* up */:
-						y--;break;
+						y--;
+						break;
 					case 1 /* right */:
-						x++;break;
+						x++;
+						break;
 					case 2 /* down */:
-						y++;break;
+						y++;
+						break;
 					case 3 /* left */:
-						x--;break;
+						x--;
+						break;
 				}
 				var index = getIndex(x, y);
 
@@ -211,7 +222,7 @@ var linked_line = function linked_line() {
 			};
 
 			var insertItemAnywhere = function insertItemAnywhere() {
-				var index = rand.getInteger(0, occupied.array.length - 1);
+				var index = randomInst.getInteger(0, occupied.array.length - 1);
 				var item = occupied.array[index];
 				if (!item) return;
 
@@ -229,25 +240,23 @@ var linked_line = function linked_line() {
 			};
 
 			var insertItemAfter = function insertItemAfter(afterItem) {
-
 				store();
 
 				var prev = afterItem;
 				var next = afterItem.next;
 
-				// con.log(afterItem)
+				// console.log(afterItem)
 				var x = afterItem.x;
 				var y = afterItem.y;
-				var startDir = rand.getInteger(0, 3);
-				var nextDir = rand.getInteger(0, 3);
+				var startDir = randomInst.getInteger(0, 3);
+				var nextDir = randomInst.getInteger(0, 3);
 
 				var pending0 = checkDir(x, y, startDir);
 				var pending1 = checkDir(pending0.x, pending0.y, nextDir);
 				var inline = checkPoints(prev, pending0, pending1, next);
 
 				if (pending0.ok && pending1.ok && inline) {
-
-					// con.log("pending0", pending0, pending1)
+					// console.log("pending0", pending0, pending1)
 					var newItem0 = makeItem({ x: pending0.x, y: pending0.y });
 
 					var newItem1 = makeItem({ x: pending1.x, y: pending1.y });
@@ -347,7 +356,7 @@ var linked_line = function linked_line() {
 					}
 				}
 
-				// con.log("extractWalls");
+				// console.log("extractWalls");
 				resolve({ walls: walls, wallrects: wallrects });
 			};
 
@@ -360,7 +369,6 @@ var linked_line = function linked_line() {
 			    done = 0;
 
 			var render = function render(time) {
-
 				attempts++;
 
 				ctx.fillStyle = "#fff";
@@ -398,7 +406,7 @@ var linked_line = function linked_line() {
 					var item = occupied.array[i];
 					ctx.fillStyle = item.type == "NULL" ? "#f00" : "#00ff00";
 					ctx.fillRect(item.x * 2 + 1, item.y * 2 + 1, 1, 1);
-				};
+				}
 
 				ctxZ.drawImage(bmp.canvas, 0, 0);
 
@@ -406,13 +414,14 @@ var linked_line = function linked_line() {
 				if (arrLen === occupied.array.length) {
 					done++;
 				} else {
-					arrLen = occupied.array.length;done = 0;
+					arrLen = occupied.array.length;
+					done = 0;
 				}
 
 				if (done < 300) {
 					// requestAnimationFrame(render);
 					if (attempts % 50 == 0) {
-						con.log("having a breather... ", done);
+						console.log("having a breather... ", done);
 						setTimeout(render, 20);
 					} else {
 						render();
@@ -454,35 +463,40 @@ var linked_line = function linked_line() {
 			};
 		};
 
-		var triangle = polygon(.5, .5, .4, 3);
-		var pentagon = polygon(.5, .5, .25, 5);
-		var hexagon = polygon(.5, .5, .4, 6);
+		var triangle = polygon(0.5, 0.5, 0.4, 3);
+		var pentagon = polygon(0.5, 0.5, 0.25, 5);
+		var hexagon = polygon(0.5, 0.5, 0.4, 6);
 
 		var circleTR5 = circle(3 / 4, 1 / 4, 1 / 5); // circle top right corner
 		var circleBL6 = circle(1 / 4, 3 / 4, 1 / 6); // circle bottom left corner
 
 		var fn = void 0;
-		switch (rand.getInteger(0, 3)) {
+		switch (randomInst.getInteger(0, 3)) {
 			case 0:
 				fn = function fn(x, y) {
 					return circleTR5(x, y) || circleBL6(x, y);
-				};break;
+				};
+				break;
 			case 1:
 				fn = function fn(x, y) {
 					return triangle(x, y);
-				};break;
+				};
+				break;
 			case 2:
 				fn = function fn(x, y) {
 					return pentagon(x, y);
-				};break;
+				};
+				break;
 			case 3:
 				fn = function fn(x, y) {
 					return hexagon(x, y);
-				};break;
+				};
+				break;
 			case 4:
 				fn = function fn(x, y) {
 					return false;
-				};break;
+				};
+				break;
 		}
 
 		for (var i = 0; i < size * size; i++) {
@@ -493,7 +507,7 @@ var linked_line = function linked_line() {
 			}
 		}
 		generate(size, preoccupied, true).then(function (_ref) {
-			// con.log(walls, wallrects);
+			// console.log(walls, wallrects);
 
 			var walls = _ref.walls,
 			    wallrects = _ref.wallrects;

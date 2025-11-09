@@ -1,20 +1,15 @@
 "use strict";
 
 define("attractor", function () {
-
 	//attractor copied from somewhere. sept 09.
 
 	var sw = window.innerWidth;
 	var sh = window.innerHeight;
-	var w = 400,
-	    h = 400;
 
-	var cols = colours.getRandomPalette();
 	var canvas = dom.canvas(sw, sh);
 	var ctx = canvas.ctx;
 
 	var a = 0.19;
-	var b = .9;
 	var c = 1.3;
 	// var d = 100;
 	var xn1 = 5;
@@ -25,7 +20,7 @@ define("attractor", function () {
 	var iterations = 2e4;
 	var mouse = { x: 0, y: 0 };
 	function f(x) {
-		return (x + .1 + x * (a - c) * x) / (1.1 + a * (c * c + a * a) * x * x) * 1.3;
+		return (x + 0.1 + x * (a - c) * x) / (1.1 + a * (c * c + a * a) * x * x) * 1.3;
 	}
 	function onLoop(time) {
 		requestAnimationFrame(onLoop);

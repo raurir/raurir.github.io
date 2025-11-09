@@ -1,9 +1,11 @@
 "use strict";
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var progressBar;
 
 var progress = function progress(eventName, eventParam) {
-	con.log("experiments progress", eventName, eventParam);
+	console.log("experiments progress", eventName, eventParam);
 	switch (eventName) {
 		case "render:progress":
 			progressBar.style.width = eventParam * 100 + "%";
@@ -26,7 +28,9 @@ var exps = function exps(experimentsDetails) {
 		var interactedShowing = false;
 		var currentExperiment;
 		var viewSource = false;
+		var format = null;
 		var seed;
+		var size = 500;
 
 		progressBar = dom.element("div", {
 			id: "progress",
@@ -90,7 +94,7 @@ var exps = function exps(experimentsDetails) {
 				if (experiment) {
 					experimentLoaded(experiment);
 				} else {
-					con.warn("require loaded... but experiment is null", experiment);
+					console.warn("require loaded... but experiment is null", experiment);
 				}
 			});
 		};
@@ -134,6 +138,7 @@ var exps = function exps(experimentsDetails) {
     ?alien,39343
     ?alien,39343&src
     ?alien,39343&src=true
+    ?alien,39343&src=true&size=1000
     */
 				var params = window.location.search.split("?")[1].split("&"),
 				    key = params[0],
@@ -142,9 +147,15 @@ var exps = function exps(experimentsDetails) {
 				    keyWithSeed = key.split(",");
 				viewSource = params.filter(function (param) {
 					return param === "src";
-				}).length;
+				}).length > 0;
+				var setSize = params.filter(function (param) {
+					return param.startsWith("size=");
+				});
+				var setFormat = params.filter(function (param) {
+					return param.startsWith("format=");
+				});
 				if (viewSource) {
-					con.log("`src` in url: Experimental graphics in SRC mode...");
+					console.log("`src` in url: Experimental graphics in SRC mode...");
 				}
 				if (key === "src") {
 					// if first key showbuttons...
@@ -154,9 +165,31 @@ var exps = function exps(experimentsDetails) {
 					key = keyWithSeed[0];
 					seed = keyWithSeed[1];
 					rand.setSeed(seed);
-					con.log("found key, seed", rand);
-				} else {
-					// seed =
+					console.log("setting seed", seed);
+				}
+				if (setSize.length === 1) {
+					var _setSize$0$split = setSize[0].split("="),
+					    _setSize$0$split2 = _slicedToArray(_setSize$0$split, 2),
+					    num = _setSize$0$split2[1];
+
+					if (!isNaN(num)) {
+						size = Math.max(100, Math.min(Number(num), 1000));
+						console.log("setting size", size);
+					} else {
+						console.warn("size invalid", num);
+					}
+				}
+				if (setFormat.length === 1) {
+					var _setFormat$0$split = setFormat[0].split("="),
+					    _setFormat$0$split2 = _slicedToArray(_setFormat$0$split, 2),
+					    fmt = _setFormat$0$split2[1];
+
+					if (fmt === "svg" || fmt === "bmp") {
+						format = fmt;
+						console.log("setting format", format);
+					} else {
+						console.warn("format invalid", fmt);
+					}
 				}
 
 				while (index < experiments.length && found == false) {
@@ -190,7 +223,7 @@ var exps = function exps(experimentsDetails) {
 		};
 
 		var resize = function resize() {
-			// con.log("resize!");
+			// console.log("resize!");
 			var sw = window.innerWidth,
 			    sh = window.innerHeight;
 
@@ -215,16 +248,16 @@ var exps = function exps(experimentsDetails) {
 		};
 
 		var experimentLoaded = function experimentLoaded(exp) {
-			currentExperiment = typeof exp === "function" ? exp() : exp;
+			currentExperiment = typeof exp === "function" ? exp(format === "svg") : exp;
 			if (currentExperiment.stage) {
 				holder.appendChild(currentExperiment.stage);
 			} else {
-				con.warn("experimentLoaded, but no stage:", currentExperiment.stage);
+				console.warn("experimentLoaded, but no stage:", currentExperiment.stage);
 			}
 			// initRenderProgress(); // experiments_progress
-			// con.log("inittted!!!!!!");
+			// console.log("inittted!!!!!!");
 			initWindowListener();
-			currentExperiment.init({ progress: progress, seed: seed, size: 800 });
+			currentExperiment.init({ progress: progress, seed: seed, size: size });
 			resize();
 		};
 

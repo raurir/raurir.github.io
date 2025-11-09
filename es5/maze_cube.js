@@ -1,7 +1,6 @@
 "use strict";
 
 define("maze_cube", ["linked_line"], function (linkedLine) {
-
 	var blocks = 11;
 	var cubeSize = 1512;
 	var size = cubeSize / blocks;
@@ -13,6 +12,8 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 	    sh = window.innerHeight;
 	var holder;
 	var controls;
+
+	console.log("test");
 
 	function cube(w, h, d, colour) {
 		var group = new THREE.Group();
@@ -33,34 +34,34 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 	}
 
 	function init() {
+		console.log("init maze cube");
 		var mazes = [];
 
 		var face = function face(preoccupied) {
 			return linkedLine.generate(blocks, preoccupied);
 		};
 		var add = function add(maze) {
-			con.log("adding walls:", mazes.length, maze.wallrects.length);
+			console.log("adding walls:", mazes.length, maze.wallrects.length);
 			mazes.push(maze.wallrects);
 			progress("render:progress", mazes.length / 6);
 		};
 
-		perf.start('gen');
+		perf.start("gen");
 
 		face().then(add).then(function () {
-			// add a custom face with a block little piece cut out... 
+			// add a custom face with a block little piece cut out...
 			return face([{ x: 1, y: 2 }, { x: 1, y: 3 }, { x: 3, y: 3 }]);
 		}).then(add).then(face).then(add).then(face).then(add).then(face).then(add).then(face).then(add).then(function () {
-			con.log("success");
-			perf.end('gen');
+			console.log("success");
+			perf.end("gen");
 			init3D(mazes);
 		}).catch(function (err) {
-			con.warn("fail", err);
+			console.warn("fail", err);
 		});
 	}
 
 	function init3D(mazes) {
-
-		// con.log(mazes);
+		// console.log(mazes);
 
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2(0x000000, 0.0002);
@@ -86,7 +87,6 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 		// }
 		// lightAbove.distance = 130;
 		// lightAbove.angle = Math.PI/3;
-
 
 		scene.add(lightAbove);
 
@@ -140,15 +140,15 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 		render(0);
 
 		function exportToObj() {
-			con.log("exportToObj"); // for printing.
+			console.log("exportToObj"); // for printing.
 			var exporter = new THREE.OBJExporter();
 			var result = exporter.parse(scene);
 			var floatingDiv = document.createElement("div");
-			floatingDiv.style.display = 'block';
+			floatingDiv.style.display = "block";
 			floatingDiv.style.background = "white";
 			floatingDiv.style.color = "black";
-			floatingDiv.innerHTML = result.split('\n').join('<br />');
-			con.log("result.length", result.length);
+			floatingDiv.innerHTML = result.split("\n").join("<br />");
+			console.log("result.length", result.length);
 			document.body.appendChild(floatingDiv);
 		}
 		// window.addEventListener("click", exportToObj);

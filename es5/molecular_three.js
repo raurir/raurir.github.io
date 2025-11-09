@@ -1,7 +1,6 @@
 "use strict";
 
 var molecular_three = function molecular_three() {
-
 	var camera, scene, renderer;
 	var mouse = { x: 0, y: 0 };
 	var camPos = { x: 0, y: 0, z: 0 };
@@ -11,6 +10,10 @@ var molecular_three = function molecular_three() {
 	function num(min, max) {
 		return Math.random() * (max - min) + min;
 	}
+
+	var r = rand.instance();
+	r.setSeed(Math.random());
+	var c = colours.instance(r);
 
 	var segmentCreationInterval = 0;
 	var segmentLastCreated;
@@ -57,11 +60,11 @@ var molecular_three = function molecular_three() {
 		var numVertices = cylinder.object.geometry.vertices.length;
 		/*
   for (var k = 0, kl = c.geometry.vertices.length; k < kl; k++) {
-  	var v = c.geometry.vertices[k];
-  	var s = sphere({radius: 1});
-  	scene.add(s);
-  	s.position.set(v.x, v.y, v.z);
-  	con.log(v);
+  var v = c.geometry.vertices[k];
+  var s = sphere({radius: 1});
+  scene.add(s);
+  s.position.set(v.x, v.y, v.z);
+  con.log(v);
   }
   */
 		var end = cylinder.object.geometry.vertices[numVertices - 2];
@@ -69,8 +72,7 @@ var molecular_three = function molecular_three() {
 	}
 
 	function init() {
-
-		colours.getRandomPalette();
+		c.getRandomPalette();
 
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2(0x000000, 0.0015);
@@ -93,7 +95,6 @@ var molecular_three = function molecular_three() {
 		scene.add(holder);
 
 		function checkDistance(reference) {
-
 			var globalPosition = new THREE.Vector3();
 			globalPosition.setFromMatrixPosition(reference.matrixWorld);
 
@@ -101,14 +102,13 @@ var molecular_three = function molecular_three() {
 			var distance;
 			var distanceOk = true;
 			for (var i = 0, il = vectors.length; i < il && distanceOk; i++) {
-
 				if (globalPosition == vectors[i]) con.log("same one", globalPosition, vectors[i]);
 
 				distance = globalPosition.distanceTo(vectors[i]);
 				if (distance < segmentLength - 5) {
 					distanceOk = false;
 				}
-			};
+			}
 			var en = new Date().getTime();
 			var proc = en - st;
 			if (proc > 3) con.warn("proc time = ", proc);
@@ -120,8 +120,7 @@ var molecular_three = function molecular_three() {
 		}
 
 		function drawSection(parent, endPoint) {
-
-			var colour = colours.mutateColour(parent.colour, 50);
+			var colour = c.mutateColour(parent.colour, 50);
 
 			var child = cylinder({ radius: segmentRadius, height: segmentLength, colour: colour });
 			child.group.position.set(endPoint.x, endPoint.y, endPoint.z);
@@ -141,10 +140,9 @@ var molecular_three = function molecular_three() {
 			child.group.remove(endSphere); // done with calc ditch it...
 
 			if (distance.ok) {
-
 				vectors.push(distance.vector);
 
-				// colour = colours.mutateColour(colour, 30);
+				// colour = c.mutateColour(colour, 30);
 
 				var s = sphere({ radius: sphereRadius, colour: colour });
 				s.position.set(distance.vector.x, distance.vector.y, distance.vector.z);
@@ -152,7 +150,6 @@ var molecular_three = function molecular_three() {
 
 				return child;
 			} else {
-
 				// con.warn("bad distance", distance);
 
 				child.group.remove(endSphere);
@@ -177,7 +174,6 @@ var molecular_three = function molecular_three() {
 			segmentLength = (2 - attempts / bail) * segmentLengthInitial / 2;
 
 			if (attempts < bail) {
-
 				progress("render:progress", attempts / bail);
 
 				// TODO maybe parent can specify it's end point in generation. (drawSection/cylinder returns endpoint)
@@ -185,11 +181,9 @@ var molecular_three = function molecular_three() {
 
 				var kids = parseInt(num(1, 3));
 				for (var i = 0; i < kids; i++) {
-
 					var newSection = drawSection(parent, endPoint);
 
 					if (newSection) {
-
 						segmentLastCreated = new Date().getTime();
 
 						(function (a, p) {
@@ -204,7 +198,7 @@ var molecular_three = function molecular_three() {
 							}, timeout);
 						})(attempts, newSection);
 					}
-				};
+				}
 			} else {
 				generationComplete = true;
 				progress("render:complete", renderer.domElement);
@@ -213,10 +207,9 @@ var molecular_three = function molecular_three() {
 
 		var seeds = parseInt(num(10, 50));
 
-		var colour = colours.getRandomColour();
+		var colour = c.getRandomColour();
 
 		for (var j = 0; j < seeds; j++) {
-
 			var baseSection = cylinder({ radius: segmentRadius, height: segmentLength, colour: colour });
 			baseSection.group.rotation.set(num(0, 2) * Math.PI, num(0, 2) * Math.PI, num(0, 2) * Math.PI);
 			holder.add(baseSection.group);
@@ -236,7 +229,7 @@ var molecular_three = function molecular_three() {
 				baseSection.group.remove(endSphere);
 				holder.remove(baseSection.group);
 			}
-		};
+		}
 
 		document.body.appendChild(renderer.domElement);
 
@@ -271,7 +264,6 @@ var molecular_three = function molecular_three() {
 	}
 
 	function render(time) {
-
 		//if (time > 10000 && holder.rotation.y < Math.PI * 2)
 		if (generationComplete) {
 			holder.rotation.y += 0.01;
