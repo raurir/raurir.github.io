@@ -54,7 +54,8 @@ define("exps_details", function () {
 		},
 		interpolated: {
 			title: "Interpolated",
-			description: "<p>FXhash exp</p>"
+			description: "<p>FXhash exp</p>",
+			srcHidden: true
 		},
 		lego_stack: {
 			title: "Lego Stack",

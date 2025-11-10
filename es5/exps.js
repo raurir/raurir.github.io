@@ -23,9 +23,8 @@ var exps = function exps(experimentsDetails) {
 
 	return function () {
 		var info;
-		// eslint-disable-next-line
 		var infoShowing = false;
-		var interactedShowing = false;
+		// eslint-disable-next-line
 		var currentExperiment;
 		var viewSource = false;
 		var format = null;
@@ -52,16 +51,22 @@ var exps = function exps(experimentsDetails) {
 
 		var buttonInfo = dom.button("?", { className: "exps-button" });
 		buttonsNav.appendChild(buttonInfo);
-		dom.on(buttonInfo, ["click", "touchend"], showInfo);
+		dom.on(buttonInfo, ["click", "touchend"], function () {
+			return showInfo();
+		});
 
 		var panelInfo = dom.element("div", { className: "exps-info" });
 		var panelInfoDetails = dom.element("div", {
 			className: "exps-info-details"
 		});
-		var panelNav = dom.element("div", { className: "exps-buttons interacted" });
+		var panelNav = dom.element("div", {
+			className: "exps-buttons interacted"
+		});
 		var panelButtonClose = dom.button("X", { className: "exps-button" });
 
-		dom.on(panelButtonClose, ["click", "touchend"], hideInfo);
+		dom.on(panelButtonClose, ["click", "touchend"], function () {
+			return hideInfo();
+		});
 
 		document.body.appendChild(panelInfo);
 		panelInfo.appendChild(panelNav);
@@ -114,6 +119,12 @@ var exps = function exps(experimentsDetails) {
 					title = expDetails.title;
 				}
 				button.key = key;
+				// Convert to title case if no spaces found
+				if (!title.includes(" ")) {
+					title = title.replace(/_/g, " ").split(" ").map(function (word) {
+						return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+					}).join(" ");
+				}
 				button.innerHTML = title;
 				document.body.appendChild(button);
 			}
@@ -122,7 +133,8 @@ var exps = function exps(experimentsDetails) {
 		var showInfo = function showInfo() {
 			infoShowing = true;
 			panelInfo.classList.add("displayed");
-			panelInfoDetails.innerHTML = "\n<h4>Experimental Graphics</h4>\n<h1>" + info.title + "</h1>\n" + info.description + "\n<p><a href='https://github.com/raurir/experimental-graphics/blob/master/js/" + info.key + ".js' target='_blank'>SRC on Github</a></p>";
+			panelInfoDetails.innerHTML = "\n<h4>Experimental Graphics</h4>\n<h1>" + info.title + "</h1>\n" + info.description + "\n" + (info.srcHidden ? // some were made after private repo:
+			"" : "<p><a href='https://github.com/raurir/experimental-graphics/blob/master/src/" + info.key + ".js' target='_blank'>SRC on Github</a></p>");
 		};
 
 		var hideInfo = function hideInfo() {
@@ -208,15 +220,9 @@ var exps = function exps(experimentsDetails) {
 					buttonsNav.removeChild(buttonInfo);
 				}
 				// showInfo();
-				dom.on(document.body, ["click", "touchstart"], function () {
-					if (interactedShowing) return;
-					interactedShowing = true;
-					buttonsNav.classList.add("interacted");
-					// setTimeout(function() {
-					//   buttonsNav.classList.remove("interacted");
-					//   interactedShowing = false;
-					// }, 3000);
-				});
+				// Add experiment-active class to body when experiment is loaded
+				document.body.classList.add("experiment-active");
+				buttonsNav.classList.add("interacted");
 			} else {
 				showButtons();
 			}
