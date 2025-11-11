@@ -22,14 +22,17 @@ var exps = function exps(experimentsDetails) {
 	var experiments = experimentsDetails.list;
 
 	return function () {
+		// Set random accent color hue
+		var randomHue = Math.floor(Math.random() * 360);
+		document.documentElement.style.setProperty("--colour-accent", "hsl(" + randomHue + ", 100%, 60%)");
+		document.documentElement.style.setProperty("--colour-accent-20", "hsla(" + randomHue + ", 100%, 60%, 0.2)");
+
 		var info;
-		var infoShowing = false;
-		// eslint-disable-next-line
 		var currentExperiment;
 		var viewSource = false;
 		var format = null;
 		var seed;
-		var size = 500;
+		var size = 2000;
 
 		progressBar = dom.element("div", {
 			id: "progress",
@@ -40,6 +43,9 @@ var exps = function exps(experimentsDetails) {
 		var holder = dom.element("div", { id: "experiment-holder" });
 		document.body.appendChild(holder);
 
+		var expList = dom.element("div", { id: "experiment-list" });
+		document.body.appendChild(expList);
+
 		var buttonsNav = dom.element("div", { className: "exps-buttons" });
 		document.body.appendChild(buttonsNav);
 
@@ -48,6 +54,10 @@ var exps = function exps(experimentsDetails) {
 		dom.on(buttonClose, ["click", "touchend"], function () {
 			window.location = "/" + (viewSource ? "?src" : "");
 		});
+
+		var buttonReload = dom.button("⟳", { className: "exps-button" });
+		buttonsNav.appendChild(buttonReload);
+		console.log(buttonReload);
 
 		var buttonInfo = dom.button("?", { className: "exps-button" });
 		buttonsNav.appendChild(buttonInfo);
@@ -126,12 +136,11 @@ var exps = function exps(experimentsDetails) {
 					}).join(" ");
 				}
 				button.innerHTML = title;
-				document.body.appendChild(button);
+				expList.appendChild(button);
 			}
 		};
 
 		var showInfo = function showInfo() {
-			infoShowing = true;
 			panelInfo.classList.add("displayed");
 			panelInfoDetails.innerHTML = "\n<h4>Experimental Graphics</h4>\n<h1>" + info.title + "</h1>\n" + info.description + "\n" + (info.srcHidden ? // some were made after private repo:
 			"" : "<p><a href='https://github.com/raurir/experimental-graphics/blob/master/src/" + info.key + ".js' target='_blank'>SRC on Github</a></p>");
@@ -139,7 +148,6 @@ var exps = function exps(experimentsDetails) {
 
 		var hideInfo = function hideInfo() {
 			panelInfo.classList.remove("displayed");
-			infoShowing = false;
 		};
 
 		var checkURL = function checkURL() {
@@ -220,6 +228,10 @@ var exps = function exps(experimentsDetails) {
 					buttonsNav.removeChild(buttonInfo);
 				}
 				// showInfo();
+				dom.on(buttonReload, ["click", "touchend"], function () {
+					window.location = "?" + key + "," + Math.round(Math.random() * 1e10) + (viewSource ? "&src" : "");
+				});
+
 				// Add experiment-active class to body when experiment is loaded
 				document.body.classList.add("experiment-active");
 				buttonsNav.classList.add("interacted");
@@ -228,29 +240,56 @@ var exps = function exps(experimentsDetails) {
 			}
 		};
 
+		var firstNode = false;
+		// Watch for canvases being added anywhere and move them to holder
+		var observer = new MutationObserver(function (mutations) {
+			mutations.forEach(function (mutation) {
+				if (!currentExperiment) return;
+				mutation.addedNodes.forEach(function (node) {
+					console.log("firstNode", firstNode);
+					if (firstNode) return;
+					console.log("observer", node);
+					if (node.parentElement !== holder) {
+						console.log("adding");
+						firstNode = true;
+						holder.appendChild(node);
+					} else {
+						console.log("not adding");
+					}
+				});
+			});
+		});
+		observer.observe(document.body, { childList: true, subtree: true });
+
 		var resize = function resize() {
-			// console.log("resize!");
+			return;
+			console.log("resize!", currentExperiment.resize);
 			var sw = window.innerWidth,
 			    sh = window.innerHeight;
 
 			if (currentExperiment.resize) currentExperiment.resize(sw, sh);
 
-			// currentExperiment.stage.setSize(sw,sh);
+			// currentExperiment.stage.setSize(sw, sh);
 
-			// var largestDimension = sw > sh ? sw : sh;
-			// var scale = largestDimension / size;
-			// var x = 0, y = 0;
-			// if (sw < sh) {
-			//   x = -((scale * size) - sw) / 2;
-			// } else {
-			//   y = -((scale * size) - sh) / 2;
-			// }
+			var largestDimension = sw > sh ? sw : sh;
+			var scale = largestDimension / size;
+			var x = 0,
+			    y = 0;
+			if (sw < sh) {
+				x = -(scale * size - sw) / 2;
+			} else {
+				y = -(scale * size - sh) / 2;
+			}
+
+			// holder.children[0].style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
 
 			// currentExperiment.inner.setAttribute("transform", "translate(" + x + "," + y + ") scale(" + scale + ")");
 		};
 
 		var initWindowListener = function initWindowListener() {
-			dom.on(window, ["resize"], resize);
+			dom.on(window, ["resize"], function () {
+				return resize();
+			});
 		};
 
 		var experimentLoaded = function experimentLoaded(exp) {
@@ -261,7 +300,6 @@ var exps = function exps(experimentsDetails) {
 				console.warn("experimentLoaded, but no stage:", currentExperiment.stage);
 			}
 			// initRenderProgress(); // experiments_progress
-			// console.log("inittted!!!!!!");
 			initWindowListener();
 			currentExperiment.init({ progress: progress, seed: seed, size: size });
 			resize();

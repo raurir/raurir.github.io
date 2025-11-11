@@ -37,7 +37,7 @@ var isDev = window.location.hostname === "exp.local" || window.location.search.i
 
 require.config({
 	baseUrl: isDev ? "es5" : "jsmin",
-	urlArgs: "bust=" + (isDev ? Math.random() : "3a2f21d88a8d273c14693dc27b8feb16"),
+	urlArgs: "bust=" + (isDev ? Math.random() : "db8158d2f329f3a8190678602adbeb97"),
 	paths: {
 		box: "games/box",
 		creature: "creature_creator/creature",
@@ -51,6 +51,9 @@ require.config({
 
 require(["dom", "rand", "geom", "colours", "exps"], function (d, r, g, c, e) {
 	console.log("v1.8 loaded. isDev:" + isDev);
+	if (!isDev) {
+		console.info("Running in development, code is minified. console logging disabled!");
+	}
 	rand = rand();
 	colours = colours(rand);
 	e();
