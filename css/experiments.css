@@ -13,7 +13,7 @@ body {
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--colour-accent);
   box-shadow: 0 2px 20px rgba(0,0,0,0.3);
-  padding: 1rem 2rem;
+  padding: 15px 30px;
   position: fixed;
   top: 0;
   left: 0;
@@ -37,6 +37,7 @@ body {
 }
 body.experiment-active {
   padding-top: 0;
+  background: #000;
 }
 body.experiment-active .site-header {
   top: -100px;
@@ -85,7 +86,7 @@ body.experiment-active .site-header {
   position: absolute;
   top: 0;
   left: 0;
-  padding-top: 90px;
+  padding: 90px 25px 20px;
 }
 .exps-buttons {
   backdrop-filter: blur(10px);
@@ -208,15 +209,6 @@ body.experiment-active .site-header {
   object-fit: contain;
 }
 @media (max-width: 900px) {
-  .site-header {
-    padding: 0.75rem 1rem;
-  }
-  .site-header h1 {
-    font-size: 1.2rem;
-  }
-  .site-header p {
-    font-size: 0.7rem;
-  }
   .exp {
     font-size: 15px;
     padding: 12px 20px;
@@ -229,8 +221,5 @@ body.experiment-active .site-header {
     font-size: 16px;
     height: 44px;
     padding: 10px 16px;
-  }
-  #experiment-list {
-    padding-top: 70px;
   }
 }

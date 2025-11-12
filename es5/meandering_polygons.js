@@ -8,9 +8,9 @@ var meandering_polygons = function meandering_polygons() {
 	var c = colours.instance(r);
 	c.getRandomPalette();
 
-	var sw = 1000,
-	    sh = 1000;
-	var bgColour = c.getNextColour();
+	var sw = window.innerWidth,
+	    sh = window.innerHeight;
+	var bgColour = "rgba(180,180,200,1)";
 	var dots = 24;
 	var arrDots = [];
 
@@ -20,15 +20,42 @@ var meandering_polygons = function meandering_polygons() {
 
 	var range = 0.2;
 
-	function white() {
-		var b = ~~(230 + Math.random() * 25),
-		    a = Math.round((0.7 + Math.random() * 0.3) * 100) / 100,
-		    w = "rgba(" + b + "," + b + "," + b + "," + a + ")";
-		// con.log(w);
-		return w;
+	var white;
+	function generateWhite(H) {
+		if (H) {
+			return function () {
+				var L = 50 + Math.random() * 20;
+				var A = 0.7 + Math.random() * 0.3;
+				return "hsla(" + H + ", 100%, " + L + "%, " + A + ")";
+			};
+		}
+		return function () {
+			var b = ~~(230 + Math.random() * 25),
+			    a = Math.round((0.7 + Math.random() * 0.3) * 100) / 100,
+			    w = "rgba(" + b + "," + b + "," + b + "," + a + ")";
+			// con.log(w);
+			return w;
+		};
 	}
 
-	function init() {
+	function init(options) {
+		if (options.transparentBg && options.randomHue) {
+			white = generateWhite(options.randomHue);
+			bgColour = "#2a2a2a"; // matches exps.js background
+		} else {
+			white = generateWhite();
+		}
+		for (var j = 0; j < dots; j++) {
+			for (var k = 0; k < j; k++) {
+				lines[uniqueId(j, k)] = {
+					points: [j, k],
+					lineWidth: 0,
+					colour: white(),
+					dashes: ~~(Math.random() * 5)
+				};
+			}
+		}
+
 		var j = 0;
 		while (j < dots) {
 			arrDots[j] = {
@@ -197,19 +224,8 @@ var meandering_polygons = function meandering_polygons() {
 		return j * (j - 1) / 2 + k;
 	}
 
-	for (var j = 0; j < dots; j++) {
-		for (var k = 0; k < j; k++) {
-			lines[uniqueId(j, k)] = {
-				points: [j, k],
-				lineWidth: 0,
-				colour: white(),
-				dashes: ~~(Math.random() * 5)
-			};
-		}
-	}
-
 	function render() {
-		ctx.fillStyle = "rgba(180,180,200,1)";
+		ctx.fillStyle = bgColour;
 		ctx.fillRect(0, 0, sw, sh);
 
 		for (var j = 0; j < dots; j++) {
@@ -301,7 +317,7 @@ var meandering_polygons = function meandering_polygons() {
 		ctx.fill();
 	}
 
-	var resizeMode = "contain";
+	// var resizeMode = "contain";
 
 	var meandering = {
 		stage: bmp.canvas,

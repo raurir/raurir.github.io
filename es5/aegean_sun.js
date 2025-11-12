@@ -7,8 +7,8 @@ define("aegean_sun", ["perlin"], function (perlin) {
 
 	var sw = window.innerWidth;
 	var sh = window.innerHeight;
-	var w = 400,
-	    h = 400;
+	var w = sw,
+	    h = sh;
 
 	var channelX = perlin.noise(w, h);
 	var channelY = perlin.noise(w, h);
@@ -22,9 +22,10 @@ define("aegean_sun", ["perlin"], function (perlin) {
 	var pixels = [];
 
 	function go(t) {
+		ctx.clearRect(0, 0, sw, sh);
 		// requestAnimationFrame(go);
-		var noiseX = channelX.cycle(Math.random() * 100, 0.005);
-		var noiseY = channelY.cycle(Math.random() * 100, 0.004);
+		var noiseX = channelX.cycle(t * 0.000001, 0.005);
+		var noiseY = channelY.cycle(t * 0.00001, 0.004);
 		// for (var i = 0, il = w * h; i < il; i++){
 		// 	var xi = i % w;
 		// 	var yi = Math.floor(i / w);

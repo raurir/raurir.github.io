@@ -23,7 +23,6 @@ var mandala = function mandala() {
 		var TAU = Math.PI * 2;
 		var size, sw, sh, centre, spokes;
 		var stage = dom.canvas(1, 1);
-		var ctx = stage.ctx;
 
 		function init(options) {
 			progress = options.progress || function () {
@@ -87,8 +86,8 @@ var mandala = function mandala() {
 			pattern.ctx.stroke();
 			pattern.ctx.fill();
 
-			document.body.appendChild(masker.canvas);
-			document.body.appendChild(pattern.canvas);
+			// document.body.appendChild(masker.canvas);
+			// document.body.appendChild(pattern.canvas);
 
 			var max = 7;
 

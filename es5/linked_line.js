@@ -47,10 +47,12 @@ var linked_line = function linked_line() {
 			var ctxR = bmpR.ctx; // grey & white draw rectangle
 
 			if (debug) {
-				document.body.appendChild(bmp.canvas);
-				document.body.appendChild(bmpZ.canvas);
-				document.body.appendChild(bmpW.canvas);
-				document.body.appendChild(bmpR.canvas);
+				var holder = document.createElement("div");
+				holder.appendChild(bmp.canvas);
+				holder.appendChild(bmpZ.canvas);
+				holder.appendChild(bmpW.canvas);
+				holder.appendChild(bmpR.canvas);
+				document.body.appendChild(holder);
 			}
 
 			var occupied = {
