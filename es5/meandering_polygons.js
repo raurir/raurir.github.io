@@ -24,7 +24,7 @@ var meandering_polygons = function meandering_polygons() {
 	function generateWhite(H) {
 		if (H) {
 			return function () {
-				var L = 50 + Math.random() * 20;
+				var L = 50 + Math.random() * 50;
 				var A = 0.7 + Math.random() * 0.3;
 				return "hsla(" + H + ", 100%, " + L + "%, " + A + ")";
 			};

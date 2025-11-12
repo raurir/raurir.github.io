@@ -8,9 +8,9 @@ body {
   margin: 0;
   padding: 0;
 }
-.site-header {
-  background: rgba(26,26,26,0.95);
-  backdrop-filter: blur(10px);
+header {
+  background: rgba(26,26,26,0.5);
+  backdrop-filter: blur(2px);
   border-bottom: 1px solid var(--colour-accent);
   box-shadow: 0 2px 20px rgba(0,0,0,0.3);
   padding: 15px 30px;
@@ -21,7 +21,12 @@ body {
   z-index: 98;
   transition: top 0.3s ease-out, opacity 0.3s ease-out;
 }
-.site-header h1 {
+header a,
+header a:visited {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+}
+header h1 {
   color: var(--colour-accent);
   font-size: 1.5rem;
   font-weight: 300;
@@ -29,7 +34,7 @@ body {
   margin: 0;
   text-transform: uppercase;
 }
-.site-header p {
+header p {
   color: rgba(255,255,255,0.6);
   font-size: 0.75rem;
   letter-spacing: 0.05em;
@@ -39,7 +44,7 @@ body.experiment-active {
   padding-top: 0;
   background: #000;
 }
-body.experiment-active .site-header {
+body.experiment-active header {
   top: -100px;
   opacity: 0;
 }
@@ -203,12 +208,21 @@ body.experiment-active .site-header {
   width: 100vw;
   height: 100vh;
 }
+#experiment-holder.fixed {
+  position: fixed;
+}
 #experiment-holder > * {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
 @media (max-width: 900px) {
+  header {
+    padding: 15px;
+  }
+  #experiment-list {
+    padding: 90px 10px 20px;
+  }
   .exp {
     font-size: 15px;
     padding: 12px 20px;

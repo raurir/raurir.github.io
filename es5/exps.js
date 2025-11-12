@@ -317,6 +317,7 @@ var exps = function exps(experimentsDetails) {
 			require(["meandering_polygons"], function (experiment) {
 				meanderingBg = experiment;
 				holder.appendChild(experiment.stage);
+				holder.classList.add("fixed");
 				experiment.stage.style.opacity = 0.2;
 				experiment.init({ transparentBg: true, randomHue: randomHue });
 			});
