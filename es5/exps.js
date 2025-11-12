@@ -219,6 +219,29 @@ var exps = function exps(experimentsDetails) {
 					}
 				}
 				experimentActive = true;
+
+				var firstNode = false;
+				// Watch for canvases being added anywhere and move them to holder
+				var observer = new MutationObserver(function (mutations) {
+					mutations.forEach(function (mutation) {
+						// console.log("mutation observed", experimentActive);
+						if (!experimentActive) return;
+						mutation.addedNodes.forEach(function (node) {
+							console.log("firstNode", firstNode);
+							if (firstNode) return;
+							console.log("observer", node);
+							if (node.parentElement !== holder) {
+								console.log("adding");
+								firstNode = true;
+								holder.appendChild(node);
+							} else {
+								console.log("not adding");
+							}
+						});
+					});
+				});
+				observer.observe(document.body, { childList: true, subtree: true });
+
 				loadExperiment(index);
 
 				info = experimentsDetails.getDetails(key);
@@ -239,30 +262,6 @@ var exps = function exps(experimentsDetails) {
 				showButtons();
 			}
 		};
-
-		if (experimentActive) {
-			var firstNode = false;
-			// Watch for canvases being added anywhere and move them to holder
-			var observer = new MutationObserver(function (mutations) {
-				mutations.forEach(function (mutation) {
-					// console.log("mutation observed", experimentActive);
-					if (!experimentActive) return;
-					mutation.addedNodes.forEach(function (node) {
-						console.log("firstNode", firstNode);
-						if (firstNode) return;
-						console.log("observer", node);
-						if (node.parentElement !== holder) {
-							console.log("adding");
-							firstNode = true;
-							holder.appendChild(node);
-						} else {
-							console.log("not adding");
-						}
-					});
-				});
-			});
-			observer.observe(document.body, { childList: true, subtree: true });
-		}
 
 		var resize = function resize() {
 			var sw = window.innerWidth,
