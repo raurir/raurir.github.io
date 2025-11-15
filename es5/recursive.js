@@ -1,13 +1,15 @@
 (function() {
-  var canvas, centre, con, createSlider, ctx, d, draw, init, redraw, rotMod, settings, size;
+  var canvas, centre, con, container, createSlider, ctx, d, draw, init, redraw, rotMod, settings, size;
 
   con = console;
 
   d = document;
 
+  container = null;
+
   canvas = null;
 
-  size = 600;
+  size = 800;
 
   centre = size / 2;
 
@@ -23,8 +25,11 @@
       granularity = 1;
     }
     div = d.createElement("div");
+    div.style.display = "flex";
     label = d.createElement("label");
     label.innerHTML = "" + prop + ":";
+    label.style.color = "#ccc";
+    label.style.width = "200px";
     input = d.createElement("input");
     input.type = "text";
     input.value = ini;
@@ -37,7 +42,7 @@
     div.appendChild(label);
     div.appendChild(range);
     div.appendChild(input);
-    d.body.appendChild(div);
+    container.appendChild(div);
     change = function(e) {
       var v;
       v = e.target.value * granularity;
@@ -58,44 +63,32 @@
     return settings[prop] = ini;
   };
 
-  createSlider("items", 1, 10, 2);
-
-  createSlider("maxRecursion", 1, 10, 5);
-
-  createSlider("angleSpiral", 0, 2, 1, 0.01);
-
-  createSlider("angleSpread", 0, 2, Math.PI / 2, 0.01);
-
-  createSlider("symmetry", -1, 1, 0, 0.01);
-
-  createSlider("scale", 0, 10, 1, 0.01);
-
   redraw = function() {
     canvas.width = canvas.width;
     return draw(centre, 50, 0, 0);
   };
 
   draw = function(x, y, branchAngle, level) {
-    var alpha, angleSpiral, angleSpread, branchScale, h, half, items, j, maxRecursion, newX, newY, rgb, rotation, scale, w, _i, _results;
+    var angleSpiral, angleSpread, branchScale, h, half, items, j, lineThickness, maxRecursion, newX, newY, rgb, rotation, scale, w, _i, _results;
     level++;
     items = settings.items;
     maxRecursion = settings.maxRecursion;
     angleSpiral = settings.angleSpiral;
     angleSpread = settings.angleSpread;
-    alpha = 1 - level / maxRecursion;
+    lineThickness = settings.lineThickness;
+    rgb = 55 + (1 - level / maxRecursion) * 200;
     _results = [];
     for (j = _i = 0; 0 <= items ? _i < items : _i > items; j = 0 <= items ? ++_i : --_i) {
       half = (items - 1) / 2;
       branchScale = 1 - (j - half) / half * settings.symmetry;
       scale = settings.scale / level * branchScale;
-      w = 30 * scale;
+      w = 30 * scale * lineThickness;
       h = 100 * scale;
       rotation = angleSpread * (j - half) + branchAngle * angleSpiral;
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(rotation);
-      rgb = 0;
-      ctx.fillStyle = "rgba(" + rgb + "," + rgb + "," + rgb + "," + alpha + ")";
+      ctx.fillStyle = "rgb(" + rgb + "," + rgb + "," + rgb + ")";
       ctx.fillRect(-w * 1 / 2, 0, w * 1, h * 1);
       ctx.restore();
       newX = x + h * -Math.sin(rotation);
@@ -110,9 +103,19 @@
   };
 
   init = function() {
+    container = d.createElement("div");
+    d.body.appendChild(container);
+    createSlider("items", 1, 10, 2);
+    createSlider("maxRecursion", 1, 10, 5);
+    createSlider("angleSpiral", 0, 2, 1, 0.01);
+    createSlider("angleSpread", 0, 2, Math.PI / 2, 0.01);
+    createSlider("symmetry", -1, 1, 0, 0.01);
+    createSlider("scale", 0, 10, 1, 0.01);
+    createSlider("lineThickness", 0.1, 1, 1, 0.01);
     canvas = d.createElement("canvas");
+    canvas.style.border = "1px solid #333";
     canvas.width = canvas.height = size;
-    d.body.appendChild(canvas);
+    container.appendChild(canvas);
     ctx = canvas.getContext("2d");
     return redraw();
   };

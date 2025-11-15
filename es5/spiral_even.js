@@ -14,7 +14,6 @@ var cy = sh / 2;
 var frame = 0;
 
 function newLine() {
-
 	bmp.ctx.clearRect(0, 0, sw, sh);
 
 	// bmp.ctx.fillStyle = "#000";
@@ -48,7 +47,8 @@ function newLine() {
 	bmp.ctx.stroke();
 
 	frame += 1;
-	if (frame < 50) requestAnimationFrame(newLine);
+	// if (frame < 50)
+	requestAnimationFrame(newLine);
 }
 
 newLine();

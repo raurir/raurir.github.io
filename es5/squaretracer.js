@@ -68,7 +68,7 @@
         yOffset = inOutCubic(zeroToOne, 0, gap, 1);
         x = gap * (-i - 1 / 2);
         y = gap * (-j + i - 1 / 2) + yOffset;
-        rgb = 0;
+        rgb = 50 + i / bits * 200;
         ctx.fillStyle = "rgba(" + rgb + "," + rgb + "," + rgb + ",1)";
         dot = 6;
         ctx.fillRect(x - dot / 2, y - dot / 2, dot, dot);

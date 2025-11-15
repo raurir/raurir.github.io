@@ -250,10 +250,15 @@ var exps = function exps(experimentsDetails) {
 				} else {
 					buttonsNav.removeChild(buttonInfo);
 				}
-				// showInfo();
-				dom.on(buttonReload, ["click", "touchend"], function () {
-					window.location = "?" + key + "," + Math.round(Math.random() * 1e10) + (viewSource ? "&src" : "");
-				});
+
+				if (info.preventRefresh) {
+					buttonsNav.removeChild(buttonReload);
+				} else {
+					// showInfo();
+					dom.on(buttonReload, ["click", "touchend"], function () {
+						window.location = "?" + key + "," + Math.round(Math.random() * 1e10) + (viewSource ? "&src" : "");
+					});
+				}
 
 				// Add experiment-active class to body when experiment is loaded
 				document.body.classList.add("experiment-active");
