@@ -31,6 +31,12 @@ function getOsc(i, a, range) {
 var bmp = dom.canvas(sw, sh);
 document.body.appendChild(bmp.canvas);
 
+var r = function r() {
+	return parseInt(50 + Math.random() * 200);
+};
+bmp.ctx.fillStyle = "rgb(" + r() + "," + r() + "," + r() + ")";
+console.log(bmp.ctx.fillStyle);
+
 var h = 0;
 var xRange = 30;
 var yRange = 30;
@@ -44,14 +50,12 @@ var yHalf = yRange / 2;
 var frame = 0;
 
 function newLine() {
-
 	bmp.ctx.clearRect(0, 0, sw, sh);
 
 	var f = 0;
 
 	for (var h = 0; h < yRange; h++) {
 		for (var v = 0; v < xRange; v++) {
-
 			f++;
 
 			var xyIndex = v + h; // getOsc(frame + v + h, 0, 10);
@@ -69,7 +73,6 @@ function newLine() {
 			var xpos = (v + 0.5) * xGap + getOsc(xy, 2, oscRange);
 			var ypos = (h + 0.5) * yGap + getOsc(xy, 3, oscRange);
 
-			bmp.ctx.fillStyle = "#000";
 			// bmp.ctx.fillRect(xpos - 2, ypos - 2, 4, 4);
 			bmp.ctx.fillText(Math.round(xyIndex), xpos - 2, ypos - 2);
 		}
