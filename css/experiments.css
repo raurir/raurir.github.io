@@ -34,11 +34,20 @@ header h1 {
   margin: 0;
   text-transform: uppercase;
 }
+header data {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
 header p {
   color: rgba(255,255,255,0.6);
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   margin: 0.25rem 0 0 0;
+}
+header code {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.5rem;
 }
 body.experiment-active {
   padding-top: 0;
