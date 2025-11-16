@@ -55,8 +55,16 @@ var exps = function exps(experimentsDetails) {
 			window.location = "/" + (viewSource ? "?src" : "");
 		});
 
-		var buttonReload = dom.button("⟳", { className: "exps-button" });
+		var buttonReload = dom.button("", { className: "exps-button" });
 		buttonsNav.appendChild(buttonReload);
+		var buttonReloadSymbol = dom.element("span", {
+			innerHTML: "⟳",
+			style: {
+				display: "inline-block",
+				transform: "translate(0px,-1px) scale(2)"
+			}
+		});
+		buttonReload.appendChild(buttonReloadSymbol);
 
 		var buttonInfo = dom.button("?", { className: "exps-button" });
 		buttonsNav.appendChild(buttonInfo);
@@ -227,11 +235,11 @@ var exps = function exps(experimentsDetails) {
 						// console.log("mutation observed", experimentActive);
 						if (!experimentActive) return;
 						mutation.addedNodes.forEach(function (node) {
-							console.log("firstNode", firstNode);
+							// console.log("firstNode", firstNode);
 							if (firstNode) return;
-							console.log("observer", node);
+							// console.log("observer", node);
 							if (node.parentElement !== holder) {
-								console.log("adding");
+								// console.log("adding");
 								firstNode = true;
 								holder.appendChild(node);
 							} else {
@@ -254,7 +262,6 @@ var exps = function exps(experimentsDetails) {
 				if (info.preventRefresh) {
 					buttonsNav.removeChild(buttonReload);
 				} else {
-					// showInfo();
 					dom.on(buttonReload, ["click", "touchend"], function () {
 						window.location = "?" + key + "," + Math.round(Math.random() * 1e10) + (viewSource ? "&src" : "");
 					});

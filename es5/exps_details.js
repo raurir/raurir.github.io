@@ -70,6 +70,10 @@ define("exps_details", function () {
 			title: "Lego Stack",
 			description: "<p>Important scientifically realistic simulation to study how high lego can be stacked.</p>"
 		},
+		linked_line: {
+			title: "Linked Line",
+			description: "<p>Labyrinth generator. Brute force method, starts with a simple line and tries to find points that the line can expand to, to find a more twisty line.</p>\n\t\t\t<p>There are 4 debug canvases:\n\t\t\t<li>Actual size as it generates: green dots are active points that can be explored more</li>\n\t\t\t<li>Zoomed in as it generates</li>\n\t\t\t<li>Zoomed in canvas after processing is complete</li>\n\t\t\t<li>Zoomed in canvas showing wall calculations</li>\n\t\t\t</p>"
+		},
 		recursive_circle: {
 			title: "Recursive Circle",
 			description: "<p>Recursive rendering. Managed to not crash my browser creating this! Life achievement.</p>",
