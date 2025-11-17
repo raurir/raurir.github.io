@@ -1,32 +1,40 @@
 "use strict";
 
 define("seven_four_sevens", function () {
-
 	// this is a remake of an old flash experiment
 	// have not done the 'chem trails' yet, maybe one day
 	// in honour of the memory of flash I have left all the variables as close to
 	// the original as possible... _root, gotoAndStop
 
+	var rnd = rand.instance();
+	rnd.setSeed(Math.random());
 	var sw = 900,
 	    sh = 600;
 	var canvas = dom.canvas(sw, sh);
+	canvas.canvas.style.width = "100%";
 	var images = [];
 	var planes = [];
-	var text = dom.element("div", { innerText: "Click to make a new waypoint, shift click to add multiple", style: { color: "white" } });
-	var button = dom.button("Add planes", { className: "button" });
-	document.body.appendChild(text);
-	document.body.appendChild(button);
+	var container = dom.element("div");
+	var text = dom.element("div", { innerText: "Click the canvasto make a new waypoint", style: { color: "white" } });
+	var button = dom.button("Add plane", { className: "button" });
+	container.appendChild(canvas.canvas);
+	container.appendChild(text);
+	container.appendChild(button);
 
 	dom.on(canvas.canvas, ["click"], function (e) {
-		if (!e.shiftKey) _root.holdingpattern = [];
-		_root.holdingpattern.push({ _x: e.x, _y: e.y });
+		var rect = canvas.canvas.getBoundingClientRect();
+		var scaleX = canvas.canvas.width / rect.width;
+		var scaleY = canvas.canvas.height / rect.height;
+		var x = (e.clientX - rect.left) * scaleX;
+		var y = (e.clientY - rect.top) * scaleY;
+		_root.holdingpattern.push({ _x: x, _y: y });
 	});
 	dom.on(button, ["click"], function (e) {
 		planes.push(Plane());
 	});
 
 	var _root = {
-		holdingpattern: [{ _x: rand.getNumber(0, sw), _y: rand.getNumber(0, sh) }, { _x: rand.getNumber(0, sw), _y: rand.getNumber(0, sh) }, { _x: rand.getNumber(0, sw), _y: rand.getNumber(0, sh) }],
+		holdingpattern: [{ _x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh) }, { _x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh) }, { _x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh) }],
 		createSmoke: function createSmoke() {
 			// this used to draw chem trails
 		}
@@ -36,7 +44,6 @@ define("seven_four_sevens", function () {
 		var PI = Math.PI;
 		var PI2 = Math.PI * 2;
 		var xdelta, ydelta, angle, targetangle, distance, deltaangle, planeframe;
-		var cA, tA;
 		var arrow = {}; // was some shape that draw an arrow to next waypoint
 		var tAngle = 0;
 		var turnMax, turnRate;
@@ -56,7 +63,6 @@ define("seven_four_sevens", function () {
 		var dir = Math.random() * PI2;
 		var speed = Math.random() * 0.4 + 2;
 		var scale = (speed - 1) / 2; // + Math.random() * 0.2;
-		con.log(speed, scale);
 		var turnMax = Math.random() * 0.03 + 0.01;
 		var turnRate = turnMax / 20;
 		// onEnterFrame = moveIt; // RIP :)
@@ -218,7 +224,7 @@ define("seven_four_sevens", function () {
 					canvas.ctx.fill();
 					canvas.ctx.beginPath();
 					canvas.ctx.fillStyle = "white";
-					canvas.ctx.font = '18px Helvetica';
+					canvas.ctx.font = "18px Helvetica";
 					canvas.ctx.fillText(i + 1, waypoint._x - 5, waypoint._y + 5);
 					canvas.ctx.fill();
 				}
@@ -248,6 +254,6 @@ define("seven_four_sevens", function () {
 
 	return {
 		init: init,
-		stage: canvas.canvas
+		stage: container
 	};
 });

@@ -17,10 +17,9 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 	var holder;
 	var controls;
 	var materialShader;
-	var materialPhong;
 	var uniforms;
 
-	function cube(w, h, d, materialType) {
+	function cube(w, h, d, materialType, materialIndex) {
 		var group = new THREE.Group();
 
 		var geometry = new THREE.BoxGeometry(w, h, d);
@@ -30,7 +29,7 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 				material = materialShader;
 				break;
 			case "phong":
-				material = materialPhong;
+				material = materialPhongStack.at(materialIndex);
 				break;
 		}
 		var object = new THREE.Mesh(geometry, material);
@@ -67,6 +66,8 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 		});
 	}
 
+	var materialPhongStack = [];
+
 	function init3D(mazes) {
 		// console.log(mazes);
 
@@ -76,16 +77,31 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 		camera = new THREE.PerspectiveCamera(90, sw / sh, 1, 20000);
 		scene.add(camera);
 
-		var lightAbove = new THREE.DirectionalLight(0x909090, 1.5);
+		var lightFront = new THREE.DirectionalLight(0x900000, 1);
+		lightFront.castShadow = true;
+		lightFront.position.set(0, 0, 1);
+		scene.add(lightFront);
+
+		var lightAbove = new THREE.DirectionalLight(0xffffff, 0.5);
 		lightAbove.castShadow = true;
-		lightAbove.position.set(0, 200, 0);
+		lightAbove.position.set(0, 1, 0);
 		scene.add(lightAbove);
 
-		materialPhong = new THREE.MeshPhongMaterial({
-			color: 0x101010,
-			emissive: 0x301000,
-			specular: 0x602020,
-			shininess: 100
+		var lightLeft = new THREE.DirectionalLight(0xffffff, 0.5);
+		lightLeft.castShadow = true;
+		lightLeft.position.set(-1, 0, 0);
+		scene.add(lightLeft);
+
+		materialPhongStack = new Array(6).fill(0).map(function () {
+			var r = 0x20 + Math.random() * 0x20,
+			    g = 0,
+			    b = 0x10 + Math.random() * r;
+			return new THREE.MeshPhongMaterial({
+				color: r << 16 | g << 8 | b,
+				emissive: 0x101010,
+				specular: 0x600000,
+				shininess: 100
+			});
 		});
 
 		uniforms = {
@@ -99,10 +115,6 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 			fog: false
 		});
 
-		var lightLeft = new THREE.DirectionalLight(0xffffff, 1.5);
-		lightLeft.position.set(-100, 0, 0);
-		scene.add(lightLeft);
-
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize(sw, sh);
 		renderer.shadowMap = {
@@ -115,34 +127,32 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 		holder = new THREE.Group();
 		scene.add(holder);
 
-		var c = cube(cubeSize * 2 - size, cubeSize * 2 - size, cubeSize * 2 - size, "shader");
+		var lavaCubeSize = cubeSize * 2; // - size * 0.4;
+		var c = cube(lavaCubeSize, lavaCubeSize, lavaCubeSize, "shader");
 		holder.add(c);
 
 		var makeFace = function makeFace(options) {
 			var face = new THREE.Group();
 			holder.add(face);
-
 			options.maze.forEach(function (item) {
 				var x = (item.x + item.w / 2 - blocks - 0.5) * size;
 				var y = (item.y + item.h / 2 - blocks - 0.5) * size;
-				var z = cubeSize + 1;
-				var c = cube(item.w * size, item.h * size, size, "phong");
+				var z = cubeSize + 10;
+				var c = cube(item.w * size, item.h * size, size, "phong", options.index);
 				c.position.set(x, y, z);
 				face.add(c);
 			});
 			if (options.rotation.x) face.rotation.x = options.rotation.x * Math.PI;
 			if (options.rotation.y) face.rotation.y = options.rotation.y * Math.PI;
 			if (options.rotation.z) face.rotation.z = options.rotation.z * Math.PI;
-			// face.rotation.set(options.rotation.x * Math.PI, options.rotation.y * Math.PI, options.rotation.z * Math.PI);
-			// return face;
 		};
 
-		makeFace({ maze: mazes[0], rotation: { x: 0 }, colour: 0xff0000 });
-		makeFace({ maze: mazes[1], rotation: { x: 1, z: 1.5 }, colour: 0x00ff00 });
-		makeFace({ maze: mazes[2], rotation: { x: 0.5, z: 0.5 }, colour: 0x0000ff });
-		makeFace({ maze: mazes[3], rotation: { x: 1.5, z: 1 }, colour: 0xffff00 });
-		makeFace({ maze: mazes[4], rotation: { y: 0.5, z: 1.5 }, colour: 0xff00ff });
-		makeFace({ maze: mazes[5], rotation: { y: 1.5, z: 1 }, colour: 0x00ffff });
+		makeFace({ maze: mazes[0], rotation: { x: 0 }, index: 0 });
+		makeFace({ maze: mazes[1], rotation: { x: 1, z: 1.5 }, index: 1 });
+		makeFace({ maze: mazes[2], rotation: { x: 0.5, z: 0.5 }, index: 2 });
+		makeFace({ maze: mazes[3], rotation: { x: 1.5, z: 1 }, index: 3 });
+		makeFace({ maze: mazes[4], rotation: { y: 0.5, z: 1.5 }, index: 4 });
+		makeFace({ maze: mazes[5], rotation: { y: 1.5, z: 1 }, index: 5 });
 
 		document.body.appendChild(renderer.domElement);
 		progress("render:complete", renderer.domElement);
@@ -168,14 +178,28 @@ define("maze_cube", ["linked_line"], function (linkedLine) {
 		window.addEventListener("touchstart", toggle);
 	}
 
+	var modes = [{ axis: "x", target: Math.PI / 2 }, { axis: "z", target: Math.PI / 2 }, { axis: "x", target: Math.PI }, { axis: "y", target: Math.PI / 2 }, { axis: "z", target: Math.PI }, { axis: "y", target: Math.PI }];
+	var rotationMode = 0;
+	var rotationSpeed = Math.PI * 0.001;
+	var rotationState = modes[rotationMode];
+
 	function render(time) {
 		if (mouse.toggle) {
-			holder.rotation.x += Math.PI * 0.005;
-			// holder.rotation.y -= 0.01;
-			holder.rotation.z -= Math.PI * 0.002;
-			// if (holder.rotation.x >= Math.PI * 2) {
-			// 	// mouse.toggle = false
-			// }
+			var axis = rotationState.axis;
+			holder.rotation[axis] += rotationSpeed;
+			if (holder.rotation[axis] >= rotationState.target) {
+				holder.rotation[axis] = rotationState.target; // lock to target.
+				rotationMode++;
+				if (rotationMode > 5) {
+					// back to one.
+					rotationMode = 0;
+					holder.rotation.x = 0;
+					holder.rotation.y = 0;
+					holder.rotation.z = 0;
+				}
+				console.log("next face:", rotationMode);
+				rotationState = modes[rotationMode];
+			}
 		}
 
 		// Update shader time uniform

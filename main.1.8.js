@@ -12,7 +12,6 @@ window.con = new Proxy(console, {
 	},
 });
 
-// changing
 // eslint-disable-next-line no-unused-vars
 var perf = (function () {
 	var stacks = {};
@@ -27,7 +26,7 @@ var perf = (function () {
 			// id = id || 0;
 			stacks[id].timeEnd = new Date().getTime();
 			var time = stacks[id].timeEnd - stacks[id].timeStart;
-			console.log("performance", id, time);
+			console.log(`performance: '${id}' complete in ${time}ms`);
 			stacks[id].timeProcessing = time;
 		},
 	};
@@ -37,7 +36,7 @@ var isDev = window.location.hostname === "exp.local" || window.location.search.i
 
 require.config({
 	baseUrl: isDev ? "es5" : "jsmin",
-	urlArgs: "bust=" + (isDev ? Math.random() : "9443adc3"),
+	urlArgs: "bust=" + (isDev ? Math.random() : "4efa557e"),
 	paths: {
 		box: "games/box",
 		creature: "creature_creator/creature",
