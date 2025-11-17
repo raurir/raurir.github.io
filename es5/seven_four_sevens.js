@@ -15,7 +15,7 @@ define("seven_four_sevens", function () {
 	var images = [];
 	var planes = [];
 	var container = dom.element("div");
-	var text = dom.element("div", { innerText: "Click the canvasto make a new waypoint", style: { color: "white" } });
+	var text = dom.element("div", { innerText: "Click the canvas to make a new waypoint", style: { color: "white" } });
 	var button = dom.button("Add plane", { className: "button" });
 	container.appendChild(canvas.canvas);
 	container.appendChild(text);
