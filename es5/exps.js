@@ -51,7 +51,11 @@ var exps = function exps(experimentsDetails) {
 
 		var buttonClose = dom.button("X", { className: "exps-button" });
 		buttonsNav.appendChild(buttonClose);
-		dom.on(buttonClose, ["click", "touchend"], function () {
+		dom.on(buttonClose, ["click", "touchstart"], function (e) {
+			if (e.type === "touchstart") {
+				e.preventDefault();
+				e.stopPropagation();
+			}
 			window.location = "/" + (viewSource ? "?src" : "");
 		});
 
@@ -68,8 +72,12 @@ var exps = function exps(experimentsDetails) {
 
 		var buttonInfo = dom.button("?", { className: "exps-button" });
 		buttonsNav.appendChild(buttonInfo);
-		dom.on(buttonInfo, ["click", "touchend"], function () {
-			return showInfo();
+		dom.on(buttonInfo, ["click", "touchstart"], function (e) {
+			if (e.type === "touchstart") {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			showInfo();
 		});
 
 		var panelInfo = dom.element("div", { className: "exps-info" });
@@ -81,8 +89,12 @@ var exps = function exps(experimentsDetails) {
 		});
 		var panelButtonClose = dom.button("X", { className: "exps-button" });
 
-		dom.on(panelButtonClose, ["click", "touchend"], function () {
-			return hideInfo();
+		dom.on(panelButtonClose, ["click", "touchstart"], function (e) {
+			if (e.type === "touchstart") {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			hideInfo();
 		});
 
 		document.body.appendChild(panelInfo);
@@ -306,7 +318,11 @@ var exps = function exps(experimentsDetails) {
 				if (info.preventRefresh) {
 					buttonsNav.removeChild(buttonReload);
 				} else {
-					dom.on(buttonReload, ["click", "touchend"], function () {
+					dom.on(buttonReload, ["click", "touchstart"], function (e) {
+						if (e.type === "touchstart") {
+							e.preventDefault();
+							e.stopPropagation();
+						}
 						window.location = "?" + key + "," + Math.round(Math.random() * 1e10) + (viewSource ? "&src" : "");
 					});
 				}
