@@ -36,7 +36,7 @@ var isDev = window.location.hostname === "exp.local" || window.location.search.i
 
 require.config({
 	baseUrl: isDev ? "es5" : "jsmin",
-	urlArgs: "bust=" + (isDev ? Math.random() : "ca2f15cd"),
+	urlArgs: "bust=" + (isDev ? Math.random() : "e1897790"),
 	paths: {
 		box: "games/box",
 		creature: "creature_creator/creature",

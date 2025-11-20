@@ -5,7 +5,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 // mogrify -format gif *.png
 // gifsicle --delay=1 --loop *.gif > anim.gif
 
-var isNode = typeof module !== 'undefined';
+var isNode = typeof module !== "undefined";
 var posJump;
 if (isNode) {
 	con = console;
@@ -17,7 +17,7 @@ if (isNode) {
 		return fs = require("fs");
 	};
 	saveFile = function saveFile(canvas, frame, cb) {
-		var filename = '/../export/' + (String(frame).length == 1 ? "0" : "") + frame + '.png';
+		var filename = "/../export/" + (String(frame).length == 1 ? "0" : "") + frame + ".png";
 		canvas.toBuffer(function (err, buf) {
 			if (err) {
 				con.log("saveFile err", err);
@@ -44,12 +44,14 @@ var nested_rotating_polygon = function nested_rotating_polygon() {
 	var BLACK = "#000",
 	    WHITE = "#fff";
 	var frame = 0;
+	var rnd = rand.instance();
 
 	function init(options) {
+		rnd.setSeed(options.seed || Math.random());
 		size = options.size;
 		bmp.setSize(size, size);
-		sides = 3; //rand.getInteger(3, 6);
-		depthMax = 6; //rand.getInteger(3, 16);
+		sides = rnd.getInteger(3, 6);
+		depthMax = 6;
 		progress("render:complete", bmp.canvas);
 		render();
 	}

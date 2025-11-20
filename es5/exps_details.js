@@ -20,11 +20,17 @@ define("exps_details", function () {
 	["isometric_cubes"], ["isometric_words", "THREE", "TweenMax"], ["interpolated", "lagrange"], ["lego_stack", "THREE"], ["linked_line"], ["mandala"], ["maze"], ["maze_cube", "linked_line", "THREE"], //, "https://threejs.org/examples/js/exporters/OBJExporter.js"],//  "lib/three/OBJExporter.js", "lib/three/OrbitControls.js"],
 	["meandering_polygons"], ["mining_branches"], ["molecular_three", "THREE"], ["nested_rotating_polygon", "ease"], ["oscillate_curtain"], ["oscillator"], ["overflow"], ["pattern_check", "css:pattern_check"], ["pattern_circles"], ["perlin_dots"], ["perlin_grid", "THREE", "TweenMax"], ["perlin_leaves"], ["perlin_noise"], ["polygon_slice"],
 	// ["polyhedra", "3d"], // 3d is not moduled!
-	["polyhedra_three", "THREE", "../lib/stemkoski/polyhedra"], ["pine_three", "THREE"], ["race_lines_three", "THREE", "TweenMax"], ["rainbow_particles"], ["rectangular_fill"], ["recursive"], ["recursive_circle"], ["recursive_polygon"], ["reddit_proc_gen"], ["seven_four_sevens"], ["spiral_even"], ["squaretracer"],
+	["polyhedra_three", "THREE", "../lib/stemkoski/polyhedra"],
+	// ["pine_three", "THREE"],
+	["race_lines_three", "THREE", "TweenMax"], ["rainbow_particles"], ["rectangular_fill"], ["recursive"], ["recursive_circle"], ["recursive_polygon"], ["reddit_proc_gen"], ["seven_four_sevens"], ["spiral_even"], ["squaretracer"],
 	// ["squash_match_shirt", "fill/stripes", "fill/dither"],
 	["synth_ambient", "Tone"], ["tea"], ["tentacle"], ["tessellation"], ["tetris_cube", "THREE", "TweenMax"], ["text_grid"], ["triangles", "THREE", "TweenMax"], ["tunnel_tour_three", "THREE", "TweenMax"], ["typography"], ["voronoi_stripes", "voronoi", "fill/stripes", "fill/dither"], ["zoned_particles"]];
 
 	var details = {
+		additive: {
+			title: "Additive",
+			description: "<p>Multiple oscillations of sine are added together.</p>\n<p>Background lines are each sine wave, foreground is their combined values.</p>\n<p>Very much how audio additive synthesis works.</p>"
+		},
 		ball_and_chain: {
 			title: "Ball and Chain",
 			description: "<p>In the celebration of the <a href='http://www.abc.net.au/news/2017-11-15/australia-reacts-to-the-same-sex-marriage-survey-results/9151826' target='_blank'>Yes</a> Vote, started making this ball and chain in THREE + Cannon. Took a bit longer than expected, hopefully I can make a rainbow happy one for legalisation day.</p><p>Something along the lines of \"It's raining ball and chains\"</p>"
@@ -73,6 +79,10 @@ define("exps_details", function () {
 		linked_line: {
 			title: "Linked Line",
 			description: "<p>Labyrinth generator. Brute force method, starts with a simple line and tries to find points that the line can expand to, to find a more twisty line.</p>\n\t\t\t<p>There are 4 debug canvases:\n\t\t\t<li>Actual size as it generates: green dots are active points that can be explored more</li>\n\t\t\t<li>Zoomed in as it generates</li>\n\t\t\t<li>Zoomed in canvas after processing is complete</li>\n\t\t\t<li>Zoomed in canvas showing wall calculations</li>\n\t\t\t</p>"
+		},
+		overflow: {
+			title: "Overflow Polygons",
+			description: "<p>Polygons possibly overlap. Points within are highlighted red.</p>"
 		},
 		recursive_circle: {
 			title: "Recursive Circle",

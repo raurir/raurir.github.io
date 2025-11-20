@@ -121,6 +121,16 @@ var exps = function exps(experimentsDetails) {
 			});
 		};
 
+		var titleCase = function titleCase(title) {
+			var titleCaseWord = function titleCaseWord(word) {
+				return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+			};
+			if (!title.includes("")) {
+				return titleCaseWord(title);
+			}
+			return title.replace(/_/g, " ").split(" ").map(titleCaseWord).join(" ");
+		};
+
 		var showButtons = function showButtons() {
 			buttonClose.style.display = "none";
 			buttonInfo.style.display = "none";
@@ -136,12 +146,7 @@ var exps = function exps(experimentsDetails) {
 					title = expDetails.title;
 				}
 				button.key = key;
-				// Convert to title case if no spaces found
-				if (!title.includes(" ")) {
-					title = title.replace(/_/g, " ").split(" ").map(function (word) {
-						return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-					}).join(" ");
-				}
+				title = titleCase(title);
 				button.innerHTML = title;
 				expList.appendChild(button);
 			}
@@ -149,8 +154,46 @@ var exps = function exps(experimentsDetails) {
 
 		var showInfo = function showInfo() {
 			panelInfo.classList.add("displayed");
-			panelInfoDetails.innerHTML = "\n<h4>EXPGFX</h4>\n<h1>" + info.title + "</h1>\n" + info.description + "\n" + (info.srcHidden ? // some were made after private repo:
-			"" : "<p><a href='https://github.com/raurir/experimental-graphics/blob/master/src/" + info.key + ".js' target='_blank'>SRC on Github</a></p>");
+			panelInfoDetails.innerHTML = "\n<h4>EXPGFX</h4>\n<h1>" + info.title + "</h1>\n" + (info.description || "No description provided") + "\n" +
+			//info.srcHidden
+			// some were made after private repo:
+			//  ""
+			// `<p><a href='https://github.com/raurir/experimental-graphics/blob/master/src/${info.key}.js' target='_blank'>SRC on Github</a></p>`
+			"<p><a href='#' class='view-source-link'>View Source</a></p>";
+
+			var viewSourceLink = panelInfoDetails.querySelector(".view-source-link");
+			dom.on(viewSourceLink, ["click"], function (e) {
+				e.preventDefault();
+				showSource();
+			});
+		};
+
+		var showSource = function showSource() {
+			panelInfoDetails.innerHTML = "<p>Loading source...</p>";
+			fetch("/es5/" + info.key + ".js").then(function (response) {
+				if (!response.ok) {
+					throw new Error("HTTP " + response.status + ": " + response.statusText);
+				}
+				return response.text();
+			}).then(function (sourceCode) {
+				panelInfoDetails.innerHTML = "\n<h4>EXPGFX:SRC</h4>\n<h1>" + info.key + ".js</h1>\n<pre><code>" + escapeHtml(sourceCode) + "</code></pre>\n<p><a href='#' class='back-to-info-link'>\u2190 Back to Info</a></p>\n";
+			}).catch(function (error) {
+				console.warn("Error loading source", error);
+				panelInfoDetails.innerHTML = "\n<h4>EXPGFX:SRC:ERROR</h4>\n<p>Could not load source code: " + error.message + "</p>\n<p><a href='#' class='back-to-info-link'>\u2190 Back to Info</a></p>\n";
+			}).finally(function () {
+				console.log("finally");
+				var backLink = panelInfoDetails.querySelector(".back-to-info-link");
+				dom.on(backLink, ["click"], function (e) {
+					e.preventDefault();
+					showInfo();
+				});
+			});
+		};
+
+		var escapeHtml = function escapeHtml(text) {
+			var div = document.createElement("div");
+			div.textContent = text;
+			return div.innerHTML;
 		};
 
 		var hideInfo = function hideInfo() {
@@ -256,7 +299,8 @@ var exps = function exps(experimentsDetails) {
 				if (info) {
 					info.key = key;
 				} else {
-					buttonsNav.removeChild(buttonInfo);
+					info = { key: key, title: titleCase(key) };
+					// buttonsNav.removeChild(buttonInfo);
 				}
 
 				if (info.preventRefresh) {

@@ -3,7 +3,6 @@
 var isNode = typeof module !== "undefined";
 
 var r = rand.instance();
-r.setSeed(Math.random());
 var c = colours.instance(r);
 
 var overflow = function overflow() {
@@ -14,6 +13,7 @@ var overflow = function overflow() {
 
 	var polys = [];
 	function init(options) {
+		r.setSeed(options.seed || Math.random());
 		size = options.size;
 		sw = options.sw || size;
 		sh = options.sh || size;
@@ -23,8 +23,11 @@ var overflow = function overflow() {
 
 		createPolygon();
 		createPolygon();
+		createPolygon();
+
 		polys.forEach(function (poly) {
-			ctx.strokeStyle = poly.colour;
+			ctx.strokeStyle = "#ffffffa0";
+			ctx.fillStyle = poly.colour + "40";
 			ctx.beginPath();
 			poly.points.forEach(function (_ref, i) {
 				var x = _ref.x,
@@ -37,11 +40,34 @@ var overflow = function overflow() {
 				} else {
 					ctx.moveTo(xs, ys);
 				}
-				// con.log(xs, ys);
 			});
 			ctx.closePath();
 			ctx.stroke();
-			// ctx.fill();
+			ctx.fill();
+		});
+
+		polys.forEach(function (poly) {
+			ctx.strokeStyle = poly.colour;
+			ctx.beginPath();
+			poly.points.forEach(function (_ref2, i) {
+				var x = _ref2.x,
+				    y = _ref2.y;
+
+				var xs = x * sw,
+				    ys = y * sh;
+
+				polys.forEach(function (otherPoly) {
+					if (poly === otherPoly) {
+						// ignore
+					} else {
+						var inside = geom.pointInPolygon(otherPoly.points, { x: x, y: y });
+						if (inside) {
+							ctx.fillStyle = "#ff000080";
+							ctx.fillRect(xs - 10, ys - 10, 20, 20);
+						}
+					}
+				});
+			});
 		});
 	}
 
@@ -50,7 +76,7 @@ var overflow = function overflow() {
 			colour: c.getRandomColour(),
 			points: []
 		};
-		// geom.pointInPolygon(polygon, point)
+
 		var sides = r.getInteger(3, 17);
 		var radius = r.getNumber(0.1, 0.4);
 		var cx = r.getNumber(0, 1);

@@ -1,7 +1,5 @@
 (function() {
-  var bits, can, centre, con, ctx, d, draw, gap, init, oscs, seeds, size, time;
-
-  con = console;
+  var bits, can, centre, ctx, d, draw, gap, init, oscs, seeds, size;
 
   d = document;
 
@@ -17,8 +15,6 @@
 
   can = null;
 
-  time = 0;
-
   oscs = 4;
 
   seeds = [];
@@ -32,22 +28,32 @@
     for (i = _i = 0; _i < oscs; i = _i += 1) {
       seeds[i] = Math.pow(2, i + 1) + (Math.random() * 2 - 1) * 10;
     }
-    con.log(seeds);
     return draw();
   };
 
-  draw = function() {
-    var i, rgb, v, x, y, _i, _j;
+  draw = function(time) {
+    var b, i, o, r, v, vs, x, y, _i, _j, _k;
     can.width = can.width;
-    time += 1;
+    vs = [];
     for (x = _i = 0; _i < bits; x = _i += 1) {
       v = 0;
       for (i = _j = 0; _j < oscs; i = _j += 1) {
-        v += Math.sin((time + x) * seeds[i] * 0.01) / Math.pow(2, i + 1);
+        o = Math.sin((time / 10 + x) * seeds[i] * 0.01) / Math.pow(2, i + 1);
+        y = centre + o * 100;
+        r = 100 + 50 * i;
+        b = 200 - 50 * i;
+        ctx.fillStyle = "rgba(" + r + ",0," + b + ",0.5)";
+        ctx.fillRect(x * gap, y, 2, 2);
+        v += o;
       }
+      vs.push(v);
+    }
+    for (x = _k = 0; _k < bits; x = _k += 1) {
+      v = vs[x];
       y = centre + v * centre / oscs;
-      rgb = 0;
-      ctx.fillStyle = "rgba(" + rgb + "," + rgb + "," + rgb + ",1)";
+      r = x * 255 / bits;
+      b = 255 - r;
+      ctx.fillStyle = "rgb(" + r + ",0," + b + ")";
       ctx.fillRect(x * gap, y, 10, 10);
     }
     return requestAnimationFrame(draw);
