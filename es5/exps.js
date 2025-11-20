@@ -47,20 +47,13 @@ var exps = function exps(experimentsDetails) {
 		document.body.appendChild(expList);
 
 		var buttonsNav = dom.element("div", { className: "exps-buttons" });
-		buttonsNav.style.cssText = "pointer-events: auto !important; z-index: 99999 !important; position: fixed !important; touch-action: manipulation !important;";
 		document.body.appendChild(buttonsNav);
 
 		var buttonClose = dom.button("X", { className: "exps-button" });
-		buttonClose.style.cssText = "pointer-events: auto !important; z-index: 10000 !important; position: relative !important;";
 		buttonsNav.appendChild(buttonClose);
-		var handleClose = function handleClose(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			e.stopImmediatePropagation();
+		dom.on(buttonClose, ["click", "touchend"], function () {
 			window.location = "/" + (viewSource ? "?src" : "");
-			return false;
-		};
-		dom.on(buttonClose, ["click", "touchstart", "touchend"], handleClose);
+		});
 
 		var buttonReload = dom.button("", { className: "exps-button" });
 		buttonsNav.appendChild(buttonReload);
@@ -74,16 +67,10 @@ var exps = function exps(experimentsDetails) {
 		buttonReload.appendChild(buttonReloadSymbol);
 
 		var buttonInfo = dom.button("?", { className: "exps-button" });
-		buttonInfo.style.cssText = "pointer-events: auto !important; z-index: 10000 !important; position: relative !important;";
 		buttonsNav.appendChild(buttonInfo);
-		var handleInfo = function handleInfo(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-			showInfo();
-			return false;
-		};
-		dom.on(buttonInfo, ["click", "touchstart", "touchend"], handleInfo);
+		dom.on(buttonInfo, ["click", "touchend"], function () {
+			return showInfo();
+		});
 
 		var panelInfo = dom.element("div", { className: "exps-info" });
 		var panelInfoDetails = dom.element("div", {
@@ -94,12 +81,8 @@ var exps = function exps(experimentsDetails) {
 		});
 		var panelButtonClose = dom.button("X", { className: "exps-button" });
 
-		dom.on(panelButtonClose, ["click", "touchstart"], function (e) {
-			if (e.type === "touchstart") {
-				e.preventDefault();
-				e.stopPropagation();
-			}
-			hideInfo();
+		dom.on(panelButtonClose, ["click", "touchend"], function () {
+			return hideInfo();
 		});
 
 		document.body.appendChild(panelInfo);
@@ -323,15 +306,9 @@ var exps = function exps(experimentsDetails) {
 				if (info.preventRefresh) {
 					buttonsNav.removeChild(buttonReload);
 				} else {
-					buttonReload.style.cssText = "pointer-events: auto !important; z-index: 10000 !important; position: relative !important;";
-					var handleReload = function handleReload(e) {
-						e.preventDefault();
-						e.stopPropagation();
-						e.stopImmediatePropagation();
+					dom.on(buttonReload, ["click", "touchend"], function () {
 						window.location = "?" + key + "," + Math.round(Math.random() * 1e10) + (viewSource ? "&src" : "");
-						return false;
-					};
-					dom.on(buttonReload, ["click", "touchstart", "touchend"], handleReload);
+					});
 				}
 
 				// Add experiment-active class to body when experiment is loaded
