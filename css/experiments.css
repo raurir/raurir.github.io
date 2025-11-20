@@ -210,12 +210,16 @@ body.experiment-active header {
   background: transparent;
   box-shadow: none;
 }
+canvas {
+  border: 1px solid #00f !important;
+}
 #experiment-holder {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100vw;
   height: 100vh;
+  border: 1px solid #f00;
 }
 #experiment-holder.fixed {
   position: fixed;
