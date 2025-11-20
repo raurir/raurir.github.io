@@ -109,12 +109,12 @@ body.experiment-active header {
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   opacity: 0;
   padding: 8px;
-  pointer-events: auto;
-  position: absolute;
+  pointer-events: auto !important;
+  position: fixed;
   right: 0;
   top: -40px;
   transition: top 0.2s ease-out, opacity 0.3s ease-out;
-  z-index: 99;
+  z-index: 9999 !important;
 }
 .exps-buttons.interacted {
   top: 0;
@@ -131,14 +131,16 @@ body.experiment-active header {
   float: right;
   font-size: 10px;
   margin-left: 6px;
+  min-height: 44px;
+  min-width: 44px;
   padding: 4px 12px;
-  pointer-events: auto;
+  pointer-events: auto !important;
   position: relative;
   touch-action: manipulation;
   transition: all 0.2s ease-out;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  z-index: 100;
+  z-index: 10000 !important;
 }
 .exps-buttons .exps-button:hover {
   border-color: var(--colour-accent);
@@ -221,6 +223,7 @@ body.experiment-active header {
 }
 canvas {
   border: 1px solid #00f !important;
+  pointer-events: auto;
 }
 #experiment-holder {
   display: flex;
@@ -229,9 +232,13 @@ canvas {
   width: 100vw;
   height: 100vh;
   border: 1px solid #f00;
+  pointer-events: none;
 }
 #experiment-holder.fixed {
   position: fixed;
+}
+#experiment-holder > * {
+  pointer-events: auto;
 }
 #experiment-holder > * {
   max-width: 100%;
