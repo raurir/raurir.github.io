@@ -1,6 +1,7 @@
 "use strict";
 
 define("cube_fractal_zoom", function () {
+	var rnd = rand.instance();
 
 	var cubeSize = 200;
 	var gridSize = cubeSize * 1.2;
@@ -40,7 +41,10 @@ define("cube_fractal_zoom", function () {
 			grid.push(c);
 		}
 		return {
-			group: group, inner: inner, num: num, grid: grid
+			group: group,
+			inner: inner,
+			num: num,
+			grid: grid
 		};
 	}
 
@@ -55,7 +59,8 @@ define("cube_fractal_zoom", function () {
 		return new THREE.Mesh(geometry, material);
 	}
 
-	function init() {
+	function init(options) {
+		rnd.setSeed(options && options.seed || Math.random());
 
 		scene = new THREE.Scene();
 
@@ -93,7 +98,6 @@ define("cube_fractal_zoom", function () {
 	}
 
 	function zoomIn() {
-
 		next.group.scale.set(0.001, 0.001, 0.001);
 
 		var scale = prev.num;
@@ -135,16 +139,18 @@ define("cube_fractal_zoom", function () {
 			var z = zi * gridSize;
 
 			TweenMax.to(c.position, 1.5, {
-				x: x, y: y, z: z,
+				x: x,
+				y: y,
+				z: z,
 				ease: Quad.easeInOut,
 				delay: 1
 			});
 		});
 
 		destRot = {
-			x: rand.getNumber(-Math.PI, Math.PI),
-			y: rand.getNumber(-Math.PI, Math.PI),
-			z: rand.getNumber(-Math.PI, Math.PI)
+			x: rnd.getNumber(-Math.PI, Math.PI),
+			y: rnd.getNumber(-Math.PI, Math.PI),
+			z: rnd.getNumber(-Math.PI, Math.PI)
 		};
 
 		TweenMax.to(prev.group.rotation, 2.5, {
@@ -173,18 +179,22 @@ define("cube_fractal_zoom", function () {
 			var z = zi * g;
 			if (index != 0) {
 				TweenMax.to(c.position, 2.5, {
-					x: x, y: y, z: z,
+					x: x,
+					y: y,
+					z: z,
 					ease: Quad.easeIn
 				});
 				TweenMax.to(c.rotation, 2.5, {
-					x: rand.getNumber(-2, 2),
-					y: rand.getNumber(-2, 2),
-					z: rand.getNumber(-2, 2),
+					x: rnd.getNumber(-2, 2),
+					y: rnd.getNumber(-2, 2),
+					z: rnd.getNumber(-2, 2),
 					ease: Quint.easeIn
 				});
 			}
 			TweenMax.to(c.scale, 2.5, {
-				x: 0, y: 0, z: 0,
+				x: 0,
+				y: 0,
+				z: 0,
 				ease: Quint.easeIn
 			});
 		});
@@ -219,7 +229,6 @@ define("cube_fractal_zoom", function () {
 	}
 
 	function render(time) {
-
 		function moveLight(light, x, y, z) {
 			var sc = 0.00004;
 			var t = time + 10000;
