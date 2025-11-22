@@ -166,19 +166,19 @@ body.experiment-active header {
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   box-sizing: border-box;
-  height: 80%;
-  left: 10%;
-  opacity: 0;
+  top: -100vh;
+  left: 10vw;
+  width: 80vw;
+  height: 80vh;
+  opacity: 1;
   padding: 3rem;
-  position: absolute;
-  top: -100%;
+  position: fixed;
   transition: top 0.4s ease-out, opacity 0.3s ease-out, height 0.4s ease-out;
-  width: 80%;
 }
 .exps-info.displayed {
   display: block;
   opacity: 1;
-  top: 10%;
+  top: 10vh;
 }
 .exps-info h1 {
   color: var(--colour-accent);
@@ -204,9 +204,9 @@ body.experiment-active header {
 }
 .exps-info .exps-info-details {
   color: rgba(255,255,255,0.85);
-  height: 100%;
   overflow-x: auto;
   overflow-y: auto;
+  height: 100vh;
 }
 .exps-info .exps-buttons {
   backdrop-filter: none;

@@ -26,6 +26,20 @@ var exps = function exps(experimentsDetails) {
 		document.documentElement.style.setProperty("--colour-accent", "hsl(" + randomHue + ", 100%, 60%)");
 		document.documentElement.style.setProperty("--colour-accent-20", "hsla(" + randomHue + ", 100%, 60%, 0.2)");
 
+		// Debug: log what element is being clicked/touched
+		/*
+  dom.on(document, ["click", "touchstart", "touchend"], (e) => {
+  	var target = e.target;
+  	var targetInfo = {
+  		tagName: target.tagName,
+  		className: target.className,
+  		id: target.id,
+  		element: target,
+  	};
+  	alert("Click/Touch target: " + JSON.stringify(targetInfo, null, 2));
+  });
+  */
+
 		var experimentActive = false;
 		var info;
 		var currentExperiment;
