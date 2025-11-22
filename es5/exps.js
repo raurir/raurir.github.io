@@ -184,13 +184,16 @@ var exps = function exps(experimentsDetails) {
 
 		var showSource = function showSource() {
 			panelInfoDetails.innerHTML = "<p>Loading source...</p>";
-			fetch("/es5/" + info.key + ".js").then(function (response) {
+			var isCoffeeScript = info.src === "coffeescript";
+			var sourcePath = isCoffeeScript ? "/cs/" + info.key + ".coffee" : "/es5/" + info.key + ".js";
+			var fileName = isCoffeeScript ? info.key + ".coffee" : info.key + ".js";
+			fetch(sourcePath).then(function (response) {
 				if (!response.ok) {
 					throw new Error("HTTP " + response.status + ": " + response.statusText);
 				}
 				return response.text();
 			}).then(function (sourceCode) {
-				panelInfoDetails.innerHTML = "\n<h4>EXPGFX:SRC</h4>\n<h1>" + info.key + ".js</h1>\n<pre><code>" + escapeHtml(sourceCode) + "</code></pre>\n<p><a href='#' class='back-to-info-link'>\u2190 Back to Info</a></p>\n";
+				panelInfoDetails.innerHTML = "\n<h4>EXPGFX:SRC</h4>\n<h1>" + fileName + "</h1>\n<pre><code>" + escapeHtml(sourceCode) + "</code></pre>\n<p><a href='#' class='back-to-info-link'>\u2190 Back to Info</a></p>\n";
 			}).catch(function (error) {
 				console.warn("Error loading source", error);
 				panelInfoDetails.innerHTML = "\n<h4>EXPGFX:SRC:ERROR</h4>\n<p>Could not load source code: " + error.message + "</p>\n<p><a href='#' class='back-to-info-link'>\u2190 Back to Info</a></p>\n";
@@ -313,9 +316,9 @@ var exps = function exps(experimentsDetails) {
 				if (info) {
 					info.key = key;
 				} else {
-					info = { key: key, title: titleCase(key) };
-					// buttonsNav.removeChild(buttonInfo);
+					info = { key: key };
 				}
+				if (!info.title) info.title = titleCase(key);
 
 				if (info.preventRefresh) {
 					buttonsNav.removeChild(buttonReload);

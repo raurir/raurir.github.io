@@ -29,7 +29,8 @@ define("exps_details", function () {
 	var details = {
 		additive: {
 			title: "Additive",
-			description: "<p>Multiple oscillations of sine are added together.</p>\n<p>Background lines are each sine wave, foreground is their combined values.</p>\n<p>Very much how audio additive synthesis works.</p>"
+			description: "<p>Multiple oscillations of sine are added together.</p>\n<p>Background lines are each sine wave, foreground is their combined values.</p>\n<p>Very much how audio additive synthesis works.</p>",
+			src: "coffeescript"
 		},
 		ball_and_chain: {
 			title: "Ball and Chain",
@@ -79,6 +80,15 @@ define("exps_details", function () {
 		linked_line: {
 			title: "Linked Line",
 			description: "<p>Labyrinth generator. Brute force method, starts with a simple line and tries to find points that the line can expand to, to find a more twisty line.</p>\n\t\t\t<p>There are 4 debug canvases:\n\t\t\t<li>Actual size as it generates: green dots are active points that can be explored more</li>\n\t\t\t<li>Zoomed in as it generates</li>\n\t\t\t<li>Zoomed in canvas after processing is complete</li>\n\t\t\t<li>Zoomed in canvas showing wall calculations</li>\n\t\t\t</p>"
+		},
+		maze: {
+			src: "coffeescript"
+		},
+		recursive: {
+			src: "coffeescript"
+		},
+		squaretracer: {
+			src: "coffeescript"
 		},
 		overflow: {
 			title: "Overflow Polygons",
