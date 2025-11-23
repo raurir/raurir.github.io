@@ -88,8 +88,9 @@ define("cube_fractal_zoom", function () {
 		var lightAmbient = new THREE.AmbientLight(0xffe0e0, 0.2);
 		scene.add(lightAmbient);
 
-		prev = cubes(2);
-		next = cubes(2);
+		// try 2,3,5:
+		prev = cubes(3);
+		next = cubes(3);
 
 		document.body.appendChild(renderer.domElement);
 		render(0);
@@ -113,7 +114,9 @@ define("cube_fractal_zoom", function () {
 		// 3: 0.5 > -1.5
 		// 4: 1 > -2
 		// 5: 1.5 > -2.5
-		var xi = 0;
+		// var xi = 0; // for 2
+		var xi = -0.5; // for 3
+		// var xi = -0.5; // for 5
 		var yi = xi; //0;
 		var zi = xi; // 0;
 
@@ -128,15 +131,18 @@ define("cube_fractal_zoom", function () {
 			ease: Quad.easeInOut
 		});
 
+		// const expandSize = 1; // for 2
+		var expandSize = 5; // for 3
+		// const expandSize = 5; // for 5
 		prev.grid.forEach(function (c, index) {
 			var _getIndex2 = getIndex(index, prev.num),
 			    xi = _getIndex2.xi,
 			    yi = _getIndex2.yi,
 			    zi = _getIndex2.zi;
 
-			var x = xi * gridSize;
-			var y = yi * gridSize;
-			var z = zi * gridSize;
+			var x = xi * gridSize * expandSize;
+			var y = yi * gridSize * expandSize;
+			var z = zi * gridSize * expandSize;
 
 			TweenMax.to(c.position, 1.5, {
 				x: x,
@@ -166,6 +172,19 @@ define("cube_fractal_zoom", function () {
 		next.group.scale.set(1, 1, 1);
 		next.group.rotation.set(destRot.x, destRot.y, destRot.z);
 
+		var targetIndex;
+		switch (prev.num) {
+			case 2:
+				targetIndex = 0;
+				break;
+			case 3:
+				targetIndex = 13;
+				break;
+			case 5:
+				targetIndex = 39;
+				break;
+		}
+
 		// explode
 		var g = gridSize * 4;
 		prev.grid.forEach(function (c, index) {
@@ -177,7 +196,7 @@ define("cube_fractal_zoom", function () {
 			var x = xi * g;
 			var y = yi * g;
 			var z = zi * g;
-			if (index != 0) {
+			if (index != targetIndex) {
 				TweenMax.to(c.position, 2.5, {
 					x: x,
 					y: y,
