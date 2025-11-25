@@ -90,6 +90,9 @@ define("exps_details", function () {
 		maze: {
 			src: "coffeescript"
 		},
+		maze_cube: {
+			description: "A never ending line, technically a labyrinth, not a maze as the title suggests, navigates around all faces of a cube"
+		},
 		recursive: {
 			src: "coffeescript"
 		},
