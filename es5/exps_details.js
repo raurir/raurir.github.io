@@ -30,68 +30,54 @@ define("exps_details", function () {
 
 	var details = {
 		additive: {
-			title: "Additive",
 			description: "<p>Multiple oscillations of sine are added together.</p>\n<p>Background lines are each sine wave, foreground is their combined values.</p>\n<p>Very much how audio additive synthesis works.</p>",
 			src: "coffeescript"
 		},
 		ball_and_chain: {
-			title: "Ball and Chain",
 			description: "<p>In the celebration of the <a href='http://www.abc.net.au/news/2017-11-15/australia-reacts-to-the-same-sex-marriage-survey-results/9151826' target='_blank'>Yes</a> Vote, started making this ball and chain in THREE + Cannon. Took a bit longer than expected, hopefully I can make a rainbow happy one for legalisation day.</p><p>Something along the lines of \"It's raining ball and chains\"</p>"
 		},
 		cube_fractal_zoom: {
-			title: "Cube Fractal Zoom",
 			description: "<p>Zooming into a cube that subdivides into muliple cubes.</p><p>Envisioned version is for each subdivision to be variable slice amounts rather than 2x2x2. Someday.</p><p>Also would like some kind of infinite shader, potentially perlin noise.</p>"
 		},
 		cube_pixelator: {
-			title: "Cube pixelator",
 			description: "<p>Should be called 'Plane pixelator' since they are planes, not cubes.</p><p>Planes are distributed through a 2 dimensional grid with each plane representing a pixel.</p><p>Each plane is exactly the same colour and this colour never changes. Instead, each plane rotates accordingly to catch the lighting within the scene and by doing so adapts its apparent shade, and thereby creates an image.</p>"
 		},
 		frame_inverse: {
-			title: "Frame Inverse",
 			description: "<p>Drawing rectangles, aye...</p><p>listen to <a href='https://youngerbrothermusic.bandcamp.com/album/the-last-days-of-gravity' target='_blank'>Younger Brother - Last Days of Gravity</a>.</p>"
 		},
 		fool: {
-			title: "Fool",
 			description: "<p>A minimal navigation experiment with tree structures. There may have been some cutting edge CSS tricks utilised.</p>"
 		},
 		fur: {
-			title: "Fur",
 			description: "<p>2 channels of perlin noise affect x and y lean of each hair of fur.</p>"
 		},
 		hex_rounded: {
-			title: "Hex Rounded",
 			description: "<p>Hex Rounded? Some title, but that's what it's been dubbed since inception in 2014 or so. Never worked properly, so fixed it up for Codevember 2017.</p>"
 		},
 		infinite_scrolling_cogs: {
-			title: "Infinite Scrolling Cogs",
 			description: "<p>Remake of <a href='https://codepen.io/raurir/pen/eknLg' target='_blank'>an old experiment</a> this time it's scrolling, non ineractive and more of a toon rendering style.</p><p>The thing I liked the best about the original, and this algorithm, is the cogs are very close to mathematically correct; not only do they animate in a life like fashion on screen, I am confident a 3D print of the geometry involved would result in a smoothly running friction free machine.</p><p>This algorithm continually creates canvases with no garbage collection. It will crash the browser eventually, I imagine, but you'd be bored after a minute anyway?</p>"
 		},
 		infinite_stairs: {
-			title: "Infinite Stairs",
 			description: "<p>Work in progress</p><p>Trying to make an infinite staircase, potentially spooky.</p>"
 		},
 		isometric_words: {
-			title: "Isometric Words",
 			description: "<p>Muddling up cubes by using the simplicity of Isometric projection.</p><p>Randomly offset the objects along the same axis the camera is looking down.</p>"
 		},
 		interpolated: {
-			title: "Interpolated",
-			description: "<p>FXhash exp</p>",
-			srcHidden: true
+			description: "<p>FXhash exp</p>"
+			// srcHidden: true,
 		},
 		lego_stack: {
-			title: "Lego Stack",
 			description: "<p>Important scientifically realistic simulation to study how high lego can be stacked.</p>"
 		},
 		linked_line: {
-			title: "Linked Line",
 			description: "<p>Labyrinth generator. Brute force method, starts with a simple line and tries to find points that the line can expand to, to find a more twisty line.</p>\n\t\t\t<p>There are 4 debug canvases:\n\t\t\t<li>Actual size as it generates: green dots are active points that can be explored more</li>\n\t\t\t<li>Zoomed in as it generates</li>\n\t\t\t<li>Zoomed in canvas after processing is complete</li>\n\t\t\t<li>Zoomed in canvas showing wall calculations</li>\n\t\t\t</p>"
 		},
 		maze: {
 			src: "coffeescript"
 		},
 		maze_cube: {
-			description: "A never ending line, technically a labyrinth, not a maze as the title suggests, navigates around all faces of a cube"
+			description: "<p>A never ending line, technically a labyrinth not a maze as the title suggests, navigates around all faces of a cube.</p>"
 		},
 		recursive: {
 			src: "coffeescript"
@@ -104,24 +90,19 @@ define("exps_details", function () {
 			description: "<p>Polygons possibly overlap. Points within are highlighted red.</p>"
 		},
 		polyhedra_three: {
-			title: "Polyhedra Three",
 			description: "<p>Somewhat custom render of polyhedra.</p>\n<p>This was a preemptive exploration for rendering to print and writing a custom 3d engine in Lua.</p>\n<p>It uses Stemkoski's polyhedra data from <a href='https://stemkoski.github.io/Three.js/Polyhedra.html' target='_blank'>here</a> \nwhich in turn uses George Hart's data from <a href='https://www.georgehart.com/virtual-polyhedra/vp.html' target='_blank'>here</a>.</p>"
 		},
 		recursive_circle: {
-			title: "Recursive Circle",
 			description: "<p>Recursive rendering. Managed to not crash my browser creating this! Life achievement.</p>",
 			preventRefresh: true
 		},
 		seven_four_sevens: {
-			title: "Seven Four Sevens",
 			description: "<p>An old flash experiment remade in javascript.</p><p>Thanks to the demise of flash I will lose heaps of graphical experiments, some irretrievably lost due to inability to open .FLAs - luckily this one had the source in a .as file.</p>"
 		},
 		synth_ambient: {
-			title: "Synth Ambient",
 			description: "<h2>This will be loud!</h2><p>A quick trip into audio synthesis in the browser.</p><p>That's the thing about synthesis, you can create out of control waveforms quite easily, hence the volume.</p><p>Using <a href='https://github.com/Tonejs/Tone.js' target='_blank'>Tone.js</a> for all the audio generation, this experiment creates a number of randomised effects, a bunch of randomised synthesizers, and with those creates a randomised drum track, randomised chords and a ranomised arpeggio.</p>"
 		},
 		triangles: {
-			title: "Triangles",
 			description: "<p>A plane of triangles fall away as they zoom towards the screen.</p><p>Probably a bit heavy for phones.</p>"
 		}
 	};

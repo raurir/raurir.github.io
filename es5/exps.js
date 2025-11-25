@@ -198,7 +198,6 @@ var exps = function exps(experimentsDetails) {
 				console.warn("Error loading source", error);
 				panelInfoDetails.innerHTML = "\n<h4>EXPGFX:SRC:ERROR</h4>\n<p>Could not load source code: " + error.message + "</p>\n<p><a href='#' class='back-to-info-link'>\u2190 Back to Info</a></p>\n";
 			}).finally(function () {
-				console.log("finally");
 				var backLink = panelInfoDetails.querySelector(".back-to-info-link");
 				dom.on(backLink, ["click"], function (e) {
 					e.preventDefault();
@@ -292,7 +291,10 @@ var exps = function exps(experimentsDetails) {
 				// Watch for canvases being added anywhere and move them to holder
 				var observer = new MutationObserver(function (mutations) {
 					mutations.forEach(function (mutation) {
-						// console.log("mutation observed", experimentActive);
+						if (mutation.target.className === "exps-info-details")
+							// in case user views source as their first action!
+							return;
+						// console.log("mutation observed", mutation.target.className, experimentActive);
 						if (!experimentActive) return;
 						mutation.addedNodes.forEach(function (node) {
 							// console.log("firstNode", firstNode);
