@@ -5,12 +5,12 @@
 body {
   background: #111;
   overflow: hidden;
-  font-family: 'MyWebFont', Fallback, sans-serif;
 }
 .container {
   position: relative;
   background: #111;
   color: #333;
+  font-family: 'MyWebFont', Fallback, sans-serif;
 }
 .nav {
   float: left;

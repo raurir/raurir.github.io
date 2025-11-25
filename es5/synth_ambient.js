@@ -1,20 +1,23 @@
 "use strict";
 
 var synth_ambient = function synth_ambient(Tone) {
-
+	var container = dom.element("div");
 	function init() {
-
-		var watchOut = dom.element("h1", { innerHTML: "Beware your speakers!" });
-		document.body.appendChild(watchOut);
+		var inner = dom.element("div");
+		container.appendChild(inner);
+		var watchOut = dom.element("h1", { innerHTML: "Beware your speakers!", style: { color: "white" } });
+		inner.appendChild(watchOut);
 		var loadNext = dom.button("Load another permutation", {
 			style: {
-				border: "1px solid black",
+				backgroundColor: "black",
+				color: "white",
+				border: "1px solid grey",
 				borderRadius: "5px",
 				display: "inline-block",
 				padding: "5px"
 			}
 		});
-		document.body.appendChild(loadNext);
+		inner.appendChild(loadNext);
 		dom.on(loadNext, ["click"], function () {
 			window.location = "?synth_ambient," + Math.round(Math.random() * 1e10);
 		});
@@ -25,7 +28,7 @@ var synth_ambient = function synth_ambient(Tone) {
 
 		Tone.Transport.bpm.value = rand.getInteger(80, 115);
 
-		var notes = [['b2', 'g2', 'c3', 'b3', 'g3', 'c4'], ['c#3', 'g#3', 'c#4', 'g#4', 'c#5'], ['g3', 'b3', 'f#4', 'g4', 'b4', 'f#5', 'g5', 'b5'], ['A3', 'C4', 'E4', 'A4', 'C5', 'E5', 'A5', 'C6', 'E6'], ['e3', 'a#4', 'e4', 'a#5', 'e5']];
+		var notes = [["b2", "g2", "c3", "b3", "g3", "c4"], ["c#3", "g#3", "c#4", "g#4", "c#5"], ["g3", "b3", "f#4", "g4", "b4", "f#5", "g5", "b5"], ["A3", "C4", "E4", "A4", "C5", "E5", "A5", "C6", "E6"], ["e3", "a#4", "e4", "a#5", "e5"]];
 		notes = notes[rand.getInteger(0, notes.length - 1)];
 
 		function timeGenerator(min, max) {
@@ -33,28 +36,28 @@ var synth_ambient = function synth_ambient(Tone) {
 		}
 
 		var delayPingPong = new Tone.PingPongDelay({
-			"delayTime": "6n",
-			"feedback": 0.9,
-			"wet": 0.2
+			delayTime: "6n",
+			feedback: 0.9,
+			wet: 0.2
 		}).toMaster();
 
 		var delayFeedback = new Tone.FeedbackDelay({
-			"delayTime": timeGenerator(2, 4),
-			"feedback": 0.9,
-			"wet": 0.4
+			delayTime: timeGenerator(2, 4),
+			feedback: 0.9,
+			wet: 0.4
 		}).toMaster();
 
 		var lowPass = new Tone.Filter({
-			"frequency": rand.getNumber(6000, 20000)
+			frequency: rand.getNumber(6000, 20000)
 		}).toMaster();
 
 		var freeverb = new Tone.Freeverb().toMaster();
 		freeverb.dampening.value = rand.getNumber(10, 5000);
 
 		var phaser = new Tone.Phaser({
-			"frequency": rand.getNumber(10, 3000),
-			"octaves": rand.getInteger(1, 7),
-			"baseFrequency": rand.getNumber(1000, 2000)
+			frequency: rand.getNumber(10, 3000),
+			octaves: rand.getInteger(1, 7),
+			baseFrequency: rand.getNumber(1000, 2000)
 		}).toMaster();
 
 		var crusher = new Tone.BitCrusher(rand.getInteger(2, 6)).toMaster();
@@ -73,28 +76,28 @@ var synth_ambient = function synth_ambient(Tone) {
 
 		var kickTime = timeGenerator(1, 2);
 		var kick = connectGenerator(new Tone.MembraneSynth({
-			"envelope": {
-				"sustain": 0,
-				"attack": 0.02,
-				"decay": 0.8
+			envelope: {
+				sustain: 0,
+				attack: 0.02,
+				decay: 0.8
 			},
-			"octaves": 10
+			octaves: 10
 		}));
 		var kickPart = new Tone.Loop(function (time) {
 			kick.triggerAttackRelease("C2", "1n", time);
 		}, kickTime).start(0);
 
 		var snare = connectGenerator(new Tone.NoiseSynth({
-			"volume": -5,
-			"envelope": {
-				"attack": 0.001,
-				"decay": 0.7,
-				"sustain": 0
+			volume: -5,
+			envelope: {
+				attack: 0.001,
+				decay: 0.7,
+				sustain: 0
 			},
-			"filterEnvelope": {
-				"attack": 0.001,
-				"decay": 0.6,
-				"sustain": 0
+			filterEnvelope: {
+				attack: 0.001,
+				decay: 0.6,
+				sustain: 0
 			}
 		}));
 		var snarePart = new Tone.Loop(function (time) {
@@ -102,34 +105,34 @@ var synth_ambient = function synth_ambient(Tone) {
 		}, "2n").start("4n");
 
 		var hihatClosed = connectGenerator(new Tone.NoiseSynth({
-			"volume": -9,
-			"envelope": {
-				"attack": 0.001,
-				"decay": 0.1,
-				"sustain": 0
+			volume: -9,
+			envelope: {
+				attack: 0.001,
+				decay: 0.1,
+				sustain: 0
 			},
-			"filterEnvelope": {
-				"attack": 0.001,
-				"decay": 0.01,
-				"sustain": 0
+			filterEnvelope: {
+				attack: 0.001,
+				decay: 0.01,
+				sustain: 0
 			}
 		}));
 
 		var hihatOpen = connectGenerator(new Tone.NoiseSynth({
-			"volume": -10,
-			"filter": {
-				"Q": 1
+			volume: -10,
+			filter: {
+				Q: 1
 			},
-			"envelope": {
-				"attack": 0.01,
-				"decay": 0.3
+			envelope: {
+				attack: 0.01,
+				decay: 0.3
 			},
-			"filterEnvelope": {
-				"attack": 0.01,
-				"decay": 0.03,
-				"baseFrequency": 14000,
-				"octaves": -2.5,
-				"exponent": 4
+			filterEnvelope: {
+				attack: 0.01,
+				decay: 0.03,
+				baseFrequency: 14000,
+				octaves: -2.5,
+				exponent: 4
 			}
 		}));
 
@@ -144,34 +147,34 @@ var synth_ambient = function synth_ambient(Tone) {
 		}, hihatTime).start(0);
 
 		var synthArpeggio = connectGenerator(new Tone.DuoSynth());
-		synthArpeggio.voice0.oscillator.type = 'sine';
-		synthArpeggio.voice1.oscillator.type = 'square';
+		synthArpeggio.voice0.oscillator.type = "sine";
+		synthArpeggio.voice1.oscillator.type = "square";
 
 		var synthPoly = connectGenerator(new Tone.PolySynth(6, Tone.Synth, {
-			"oscillator": {
-				"partials": [0, 2, 3, 4]
+			oscillator: {
+				partials: [0, 2, 3, 4]
 			},
-			"envelope": {
-				"attack": 0.3,
-				"decay": 0.05,
-				"sustain": 0,
-				"release": 0.02
+			envelope: {
+				attack: 0.3,
+				decay: 0.05,
+				sustain: 0,
+				release: 0.02
 			}
 		}));
 
 		var bass = connectGenerator(new Tone.MonoSynth({
-			"volume": -10,
-			"envelope": {
-				"attack": 0.1,
-				"decay": 0.3,
-				"release": 2
+			volume: -10,
+			envelope: {
+				attack: 0.1,
+				decay: 0.3,
+				release: 2
 			},
-			"filterEnvelope": {
-				"attack": 0.001,
-				"decay": 0.01,
-				"sustain": 0.5,
-				"baseFrequency": 200,
-				"octaves": 2.6
+			filterEnvelope: {
+				attack: 0.001,
+				decay: 0.01,
+				sustain: 0.5,
+				baseFrequency: 200,
+				octaves: 2.6
 			}
 		}));
 
@@ -184,8 +187,8 @@ var synth_ambient = function synth_ambient(Tone) {
 		bassPart.probability = 0.9;
 
 		var noise = connectGenerator(new Tone.Noise({
-			"volume": -20,
-			"type": ["white", "brown", "pink"][rand.getInteger(0, 2)]
+			volume: -20,
+			type: ["white", "brown", "pink"][rand.getInteger(0, 2)]
 		}));
 		var noiseVolume = rand.getNumber(0, 0.4);
 		if (noiseVolume > 0.02) {
@@ -199,10 +202,10 @@ var synth_ambient = function synth_ambient(Tone) {
 
 		Tone.Transport.scheduleRepeat(function (time) {
 			var note = notesArpeggio[noteArpeggioCurrent % notesArpeggio.length];
-			if (noteArpeggioCurrent < notesArpeggio.length) synthArpeggio.triggerAttackRelease(note, '16n', time);
+			if (noteArpeggioCurrent < notesArpeggio.length) synthArpeggio.triggerAttackRelease(note, "16n", time);
 			noteArpeggioCurrent++;
 			noteArpeggioCurrent %= noteArpeggioLoop;
-		}, '16n');
+		}, "16n");
 
 		var polyTime = timeGenerator(1, 4);
 		var notesPoly = notes.slice(0, rand.getInteger(2, 6));
@@ -217,13 +220,13 @@ var synth_ambient = function synth_ambient(Tone) {
 		// 	synthWash.triggerAttackRelease(notesWash, "8n");
 		// }, washTime);
 
-
 		Tone.Transport.start();
 	}
 
 	return {
 		init: init,
-		resize: function resize() {}
+		resize: function resize() {},
+		stage: container
 	};
 };
 

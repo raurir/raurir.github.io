@@ -22,7 +22,9 @@ define("exps_details", function () {
 	// ["polyhedra", "3d"], // 3d is not moduled!
 	["polyhedra_three", "THREE", "../lib/stemkoski/polyhedra"],
 	// ["pine_three", "THREE"],
-	["race_lines_three", "THREE", "TweenMax"], ["rainbow_particles"], ["rectangular_fill"], ["recursive"], ["recursive_circle"], ["recursive_polygon"], ["reddit_proc_gen"], ["seven_four_sevens"], ["spiral_even"], ["squaretracer"],
+	["race_lines_three", "THREE", "TweenMax"], ["rainbow_particles"], ["rectangular_fill"], ["recursive"], ["recursive_circle"], ["recursive_polygon"],
+	// ["reddit_proc_gen"],
+	["seven_four_sevens"], ["spiral_even"], ["squaretracer"],
 	// ["squash_match_shirt", "fill/stripes", "fill/dither"],
 	["synth_ambient", "Tone"], ["tea"], ["tentacle"], ["tessellation"], ["tetris_cube", "THREE", "TweenMax"], ["text_grid"], ["triangles", "THREE", "TweenMax"], ["tunnel_tour_three", "THREE", "TweenMax"], ["typography"], ["voronoi_stripes", "voronoi", "fill/stripes", "fill/dither"], ["zoned_particles"]];
 
@@ -47,6 +49,10 @@ define("exps_details", function () {
 		frame_inverse: {
 			title: "Frame Inverse",
 			description: "<p>Drawing rectangles, aye...</p><p>listen to <a href='https://youngerbrothermusic.bandcamp.com/album/the-last-days-of-gravity' target='_blank'>Younger Brother - Last Days of Gravity</a>.</p>"
+		},
+		fool: {
+			title: "Fool",
+			description: "<p>A minimal navigation experiment with tree structures. There may have been some cutting edge CSS tricks utilised.</p>"
 		},
 		fur: {
 			title: "Fur",
@@ -93,6 +99,10 @@ define("exps_details", function () {
 		overflow: {
 			title: "Overflow Polygons",
 			description: "<p>Polygons possibly overlap. Points within are highlighted red.</p>"
+		},
+		polyhedra_three: {
+			title: "Polyhedra Three",
+			description: "<p>Somewhat custom render of polyhedra.</p>\n<p>This was a preemptive exploration for rendering to print and writing a custom 3d engine in Lua.</p>\n<p>It uses Stemkoski's polyhedra data from <a href='https://stemkoski.github.io/Three.js/Polyhedra.html' target='_blank'>here</a> \nwhich in turn uses George Hart's data from <a href='https://www.georgehart.com/virtual-polyhedra/vp.html' target='_blank'>here</a>.</p>"
 		},
 		recursive_circle: {
 			title: "Recursive Circle",
