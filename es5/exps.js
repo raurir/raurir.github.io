@@ -245,10 +245,6 @@ var exps = function exps(experimentsDetails) {
         "</h1>\n" +
         (info.description || "No description provided") +
         "\n" +
-        //info.srcHidden
-        // some were made after private repo:
-        //  ""
-        // `<p><a href='https://github.com/raurir/experimental-graphics/blob/master/src/${info.key}.js' target='_blank'>SRC on Github</a></p>`
         "<p><a href='#' class='view-source-link'>View Source</a></p>";
 
       var viewSourceLink = panelInfoDetails.querySelector(
@@ -256,19 +252,19 @@ var exps = function exps(experimentsDetails) {
       );
       dom.on(viewSourceLink, ["click"], function (e) {
         e.preventDefault();
-        showSource();
+        showSource(info.key, info.src);
       });
     };
 
-    var showSource = function showSource() {
+    var showSource = function showSource(srcFile, language) {
       panelInfoDetails.innerHTML = "<p>Loading source...</p>";
-      var isCoffeeScript = info.src === "coffeescript";
+      var isCoffeeScript = language === "coffeescript";
       var sourcePath = isCoffeeScript
-        ? "/cs/" + info.key + ".coffee"
-        : "/es5/" + info.key + ".js";
+        ? "/cs/" + srcFile + ".coffee"
+        : "/es5/" + srcFile + ".js";
       var fileName = isCoffeeScript
-        ? info.key + ".coffee"
-        : info.key + ".js";
+        ? srcFile + ".coffee"
+        : srcFile + ".js";
       fetch(sourcePath)
         .then(function (response) {
           if (!response.ok) {
@@ -288,6 +284,20 @@ var exps = function exps(experimentsDetails) {
             "</h1>\n<pre><code>" +
             escapeHtml(sourceCode) +
             "</code></pre>\n<p><a href='#' class='back-to-info-link'>\u2190 Back to Info</a></p>\n";
+          // Add event listeners to dependency links
+          var dependencyLinks =
+            panelInfoDetails.querySelectorAll(
+              ".dependency-link",
+            );
+          dependencyLinks.forEach(function (link) {
+            dom.on(link, ["click"], function (e) {
+              e.preventDefault();
+              var depName = e.target.getAttribute(
+                "data-dependency",
+              );
+              showSource(depName);
+            });
+          });
         })
         .catch(function (error) {
           console.warn("Error loading source", error);
@@ -310,7 +320,48 @@ var exps = function exps(experimentsDetails) {
     var escapeHtml = function escapeHtml(text) {
       var div = document.createElement("div");
       div.textContent = text;
-      return div.innerHTML;
+      var escaped = div.innerHTML;
+
+      // Find define() calls and make dependencies clickable
+      // Match: define("name", ["dep1", "dep2"], ...
+      var defineRegex =
+        /define\s*\(\s*"([^"]+)"\s*,\s*\[([^\]]+)\]/g;
+
+      escaped = escaped.replace(
+        defineRegex,
+        function (_match, moduleName, dependencies) {
+          // Parse the dependency names from the escaped HTML
+          var depRegex = /"([^"]+)"/g;
+          var linkedDeps = dependencies;
+          var depMatch = void 0;
+
+          while (
+            (depMatch = depRegex.exec(dependencies)) !== null
+          ) {
+            var depName = depMatch[1];
+
+            // Skip third-party libraries (lib/ prefix)
+            if (depName.startsWith("lib/")) {
+              continue;
+            }
+
+            var quotedDep = '"' + depName + '"';
+            var link =
+              "\"<a href='#' class='dependency-link' data-dependency='" +
+              depName +
+              "'>" +
+              depName +
+              '</a>"';
+            linkedDeps = linkedDeps.replace(quotedDep, link);
+          }
+
+          return (
+            'define("' + moduleName + '", [' + linkedDeps + "]"
+          );
+        },
+      );
+
+      return escaped;
     };
 
     var hideInfo = function hideInfo() {
