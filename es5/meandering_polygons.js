@@ -9,7 +9,7 @@ var meandering_polygons = function meandering_polygons() {
 	c.getRandomPalette();
 
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 	var bgColour = "rgba(180,180,200,1)";
 	var dots = 24;
 	var arrDots = [];
@@ -31,8 +31,8 @@ var meandering_polygons = function meandering_polygons() {
 		}
 		return function () {
 			var b = ~~(230 + Math.random() * 25),
-			    a = Math.round((0.7 + Math.random() * 0.3) * 100) / 100,
-			    w = "rgba(" + b + "," + b + "," + b + "," + a + ")";
+				a = Math.round((0.7 + Math.random() * 0.3) * 100) / 100,
+				w = "rgba(" + b + "," + b + "," + b + "," + a + ")";
 			// con.log(w);
 			return w;
 		};
@@ -51,7 +51,7 @@ var meandering_polygons = function meandering_polygons() {
 					points: [j, k],
 					lineWidth: 0,
 					colour: white(),
-					dashes: ~~(Math.random() * 5)
+					dashes: ~~(Math.random() * 5),
 				};
 			}
 		}
@@ -89,14 +89,22 @@ var meandering_polygons = function meandering_polygons() {
 							ctx.beginPath();
 							ctx.lineWidth = lineWidth;
 							ctx.strokeStyle = white();
-							ctx.drawCircle(this.size / 2, this.size / 2, radius);
+							ctx.drawCircle(
+								this.size / 2,
+								this.size / 2,
+								radius,
+							);
 							ctx.stroke();
 
 							radius *= Math.random();
 
 							ctx.beginPath();
 							ctx.fillStyle = white();
-							ctx.drawCircle(this.size / 2, this.size / 2, radius);
+							ctx.drawCircle(
+								this.size / 2,
+								this.size / 2,
+								radius,
+							);
 							ctx.fill();
 
 							break;
@@ -106,11 +114,19 @@ var meandering_polygons = function meandering_polygons() {
 							ctx.beginPath();
 							ctx.lineWidth = 2;
 							ctx.strokeStyle = white();
-							ctx.drawCircle(this.size / 2, this.size / 2, radius - 1);
+							ctx.drawCircle(
+								this.size / 2,
+								this.size / 2,
+								radius - 1,
+							);
 							for (var i = 0; i < sides; i++) {
-								var angle = i / sides * Math.PI * 2;
-								var xp = this.size / 2 + this.size / 2 * 0.8 * Math.cos(angle),
-								    yp = this.size / 2 + this.size / 2 * 0.8 * Math.sin(angle);
+								var angle = (i / sides) * Math.PI * 2;
+								var xp =
+										this.size / 2 +
+										(this.size / 2) * 0.8 * Math.cos(angle),
+									yp =
+										this.size / 2 +
+										(this.size / 2) * 0.8 * Math.sin(angle);
 								if (i == 0) {
 									ctx.moveTo(xp, yp);
 								} else {
@@ -133,7 +149,11 @@ var meandering_polygons = function meandering_polygons() {
 					ctx.save();
 					ctx.translate(this.x * sw, this.y * sh);
 					ctx.rotate(this.rotation);
-					ctx.drawImage(this.bmp.canvas, -this.size / 2, -this.size / 2);
+					ctx.drawImage(
+						this.bmp.canvas,
+						-this.size / 2,
+						-this.size / 2,
+					);
 					ctx.restore();
 				},
 
@@ -142,8 +162,10 @@ var meandering_polygons = function meandering_polygons() {
 				friction: 0.9,
 
 				move: function move() {
-					this.rotationFloat += (Math.random() > 0.5 ? -1 : 1) * 0.5;
-					this.rotation -= (this.rotation - this.rotationFloat) * 0.01;
+					this.rotationFloat +=
+						(Math.random() > 0.5 ? -1 : 1) * 0.5;
+					this.rotation -=
+						(this.rotation - this.rotationFloat) * 0.01;
 
 					this.dirFloat += (Math.random() > 0.5 ? -1 : 1) * 0.1;
 					this.dir -= (this.dir - this.dirFloat) * 0.01;
@@ -161,29 +183,34 @@ var meandering_polygons = function meandering_polygons() {
 					if (this.y < -0.2) this.y = 1.2;
 					if (this.y > 1.2) this.y = -0.2;
 				},
-				force: function force(opposite, distance, deltaX, deltaY) {
+				force: function force(
+					opposite,
+					distance,
+					deltaX,
+					deltaY,
+				) {
 					// return;
-					this.fx = deltaX / distance * this.attraction; // * (range - distance);
-					this.fy = deltaY / distance * this.attraction; // * (range - distance);
-				}
+					this.fx = (deltaX / distance) * this.attraction; // * (range - distance);
+					this.fy = (deltaY / distance) * this.attraction; // * (range - distance);
+				},
 			};
 			j++;
 		}
 		render();
 		var isDown = false,
-		    mouseTarget = null;
+			mouseTarget = null;
 		addEventListener("mousedown", function (e) {
 			isDown = true;
 			// mouseTarget = e;
 			var mx = e.x / sw,
-			    my = e.y / sh;
+				my = e.y / sh;
 
 			for (var k = 0; k < dots; k++) {
 				var dot = arrDots[k];
 
 				var dx = dot.x - mx,
-				    dy = dot.y - my,
-				    d = Math.sqrt(dx * dx + dy * dy);
+					dy = dot.y - my,
+					d = Math.sqrt(dx * dx + dy * dy);
 
 				if (d < 0.1) {
 					// ctx.beginPath();
@@ -212,7 +239,7 @@ var meandering_polygons = function meandering_polygons() {
 		addEventListener("mousemove", function (e) {
 			if (isDown && mouseTarget != null) {
 				var mx = e.x / sw,
-				    my = e.y / sh;
+					my = e.y / sh;
 				arrDots[mouseTarget].x = mx;
 				arrDots[mouseTarget].y = my;
 			}
@@ -221,7 +248,7 @@ var meandering_polygons = function meandering_polygons() {
 
 	var lines = [];
 	function uniqueId(j, k) {
-		return j * (j - 1) / 2 + k;
+		return (j * (j - 1)) / 2 + k;
 	}
 
 	function render() {
@@ -241,18 +268,25 @@ var meandering_polygons = function meandering_polygons() {
 				var other = arrDots[k];
 
 				var dx = dot.x - other.x,
-				    dy = dot.y - other.y,
-				    d = Math.sqrt(dx * dx + dy * dy);
+					dy = dot.y - other.y,
+					d = Math.sqrt(dx * dx + dy * dy);
 
 				var inRange = d < range;
 				// ignore off screen
-				if (other.x < 0 || other.x > 1 || other.y < 0 || other.y > 1) inRange = false;
+				if (
+					other.x < 0 ||
+					other.x > 1 ||
+					other.y < 0 ||
+					other.y > 1
+				)
+					inRange = false;
 
 				if (inRange) {
 					dot.force(other, d, dx, dy);
 					other.force(dot, d, dx, dy);
 
-					lines[lineId].lineWidth -= (lines[lineId].lineWidth - 3) * 0.01;
+					lines[lineId].lineWidth -=
+						(lines[lineId].lineWidth - 3) * 0.01;
 				} else {
 					lines[lineId].lineWidth *= 0.9;
 					if (lines[lineId].lineWidth < 0.1) {
@@ -264,18 +298,23 @@ var meandering_polygons = function meandering_polygons() {
 
 		for (var m = 0, ml = lines.length; m < ml; m++) {
 			var lineM = lines[m],
-			    pointsM = lineM.points,
-			    a = arrDots[pointsM[0]],
-			    b = arrDots[pointsM[1]];
+				pointsM = lineM.points,
+				a = arrDots[pointsM[0]],
+				b = arrDots[pointsM[1]];
 
 			if (lineM.lineWidth) {
 				for (var k = 0; k < m; k++) {
 					var lineK = lines[k];
 					if (lineK.lineWidth) {
 						var pointsK = lineK.points,
-						    c = arrDots[pointsK[0]],
-						    d = arrDots[pointsK[1]];
-						var intersects = geom.intersectionBetweenPoints(a, b, c, d);
+							c = arrDots[pointsK[0]],
+							d = arrDots[pointsK[1]];
+						var intersects = geom.intersectionBetweenPoints(
+							a,
+							b,
+							c,
+							d,
+						);
 						if (intersects) {
 							debugCircle(intersects, lineM.colour);
 						}
@@ -305,7 +344,7 @@ var meandering_polygons = function meandering_polygons() {
 	}
 
 	function debugCircle(dot, colour) {
-		var radius = sw * range / 2;
+		var radius = (sw * range) / 2;
 		// ctx.beginPath();
 		// ctx.fillStyle = "rgba(255,0,0,0.3)"; // dot.colour;
 		// ctx.drawCircle(dot.x * sw, dot.y * sh, radius);
@@ -328,7 +367,7 @@ var meandering_polygons = function meandering_polygons() {
 			bmp.canvas.height = sh;
 		},
 		init: init,
-		kill: function kill() {}
+		kill: function kill() {},
 	};
 
 	return meandering;

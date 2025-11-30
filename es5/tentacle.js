@@ -15,7 +15,7 @@ define("tentacle", function () {
 	var colour;
 
 	function init(options) {
-		r.setSeed(options && options.seed || Math.random());
+		r.setSeed((options && options.seed) || Math.random());
 		c.getRandomPalette();
 		colour = c.getNextColour();
 		numLines = r.getInteger(5, 15);
@@ -54,7 +54,8 @@ define("tentacle", function () {
 			move: function move(px, py) {
 				pos += 0.01;
 				// feed oscillation in here.
-				rot = j / numLines * TAU + Math.sin(pos) * 0.24 * (i + 1);
+				rot =
+					(j / numLines) * TAU + Math.sin(pos) * 0.24 * (i + 1);
 				x = px + Math.sin(rot) * 10;
 				y = py + Math.cos(rot) * 10;
 
@@ -70,8 +71,8 @@ define("tentacle", function () {
         ctx.stroke();
         */
 
-				return { x: x, y: y };
-			}
+				return {x: x, y: y};
+			},
 		};
 	}
 
@@ -86,7 +87,7 @@ define("tentacle", function () {
 		ctx.fillStyle = colour;
 
 		for (var j = 0; j < numLines; j++) {
-			var p = { x: 0, y: 0 };
+			var p = {x: 0, y: 0};
 			for (var i = 0; i < lineLength; i++) {
 				var joint = lines[j][i];
 				p = joint.move(p.x, p.y);
@@ -96,7 +97,7 @@ define("tentacle", function () {
 
 	var experiment = {
 		stage: bmp.canvas,
-		init: init
+		init: init,
 	};
 
 	return experiment;

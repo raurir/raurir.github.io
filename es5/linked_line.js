@@ -6,16 +6,25 @@ var linked_line = function linked_line() {
 	var randomInst = rand.instance();
 
 	var generate = function generate(size, preoccupied) {
-		var debug = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+		var debug =
+			arguments.length > 2 && arguments[2] !== undefined
+				? arguments[2]
+				: false;
 
 		/*
   param `preoccupied` hahahaha!
   array of masked out coordinates
   */
-		if (!randomInst.getSeed()) randomInst.setSeed(parseInt(Math.random() * 1e10));
+		if (!randomInst.getSeed())
+			randomInst.setSeed(parseInt(Math.random() * 1e10));
 		return new Promise(function (resolve, reject) {
-			if (Math.round(size / 2) === size / 2 || Math.round(size) !== size) {
-				var err = "linked_line - invalid size, needs to be odd integer - you supplied: " + size;
+			if (
+				Math.round(size / 2) === size / 2 ||
+				Math.round(size) !== size
+			) {
+				var err =
+					"linked_line - invalid size, needs to be odd integer - you supplied: " +
+					size;
 				alert(err);
 				reject(err);
 			}
@@ -57,7 +66,7 @@ var linked_line = function linked_line() {
 			var occupied = {
 				array: [],
 				// twoD: [],
-				oneD: []
+				oneD: [],
 				// neighbourless: []
 			};
 			var backup = {};
@@ -78,22 +87,28 @@ var linked_line = function linked_line() {
 				var item = {
 					x: options.x,
 					y: options.y,
-					type: "NULL"
+					type: "NULL",
 				};
 				occupied.oneD[getIndex(item.x, item.y)] = item;
 				occupied.array.push(item);
 			};
 
 			var makeItem = function makeItem(options) {
-				var x = options.x == undefined ? randomInst.random() : options.x;
-				var y = options.y == undefined ? randomInst.random() : options.y;
+				var x =
+					options.x == undefined
+						? randomInst.random()
+						: options.x;
+				var y =
+					options.y == undefined
+						? randomInst.random()
+						: options.y;
 				var item = {
 					x: x,
 					y: y,
 					type: "TUNNEL",
 					surrounded: false,
 					prev: options.prev,
-					next: options.next
+					next: options.next,
 				};
 
 				// occupied.twoD[y][x] = item;
@@ -110,7 +125,7 @@ var linked_line = function linked_line() {
 				return y * wid + x;
 			};
 			var getXY = function getXY(index) {
-				return { x: index % sw, y: Math.floor(index / sw) };
+				return {x: index % sw, y: Math.floor(index / sw)};
 			};
 
 			var start = function start() {
@@ -118,7 +133,12 @@ var linked_line = function linked_line() {
 				for (var y = 0; y < hei; y++) {
 					for (var x = 0; x < wid; x++) {
 						occupied.oneD.push(-1);
-						ctx.fillRect(x * block - 2 + block / 2, y * block - 2 + block / 2, 4, 4);
+						ctx.fillRect(
+							x * block - 2 + block / 2,
+							y * block - 2 + block / 2,
+							4,
+							4,
+						);
 					}
 				}
 
@@ -140,10 +160,10 @@ var linked_line = function linked_line() {
 
 					if (i == 0) {
 						// first
-						newItem = makeItem({ x: x, y: y });
+						newItem = makeItem({x: x, y: y});
 						first = newItem;
 					} else {
-						newItem = makeItem({ x: x, y: y, prev: lastItem });
+						newItem = makeItem({x: x, y: y, prev: lastItem});
 						lastItem.next = newItem;
 					}
 					lastItem = newItem;
@@ -157,10 +177,12 @@ var linked_line = function linked_line() {
 			var checkSurrounded = function checkSurrounded(item) {
 				// Only check the 4 cardinal directions, not diagonals
 				// This matches what checkDir can actually use
-				var directions = [{ x: 0, y: -1 }, // up
-				{ x: 1, y: 0 }, // right
-				{ x: 0, y: 1 }, // down
-				{ x: -1, y: 0 }];
+				var directions = [
+					{x: 0, y: -1}, // up
+					{x: 1, y: 0}, // right
+					{x: 0, y: 1}, // down
+					{x: -1, y: 0},
+				];
 
 				for (var d = 0; d < directions.length; d++) {
 					var x = item.x + directions[d].x;
@@ -199,33 +221,60 @@ var linked_line = function linked_line() {
 
 				return {
 					// ok: !!(occupied.twoD[y] && occupied.twoD[y][x] === -1),
-					ok: x >= 0 && x < wid && y >= 0 && y < hei && occupied.oneD[index] === -1,
+					ok:
+						x >= 0 &&
+						x < wid &&
+						y >= 0 &&
+						y < hei &&
+						occupied.oneD[index] === -1,
 					x: x,
-					y: y
+					y: y,
 				};
 			};
 
 			var checkPoints = function checkPoints() {
-				for (var _len = arguments.length, points = Array(_len), _key = 0; _key < _len; _key++) {
+				for (
+					var _len = arguments.length,
+						points = Array(_len),
+						_key = 0;
+					_key < _len;
+					_key++
+				) {
 					points[_key] = arguments[_key];
 				}
 
 				for (var i = 0, il = points.length - 1; i < il; i++) {
 					var p0 = points[i],
-					    p1 = points[i + 1];
-					if (Math.abs(p0.x - p1.x) !== 0 && Math.abs(p0.y - p1.y) !== 0) {
+						p1 = points[i + 1];
+					if (
+						Math.abs(p0.x - p1.x) !== 0 &&
+						Math.abs(p0.y - p1.y) !== 0
+					) {
 						return false;
 					}
 				}
 				// Only reject if all 4 points form a straight line (not just 3)
-				if (points[0].x === points[1].x && points[1].x === points[2].x && points[2].x === points[3].x) return false;
-				if (points[0].y === points[1].y && points[1].y === points[2].y && points[2].y === points[3].y) return false;
+				if (
+					points[0].x === points[1].x &&
+					points[1].x === points[2].x &&
+					points[2].x === points[3].x
+				)
+					return false;
+				if (
+					points[0].y === points[1].y &&
+					points[1].y === points[2].y &&
+					points[2].y === points[3].y
+				)
+					return false;
 
 				return true;
 			};
 
 			var insertItemAnywhere = function insertItemAnywhere() {
-				var index = randomInst.getInteger(0, occupied.array.length - 1);
+				var index = randomInst.getInteger(
+					0,
+					occupied.array.length - 1,
+				);
 				var item = occupied.array[index];
 				if (!item) return;
 
@@ -242,7 +291,9 @@ var linked_line = function linked_line() {
 				}
 			};
 
-			var insertItemAfter = function insertItemAfter(afterItem) {
+			var insertItemAfter = function insertItemAfter(
+				afterItem,
+			) {
 				store();
 
 				var prev = afterItem;
@@ -255,17 +306,39 @@ var linked_line = function linked_line() {
 				var nextDir = randomInst.getInteger(0, 3);
 
 				var pending0 = checkDir(x, y, startDir);
-				var pending1 = checkDir(pending0.x, pending0.y, nextDir);
-				var inline = checkPoints(prev, pending0, pending1, next);
+				var pending1 = checkDir(
+					pending0.x,
+					pending0.y,
+					nextDir,
+				);
+				var inline = checkPoints(
+					prev,
+					pending0,
+					pending1,
+					next,
+				);
 
 				// Check if new points would overlap with existing points
-				var wouldOverlap = pending1.x === next.x && pending1.y === next.y || pending0.x === prev.x && pending0.y === prev.y;
+				var wouldOverlap =
+					(pending1.x === next.x && pending1.y === next.y) ||
+					(pending0.x === prev.x && pending0.y === prev.y);
 
-				if (pending0.ok && pending1.ok && inline && !wouldOverlap) {
+				if (
+					pending0.ok &&
+					pending1.ok &&
+					inline &&
+					!wouldOverlap
+				) {
 					// console.log("pending0", pending0, pending1)
-					var newItem0 = makeItem({ x: pending0.x, y: pending0.y });
+					var newItem0 = makeItem({
+						x: pending0.x,
+						y: pending0.y,
+					});
 
-					var newItem1 = makeItem({ x: pending1.x, y: pending1.y });
+					var newItem1 = makeItem({
+						x: pending1.x,
+						y: pending1.y,
+					});
 
 					prev.next = newItem0;
 
@@ -297,7 +370,11 @@ var linked_line = function linked_line() {
 
 				var walls = [];
 				// get pixels to discover what is to be drawn, make an array of blocks.
-				for (var i = 0, j = 0, il = pixels.length; i < il; i += 4, j++) {
+				for (
+					var i = 0, j = 0, il = pixels.length;
+					i < il;
+					i += 4, j++
+				) {
 					var xy = getXY(j);
 					var r = pixels[i]; // var g = pixels[i + 1], b = pixels[i + 2], a = pixels[i + 3];
 					if (r == 255) {
@@ -316,14 +393,14 @@ var linked_line = function linked_line() {
 					if (row != w.y) {
 						// new row - add a block
 						row = w.y;
-						wallrects.push({ x: w.x, y: w.y, w: 1, h: 1 });
+						wallrects.push({x: w.x, y: w.y, w: 1, h: 1});
 					} else {
 						// check if the previous x is the same...
 						if (walls[i - 1].x == w.x - 1) {
 							// if it's the same block widen it.
 							wallrects[wallrects.length - 1].w++;
 						} else {
-							wallrects.push({ x: w.x, y: w.y, w: 1, h: 1 }); // add a new one.
+							wallrects.push({x: w.x, y: w.y, w: 1, h: 1}); // add a new one.
 						}
 					}
 				}
@@ -334,7 +411,11 @@ var linked_line = function linked_line() {
 					for (var j = i + 1; j < il; j++) {
 						var w1 = wallrects[j];
 						if (w0 && w1) {
-							if (w0.x == w1.x && w0.w == w1.w && w0.y + w0.h == w1.y) {
+							if (
+								w0.x == w1.x &&
+								w0.w == w1.w &&
+								w0.y + w0.h == w1.y
+							) {
 								wallrects[i].h++;
 								wallrects[j] = null;
 							}
@@ -353,12 +434,17 @@ var linked_line = function linked_line() {
 
 				for (i = 0, il = wallrects.length; i < il; i++) {
 					w = wallrects[i];
-					ctxR.rect(w.x * blockZoom + 1, w.y * blockZoom + 1, w.w * blockZoom - 2, w.h * blockZoom - 2);
+					ctxR.rect(
+						w.x * blockZoom + 1,
+						w.y * blockZoom + 1,
+						w.w * blockZoom - 2,
+						w.h * blockZoom - 2,
+					);
 				}
 				ctxR.fill();
 
 				// console.log("extractWalls");
-				resolve({ walls: walls, wallrects: wallrects });
+				resolve({walls: walls, wallrects: wallrects});
 			};
 
 			ctxZ.scale(blockZoom, blockZoom);
@@ -369,7 +455,7 @@ var linked_line = function linked_line() {
 			ctxL.imageSmoothingEnabled = false;
 
 			var arrLen = 0,
-			    done = 0;
+				done = 0;
 
 			var render = function render(time) {
 				attempts++;
@@ -380,7 +466,8 @@ var linked_line = function linked_line() {
 				// for (var i = 0; i < 40; i++) insertItemAnywhere();
 				for (var i = 0; i < 1; i++) {
 					insertItemAnywhere();
-				}ctx.beginPath();
+				}
+				ctx.beginPath();
 				ctx.lineWidth = 1; //(block / 2) * 0.25;
 				var item = first;
 				while (item) {
@@ -408,7 +495,8 @@ var linked_line = function linked_line() {
 
 				for (var i = 0; i < occupied.array.length; i++) {
 					var item = occupied.array[i];
-					ctx.fillStyle = item.type == "NULL" ? "#f00" : "#00ff00";
+					ctx.fillStyle =
+						item.type == "NULL" ? "#f00" : "#00ff00";
 					ctx.fillRect(item.x * 2 + 1, item.y * 2 + 1, 1, 1);
 				}
 
@@ -440,7 +528,10 @@ var linked_line = function linked_line() {
 	};
 
 	var init = function init(options) {
-		randomInst.setSeed(options && options.seed || parseInt(Math.random() * 1e10));
+		randomInst.setSeed(
+			(options && options.seed) ||
+				parseInt(Math.random() * 1e10),
+		);
 		console.log("set seed", randomInst.getSeed());
 
 		var size = 39; // options.size passed in is massive stage size...
@@ -449,14 +540,14 @@ var linked_line = function linked_line() {
 		var polygon = function polygon(cx, cy, r, sides) {
 			var points = [];
 			for (var i = 0; i < sides; i++) {
-				var angle = i / sides * TAU; // + TAU / 4,
+				var angle = (i / sides) * TAU; // + TAU / 4,
 				points.push({
 					x: size * cx + Math.cos(angle) * size * r,
-					y: size * cy + Math.sin(angle) * size * r
+					y: size * cy + Math.sin(angle) * size * r,
 				});
 			}
 			return function (x, y) {
-				return geom.pointInPolygon(points, { x: x, y: y });
+				return geom.pointInPolygon(points, {x: x, y: y});
 			};
 		};
 
@@ -501,15 +592,15 @@ var linked_line = function linked_line() {
 
 		for (var i = 0; i < size * size; i++) {
 			var x = i % size,
-			    y = Math.floor(i / size);
+				y = Math.floor(i / size);
 			if (fn(x, y)) {
-				preoccupied.push({ x: x, y: y });
+				preoccupied.push({x: x, y: y});
 			}
 		}
 
 		generate(size, preoccupied, true).then(function (_ref) {
 			var walls = _ref.walls,
-			    wallrects = _ref.wallrects;
+				wallrects = _ref.wallrects;
 
 			console.log(walls, wallrects);
 		});
@@ -517,7 +608,7 @@ var linked_line = function linked_line() {
 
 	return {
 		generate: generate,
-		init: init
+		init: init,
 	};
 };
 

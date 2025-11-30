@@ -1,13 +1,12 @@
-'use strict';
+"use strict";
 
 var polyhedra_three = function polyhedra_three() {
-
 	var stage = document.createElement("div");
 
 	var camera, scene, projector, renderer;
-	var mouse = { x: 0, y: 0 };
+	var mouse = {x: 0, y: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 	sw = sh = 400;
 	var theta = 0;
 	var h = [];
@@ -18,13 +17,13 @@ var polyhedra_three = function polyhedra_three() {
 
 	var settings = {};
 	settings.lineScale = 1;
-	settings.lineSize = 1 + Math.random() * 10 * settings.lineScale;
+	settings.lineSize =
+		1 + Math.random() * 10 * settings.lineScale;
 	settings.lineGap = 2 + Math.random() * 3 * settings.lineScale;
 	settings.baseRotation = 0;
 	settings.varyRotation = Math.random() * Math.PI * 2;
 
 	function createPattern(size) {
-
 		// con.log('createCanvas, size', size);
 		var half = size / 2;
 		var canvas = dom.canvas(size, size);
@@ -34,7 +33,10 @@ var polyhedra_three = function polyhedra_three() {
 		// puts the canvas centre so the whole area has a pattern
 		ctx.save();
 		ctx.translate(half, half);
-		ctx.rotate(settings.baseRotation + Math.random() * settings.varyRotation);
+		ctx.rotate(
+			settings.baseRotation +
+				Math.random() * settings.varyRotation,
+		);
 		ctx.translate(-half, -half);
 
 		ctx.fillStyle = colours.getRandomColour();
@@ -64,7 +66,12 @@ var polyhedra_three = function polyhedra_three() {
 			colour = colours.getNextColour();
 			// }
 			ctx.fillStyle = colour;
-			ctx.fillRect(-padding, y, size + padding * 2, settings.lineSize);
+			ctx.fillRect(
+				-padding,
+				y,
+				size + padding * 2,
+				settings.lineSize,
+			);
 			y += settings.lineSize + settings.lineGap;
 		}
 
@@ -76,8 +83,8 @@ var polyhedra_three = function polyhedra_three() {
 	function draw(props) {
 		var i, il;
 		var faces = [],
-		    faceRange = [],
-		    totalFaces = 0;
+			faceRange = [],
+			totalFaces = 0;
 		props.face.map(function (face) {
 			for (i = 0, il = face.length - 2; i < il; i++) {
 				faces.push(face[0], face[i + 1], face[i + 2]);
@@ -113,18 +120,25 @@ var polyhedra_three = function polyhedra_three() {
 			var r = Math.round(Math.random() * 255);
 			var g = Math.round(Math.random() * 255);
 			var b = Math.round(Math.random() * 255);
-			var col = r << 16 | g << 8 | b;
+			var col = (r << 16) | (g << 8) | b;
 
-			var material = new THREE.MeshLambertMaterial({ color: col });
+			var material = new THREE.MeshLambertMaterial({
+				color: col,
+			});
 			// var material = new THREE.MeshBasicMaterial( { color: col } )
 			// var mat = new THREE.MeshBasicMaterial({color: 0xffffff, map: texture});
 
 			materials.push(material);
 		}
 
-		var geometry = new THREE.PolyhedronGeometry(vertices, faces, 200, 0);
+		var geometry = new THREE.PolyhedronGeometry(
+			vertices,
+			faces,
+			200,
+			0,
+		);
 
-		con.log('geometry', geometry);
+		con.log("geometry", geometry);
 
 		var materialIndex = 0;
 		for (i = 0, il = geometry.faces.length; i < il; i++) {
@@ -141,7 +155,6 @@ var polyhedra_three = function polyhedra_three() {
 	}
 
 	function init() {
-
 		var time1 = new Date().getTime();
 
 		scene = new THREE.Scene();
@@ -174,7 +187,11 @@ var polyhedra_three = function polyhedra_three() {
 
 		stage.appendChild(renderer.domElement);
 
-		document.addEventListener('mousemove', onDocumentMouseMove, false);
+		document.addEventListener(
+			"mousemove",
+			onDocumentMouseMove,
+			false,
+		);
 
 		var time2 = new Date().getTime();
 		render();
@@ -186,12 +203,11 @@ var polyhedra_three = function polyhedra_three() {
 
 	function onDocumentMouseMove(event) {
 		event.preventDefault();
-		mouse.x = event.clientX / sw * 2 - 1;
+		mouse.x = (event.clientX / sw) * 2 - 1;
 		mouse.y = -(event.clientY / sh) * 2 + 1;
 	}
 
 	function render() {
-
 		var camRadius = 500;
 
 		theta += mouse.x * 4;
@@ -214,7 +230,7 @@ var polyhedra_three = function polyhedra_three() {
 
 	var experiment = {
 		stage: stage,
-		init: init
+		init: init,
 	};
 
 	return experiment;

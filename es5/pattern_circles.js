@@ -25,13 +25,14 @@ var pattern_circles = function pattern_circles() {
 		// ctx.fillStyle = "#0f0";
 		ctx.fillRect(cx - 2, cy - 2, 4, 4);
 
-		rotation = Math.random() * Math.PI / 2;
+		rotation = (Math.random() * Math.PI) / 2;
 		var size = 10 + ~~(Math.random() * 50);
 		var lines = 2 + ~~(Math.random() * 5);
 		var widths = [];
 		while (widths.length < lines) {
 			widths.push(Math.ceil(Math.random() * size));
-		}widths.push(size);
+		}
+		widths.push(size);
 
 		var noDuplicates = [];
 		widths.map(function (a, i) {
@@ -101,7 +102,7 @@ var pattern_circles = function pattern_circles() {
 
 	var experiment = {
 		stage: bmp.canvas,
-		init: init
+		init: init,
 	};
 
 	return experiment;

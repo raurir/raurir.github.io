@@ -34,7 +34,7 @@ var circle_sectors = function circle_sectors() {
 		var dotty = r.getNumber(0, 1) > 0.8;
 		var howDotty = r.getNumber(0.1, 0.8);
 
-		var colourCycle = function () {
+		var colourCycle = (function () {
 			var mode = r.getInteger(0, 2);
 			console.log("colourCycle - mode:", mode);
 			// params for case 2 only.
@@ -57,20 +57,22 @@ var circle_sectors = function circle_sectors() {
 					return function (ring, sector) {
 						if (ring != ringLast) {
 							ringLast = ring;
-							return c.getNextColour(ringRegularCycle || r.getInteger(0, 4));
+							return c.getNextColour(
+								ringRegularCycle || r.getInteger(0, 4),
+							);
 						} else {
 							return c.getCurrentColour();
 						}
 					};
 			}
-		}();
+		})();
 
 		bmp.ctx.lineWidth = padding * size;
 
 		for (var i = ringStart; i < rings; i++) {
 			if (dotty && r.getNumber(0, 1) > howDotty) continue; // not sure i like this.
-			var ringRadiusInner = i / rings * centre;
-			var ringRadiusOuter = (i + 1) / rings * centre;
+			var ringRadiusInner = (i / rings) * centre;
+			var ringRadiusOuter = ((i + 1) / rings) * centre;
 			var perimeter = TAU * ringRadiusInner;
 			var sectors = sectorsStart;
 			while (perimeter / sectors > sectorsMin) {
@@ -81,20 +83,33 @@ var circle_sectors = function circle_sectors() {
 					bmp.ctx.beginPath();
 					bmp.ctx.moveTo(x0 * size, y0 * size);
 					bmp.ctx.lineTo(x1 * size, y1 * size);
-					bmp.ctx.arc(centre * size, centre * size, ringRadiusOuter * size, QUADRANT - angle0, QUADRANT - angle1, true); // anti clockwise
+					bmp.ctx.arc(
+						centre * size,
+						centre * size,
+						ringRadiusOuter * size,
+						QUADRANT - angle0,
+						QUADRANT - angle1,
+						true,
+					); // anti clockwise
 					// cursor now at x2, y2
 					bmp.ctx.lineTo(x3 * size, y3 * size);
-					bmp.ctx.arc(centre * size, centre * size, ringRadiusInner * size, QUADRANT - angle1, QUADRANT - angle0, false); // clockwise
+					bmp.ctx.arc(
+						centre * size,
+						centre * size,
+						ringRadiusInner * size,
+						QUADRANT - angle1,
+						QUADRANT - angle0,
+						false,
+					); // clockwise
 					// cursor now at x0, y0
 					bmp.ctx.closePath();
 				};
 
 				// draw sectors as standard colour blocks
 
-
 				if (dotty && r.getNumber(0, 1) > howDotty) continue;
-				var angle0 = j / sectors * TAU;
-				var angle1 = (j + 1) / sectors * TAU;
+				var angle0 = (j / sectors) * TAU;
+				var angle1 = ((j + 1) / sectors) * TAU;
 				var x0 = centre + Math.sin(angle0) * ringRadiusInner;
 				var y0 = centre + Math.cos(angle0) * ringRadiusInner;
 				var x1 = centre + Math.sin(angle0) * ringRadiusOuter;
@@ -119,7 +134,7 @@ var circle_sectors = function circle_sectors() {
 	}
 	return {
 		stage: bmp.canvas,
-		init: init
+		init: init,
 	};
 };
 

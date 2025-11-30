@@ -18,9 +18,13 @@ define("attractor", function () {
 
 	var scale = 40;
 	var iterations = 2e4;
-	var mouse = { x: 0, y: 0 };
+	var mouse = {x: 0, y: 0};
 	function f(x) {
-		return (x + 0.1 + x * (a - c) * x) / (1.1 + a * (c * c + a * a) * x * x) * 1.3;
+		return (
+			((x + 0.1 + x * (a - c) * x) /
+				(1.1 + a * (c * c + a * a) * x * x)) *
+			1.3
+		);
 	}
 	function onLoop(time) {
 		requestAnimationFrame(onLoop);
@@ -44,7 +48,7 @@ define("attractor", function () {
 	}
 
 	dom.on(window, ["mousemove", "touchmove"], function (e) {
-		var event = e.changedTouches && e.changedTouches[0] || e;
+		var event = (e.changedTouches && e.changedTouches[0]) || e;
 		mouse.x = (event.x || event.pageX) - sw / 2;
 		mouse.y = (event.y || event.pageY) - sh / 2;
 	});
@@ -54,6 +58,6 @@ define("attractor", function () {
 	}
 	return {
 		init: init,
-		stage: canvas.canvas
+		stage: canvas.canvas,
 	};
 });

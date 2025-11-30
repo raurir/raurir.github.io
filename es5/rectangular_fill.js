@@ -31,7 +31,9 @@ var rectangular_fill = function rectangular_fill() {
 		var height = Math.ceil(rndI.random() * size);
 		var colour = c.getRandomColour();
 
-		var startIndex = Math.floor(available.length * rndI.random());
+		var startIndex = Math.floor(
+			available.length * rndI.random(),
+		);
 		var start = available[startIndex];
 		var y = start % rows;
 		var x = Math.floor(start / rows);
@@ -74,7 +76,7 @@ var rectangular_fill = function rectangular_fill() {
 				x: x * block + stroke,
 				y: y * block + stroke,
 				w: width * block - 2 * stroke,
-				h: height * block - 2 * stroke
+				h: height * block - 2 * stroke,
 			});
 		}
 
@@ -97,7 +99,8 @@ var rectangular_fill = function rectangular_fill() {
 
 		if (attempts % 1e2 == 0) {
 			var currentProgress = (total - available.length) / total;
-			if (lastProgress !== currentProgress) progress("render:progress", currentProgress);
+			if (lastProgress !== currentProgress)
+				progress("render:progress", currentProgress);
 			lastProgress = currentProgress;
 		}
 
@@ -152,7 +155,14 @@ var rectangular_fill = function rectangular_fill() {
 		//   }
 		// }
 
-		bmp.ctx.setTransform(1, rndI.random() * 0.2 - 0.1, rndI.random() * 0.2 - 0.1, 1, 0, 0);
+		bmp.ctx.setTransform(
+			1,
+			rndI.random() * 0.2 - 0.1,
+			rndI.random() * 0.2 - 0.1,
+			1,
+			0,
+			0,
+		);
 
 		for (var s = 0, sl = squares.length; s < sl; s++) {
 			var rect = squares[s];
@@ -190,7 +200,7 @@ var rectangular_fill = function rectangular_fill() {
 			// bmp.canvas.style.height = sh + "px";
 		},
 		init: init,
-		kill: function kill() {}
+		kill: function kill() {},
 	};
 };
 

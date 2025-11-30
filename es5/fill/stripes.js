@@ -5,31 +5,40 @@ var isNode = typeof module !== "undefined";
 
 var fillStripes = function fillStripes(args) {
 	var c = args.c,
-	    r = args.r,
-	    size = args.size,
-	    settings = args.settings;
+		r = args.r,
+		size = args.size,
+		settings = args.settings;
 
 	var checkArgs = Object.keys(args).sort().join(",");
 	if (checkArgs !== "c,r,settings,size") {
-		console.warn("fillStripes `args` are not ok... received:", checkArgs);
+		console.warn(
+			"fillStripes `args` are not ok... received:",
+			checkArgs,
+		);
 	}
 
 	var checkSettings = Object.keys(settings).sort().join("\n");
-	if (checkSettings !== "baseRotation\nlineGap\nlineScale\nlineSize\noverallScale\npointBias\npointMethod\nsites\nvaryDuotone\nvaryPerLine\nvaryPerRegion\nvaryRotation") {
-		console.warn("fillStripes argument `settings` is not ok... received:", checkSettings);
+	if (
+		checkSettings !==
+		"baseRotation\nlineGap\nlineScale\nlineSize\noverallScale\npointBias\npointMethod\nsites\nvaryDuotone\nvaryPerLine\nvaryPerRegion\nvaryRotation"
+	) {
+		console.warn(
+			"fillStripes argument `settings` is not ok... received:",
+			checkSettings,
+		);
 	}
 
 	console.log("checkSettings", checkSettings);
 
 	var baseRotation = settings.baseRotation,
-	    lineGap = settings.lineGap,
-	    lineScale = settings.lineScale,
-	    lineSize = settings.lineSize,
-	    overallScale = settings.overallScale,
-	    varyDuotone = settings.varyDuotone,
-	    varyPerLine = settings.varyPerLine,
-	    varyPerRegion = settings.varyPerRegion,
-	    varyRotation = settings.varyRotation;
+		lineGap = settings.lineGap,
+		lineScale = settings.lineScale,
+		lineSize = settings.lineSize,
+		overallScale = settings.overallScale,
+		varyDuotone = settings.varyDuotone,
+		varyPerLine = settings.varyPerLine,
+		varyPerRegion = settings.varyPerRegion,
+		varyRotation = settings.varyRotation;
 
 	// console.log('dom.canvas, size', size);
 
@@ -37,7 +46,7 @@ var fillStripes = function fillStripes(args) {
 	var stage = dom.canvas(size, size);
 	// canvas.canvas.style.border = '2px solid black'
 	var ctx = stage.ctx,
-	    canvas = stage.canvas;
+		canvas = stage.canvas;
 	// document.body.appendChild(canvas);
 	// puts the canvas centre so the whole area has a pattern
 	// ctx.save();
@@ -56,7 +65,12 @@ var fillStripes = function fillStripes(args) {
 	var padding = Math.sqrt(half * half * 2) - half; // the gaps between the corner when rotated 45 degrees
 
 	// draw bg. not good for shirts!!!
-	ctx.fillRect(-padding, -padding, size + padding * 2, size + padding * 2);
+	ctx.fillRect(
+		-padding,
+		-padding,
+		size + padding * 2,
+		size + padding * 2,
+	);
 
 	var lsc = lineScale;
 	var lsi = lineSize;

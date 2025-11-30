@@ -1,17 +1,55 @@
 "use strict";
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _slicedToArray = (function () {
+	function sliceIterator(arr, i) {
+		var _arr = [];
+		var _n = true;
+		var _d = false;
+		var _e = undefined;
+		try {
+			for (
+				var _i = arr[Symbol.iterator](), _s;
+				!(_n = (_s = _i.next()).done);
+				_n = true
+			) {
+				_arr.push(_s.value);
+				if (i && _arr.length === i) break;
+			}
+		} catch (err) {
+			_d = true;
+			_e = err;
+		} finally {
+			try {
+				if (!_n && _i["return"]) _i["return"]();
+			} finally {
+				if (_d) throw _e;
+			}
+		}
+		return _arr;
+	}
+	return function (arr, i) {
+		if (Array.isArray(arr)) {
+			return arr;
+		} else if (Symbol.iterator in Object(arr)) {
+			return sliceIterator(arr, i);
+		} else {
+			throw new TypeError(
+				"Invalid attempt to destructure non-iterable instance",
+			);
+		}
+	};
+})();
 
 /* eslint-disable no-console */
 /* eslint-disable indent */
 var isNode = typeof module !== "undefined";
 
-if (isNode) {}
+if (isNode) {
+}
 // var rand = require("./rand.js");
 // var dom = require("./dom.js");
 // var colours = require("./colours.js");
 // var geom = require("./geom.js");
-
 
 // prettier-ignore
 var SHAPE_L = { "0": { "blocks": [[1, 1], [0, 1]],
@@ -72,8 +110,8 @@ var tessellation = function tessellation() {
 
 		var dotLine = function dotLine(ctx, _ref, _ref2) {
 			var _ref3 = _slicedToArray(_ref, 2),
-			    a = _ref3[0],
-			    b = _ref3[1];
+				a = _ref3[0],
+				b = _ref3[1];
 
 			var fillStyle = _ref2.fillStyle;
 
@@ -83,10 +121,15 @@ var tessellation = function tessellation() {
 			ctx.fillStyle = fillStyle;
 			for (var i = 0; i < jumps; i++) {
 				var _geom$lerp = geom.lerp(a, b, i / jumps),
-				    x = _geom$lerp.x,
-				    y = _geom$lerp.y;
+					x = _geom$lerp.x,
+					y = _geom$lerp.y;
 
-				ctx.fillRect(Math.floor(x * block * sw - 2), Math.floor(y * block * sw - 2), 4, 4);
+				ctx.fillRect(
+					Math.floor(x * block * sw - 2),
+					Math.floor(y * block * sw - 2),
+					4,
+					4,
+				);
 			}
 		};
 
@@ -100,37 +143,45 @@ var tessellation = function tessellation() {
 		};
 
 		var testNeighbours = function testNeighbours(nextOccupied) {
-			return nextOccupied.some(function (occupied, positionIndex) {
-				var x = positionIndex % blocks;
-				var y = Math.floor(positionIndex / blocks);
+			return nextOccupied.some(
+				function (occupied, positionIndex) {
+					var x = positionIndex % blocks;
+					var y = Math.floor(positionIndex / blocks);
 
-				if (occupied === 0) {
-					// this block is empty
-					var top = isBusy(nextOccupied, x, y - 1);
-					var topRight = isBusy(nextOccupied, x + 1, y - 1);
-					var right = isBusy(nextOccupied, x + 1, y);
-					var bottomRight = isBusy(nextOccupied, x + 1, y + 1);
-					var bottom = isBusy(nextOccupied, x, y + 1);
-					var bottomLeft = isBusy(nextOccupied, x - 1, y + 1);
-					var left = isBusy(nextOccupied, x - 1, y);
+					if (occupied === 0) {
+						// this block is empty
+						var top = isBusy(nextOccupied, x, y - 1);
+						var topRight = isBusy(nextOccupied, x + 1, y - 1);
+						var right = isBusy(nextOccupied, x + 1, y);
+						var bottomRight = isBusy(
+							nextOccupied,
+							x + 1,
+							y + 1,
+						);
+						var bottom = isBusy(nextOccupied, x, y + 1);
+						var bottomLeft = isBusy(nextOccupied, x - 1, y + 1);
+						var left = isBusy(nextOccupied, x - 1, y);
 
-					var isSingleBlock = left && right && top && bottom;
-					if (isSingleBlock) {
-						return true;
+						var isSingleBlock = left && right && top && bottom;
+						if (isSingleBlock) {
+							return true;
+						}
+						// check horizontal 2 blocks
+						var isHorizontalDouble =
+							top && topRight && bottomRight && bottom;
+						if (isHorizontalDouble) {
+							return true;
+						}
+						// check vertical 2 blocks
+						var isVerticalDouble =
+							right && bottomRight && bottomLeft && left;
+						if (isVerticalDouble) {
+							return true;
+						}
 					}
-					// check horizontal 2 blocks
-					var isHorizontalDouble = top && topRight && bottomRight && bottom;
-					if (isHorizontalDouble) {
-						return true;
-					}
-					// check vertical 2 blocks
-					var isVerticalDouble = right && bottomRight && bottomLeft && left;
-					if (isVerticalDouble) {
-						return true;
-					}
-				}
-				return false;
-			});
+					return false;
+				},
+			);
 		};
 
 		var getBlocks = function getBlocks(shapeBlocks, position) {
@@ -141,14 +192,17 @@ var tessellation = function tessellation() {
 					if (row[j] === 1) {
 						var x = position.x + j;
 						var y = position.y + i;
-						blocks.push({ x: x, y: y });
+						blocks.push({x: x, y: y});
 					}
 				}
 			}
 			return blocks;
 		};
 
-		var testPolygon = function testPolygon(shapeBlocks, position) {
+		var testPolygon = function testPolygon(
+			shapeBlocks,
+			position,
+		) {
 			var test = occupied.slice();
 			for (var i = 0; i < 2; i++) {
 				for (var j = 0; j < 2; j++) {
@@ -182,21 +236,29 @@ var tessellation = function tessellation() {
 
 		var drawPolygon = function drawPolygon(points, _ref4) {
 			var lineWidth = _ref4.lineWidth,
-			    strokeStyle = _ref4.strokeStyle,
-			    fillStyle = _ref4.fillStyle;
+				strokeStyle = _ref4.strokeStyle,
+				fillStyle = _ref4.fillStyle;
 
 			var polygon = dom.canvas(2 * block * sw, 2 * block * sw);
 			// document.body.appendChild(polygon.canvas);
 			polygon.ctx.beginPath();
 			points.forEach(function (_ref5, i) {
 				var x = _ref5.x,
-				    y = _ref5.y;
+					y = _ref5.y;
 
-				polygon.ctx[i == 0 ? "moveTo" : "lineTo"](x * block * sw, y * block * sh);
+				polygon.ctx[i == 0 ? "moveTo" : "lineTo"](
+					x * block * sw,
+					y * block * sh,
+				);
 			});
 			polygon.ctx.closePath();
 
-			var gradient = polygon.ctx.createLinearGradient(0, 0, r.getNumber(block, 2 * block), r.getNumber(block, 2 * block));
+			var gradient = polygon.ctx.createLinearGradient(
+				0,
+				0,
+				r.getNumber(block, 2 * block),
+				r.getNumber(block, 2 * block),
+			);
 			gradient.addColorStop(0, fillStyle);
 			gradient.addColorStop(1, c.mutateColour(fillStyle, 20));
 
@@ -230,11 +292,11 @@ var tessellation = function tessellation() {
 				fillStyle: c.getNextColour(),
 				// fillStyle: c.getRandomColour(),
 				lineWidth: 0.1,
-				strokeStyle: "#000"
+				strokeStyle: "#000",
 			});
 
-			var x = position.x / blocks * sw;
-			var y = position.y / blocks * sh;
+			var x = (position.x / blocks) * sw;
+			var y = (position.y / blocks) * sh;
 
 			ctx.save();
 			ctx.translate(x - sw / 2, y - sh / 2);
@@ -246,7 +308,7 @@ var tessellation = function tessellation() {
 			// ctx.fillRect(0 - 10, 0 - 10, 20, 20);
 
 			var sp = getBlocks(shape.blocks, position);
-			spots.push({ id: spotId, blocks: sp });
+			spots.push({id: spotId, blocks: sp});
 			spotId++;
 
 			// !! invalid due to restore() above.
@@ -262,23 +324,27 @@ var tessellation = function tessellation() {
 
 		var complete = false;
 
-		var getPosFromRadial = function getPosFromRadial(ratioComplete) {
+		var getPosFromRadial = function getPosFromRadial(
+			ratioComplete,
+		) {
 			var p = ratioComplete * 50;
-			var diagonal = Math.ceil(Math.hypot(blocks / 2, blocks / 2)); // + 2);
+			var diagonal = Math.ceil(
+				Math.hypot(blocks / 2, blocks / 2),
+			); // + 2);
 			var r = p * blocks * 0.04;
 
 			if (r > diagonal) {
 				complete = true;
 			}
 
-			var a = p / (1 + r * -0) * 20;
+			var a = (p / (1 + r * -0)) * 20;
 			var x = Math.floor(blocks / 2 + Math.sin(a) * r);
 			var y = Math.floor(blocks / 2 + Math.cos(a) * r);
 
 			// const r = p * 0.5;
 			// const a = (z / 180) * Math.PI * 137.5;
 
-			return { x: x, y: y };
+			return {x: x, y: y};
 		};
 
 		var jitter = function jitter(rot, pos) {
@@ -286,7 +352,10 @@ var tessellation = function tessellation() {
 			for (var x = -1; x < 2 && go; x++) {
 				for (var y = -1; y < 2 && go; y++) {
 					for (var r = 0; r < 4 && go; r++) {
-						go = !drawShape((rot + r) % 4, { x: pos.x + x, y: pos.y + y });
+						go = !drawShape((rot + r) % 4, {
+							x: pos.x + x,
+							y: pos.y + y,
+						});
 					}
 				}
 			}
@@ -296,9 +365,12 @@ var tessellation = function tessellation() {
 			// console.log("drawSet");
 			attempt++;
 			var ratioComplete = attempt / maxAttempts;
-			var occComplete = occupied.filter(function (b) {
-				return b > 0;
-			}).length / occupied.length === 1;
+			var occComplete =
+				occupied.filter(function (b) {
+					return b > 0;
+				}).length /
+					occupied.length ===
+				1;
 
 			if (complete || occComplete) {
 				console.log("complete");
@@ -330,9 +402,11 @@ var tessellation = function tessellation() {
 		};
 
 		var init = function init(options) {
-			progress = options.progress || function () {
-				console.log("tessellation - no progress defined");
-			};
+			progress =
+				options.progress ||
+				function () {
+					console.log("tessellation - no progress defined");
+				};
 			r.setSeed(options.seed);
 			size = options.size;
 			sw = options.sw || size;
@@ -371,14 +445,19 @@ var tessellation = function tessellation() {
 
 		var update = function update(settings, seed) {
 			console.log("update", settings);
-			init({ progress: progress, seed: seed, size: size, settings: settings });
+			init({
+				progress: progress,
+				seed: seed,
+				size: size,
+				settings: settings,
+			});
 		};
 
 		return {
 			stage: bmp.canvas,
 			init: init,
 			settings: settings,
-			update: update
+			update: update,
 		};
 	};
 };

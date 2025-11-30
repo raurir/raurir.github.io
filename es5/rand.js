@@ -47,20 +47,25 @@ var rand = function rand(isInstance, providedRandom) {
 		getSeed: function getSeed() {
 			return seed;
 		},
-		random: providedRandom || function () {
-			// console.log("calling funkyvector")
-			if (z === undefined) {
-				console.warn("no seed set - are you calling rand itself or an instance of rand?");
-				errors++;
-				if (errors > 1000) throw new Error("rand bailing because no seed");
-				return null;
-			}
-			// define the recurrence relationship
-			z = (a * z + c) % m;
-			// return a float in [0, 1)
-			// if z = m then z / m = 0 therefore (z % m) / m < 1 always
-			return z / m;
-		},
+		random:
+			providedRandom ||
+			function () {
+				// console.log("calling funkyvector")
+				if (z === undefined) {
+					console.warn(
+						"no seed set - are you calling rand itself or an instance of rand?",
+					);
+					errors++;
+					if (errors > 1000)
+						throw new Error("rand bailing because no seed");
+					return null;
+				}
+				// define the recurrence relationship
+				z = (a * z + c) % m;
+				// return a float in [0, 1)
+				// if z = m then z / m = 0 therefore (z % m) / m < 1 always
+				return z / m;
+			},
 
 		getLastRandom: function getLastRandom() {
 			return z / m;
@@ -96,7 +101,10 @@ var rand = function rand(isInstance, providedRandom) {
 			// with this you can run multiple seeded randoms in parallel if needed.
 			// optionally set seed
 			var r = rand(true, providedRandom);
-			if (typeof seed === "number" || typeof seed === "string") {
+			if (
+				typeof seed === "number" ||
+				typeof seed === "string"
+			) {
 				r.setSeed(seed);
 			}
 			instances[instanceCount] = r;
@@ -109,8 +117,11 @@ var rand = function rand(isInstance, providedRandom) {
 			if (id && randInstance) {
 				return randInstance;
 			}
-			return "Can't find that rand instance, available ids are: " + Object.keys(instances);
-		}
+			return (
+				"Can't find that rand instance, available ids are: " +
+				Object.keys(instances)
+			);
+		},
 	};
 };
 

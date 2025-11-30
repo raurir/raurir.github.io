@@ -67,21 +67,28 @@ var canvas = function canvas(w, h) {
 	return {
 		setSize: setSize,
 		canvas: c,
-		ctx: ctx
+		ctx: ctx,
 	};
 };
 
 var button = function button(txt) {
-	var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	var props =
+		arguments.length > 1 && arguments[1] !== undefined
+			? arguments[1]
+			: {};
 
-	if (props.innerHTML) console.warn("Specify button text as 1st param");
+	if (props.innerHTML)
+		console.warn("Specify button text as 1st param");
 	props.innerHTML = txt;
 	var b = element("button", props);
 	return b;
 };
 
 var svg = function svg(tag, props) {
-	var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+	var el = document.createElementNS(
+		"http://www.w3.org/2000/svg",
+		tag,
+	);
 	setAttributes(el, props);
 	el.setSize = function (w, h) {
 		el.setAttribute("width", w);
@@ -122,7 +129,7 @@ var dom = {
 	setProps: setProps,
 	setAttributes: setAttributes,
 	svg: svg,
-	trigger: trigger
+	trigger: trigger,
 };
 
 if (isNode) module.exports = dom;

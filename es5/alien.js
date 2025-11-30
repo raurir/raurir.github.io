@@ -30,7 +30,9 @@ var alien = function alien() {
 		sh = options.sh || size;
 		stage.setSize(sw, sh);
 
-		cellSize = Math.ceil(rndI.getInteger(20, 60) / numberOfColumns);
+		cellSize = Math.ceil(
+			rndI.getInteger(20, 60) / numberOfColumns,
+		);
 		canvasWidth = cellSize * (numberOfColumns + 2);
 		canvasHeight = cellSize * (numberOfRows + 2);
 
@@ -44,7 +46,11 @@ var alien = function alien() {
 		aliens.x.forEach(function (x, xi) {
 			aliens.y.forEach(function (y) {
 				var img = oneAlien();
-				ctx.drawImage(img, centre + x * canvasWidth, centre + y * canvasHeight);
+				ctx.drawImage(
+					img,
+					centre + x * canvasWidth,
+					centre + y * canvasHeight,
+				);
 			});
 			progress("render:progress", xi / aliens.x.length);
 		});
@@ -76,7 +82,7 @@ var alien = function alien() {
 
 		function drawGrid() {
 			var column = void 0,
-			    row = void 0;
+				row = void 0;
 			var colourLine = c.getNextColour();
 			var colourFill = c.getNextColour();
 			for (row = 0; row < numberOfRows; row++) {
@@ -86,7 +92,12 @@ var alien = function alien() {
 			}
 			for (row = 0; row < numberOfRows; row++) {
 				for (column = 0; column < numberOfColumns; column++) {
-					drawCell(row, column, colourFill || c.getNextColour(), 0);
+					drawCell(
+						row,
+						column,
+						colourFill || c.getNextColour(),
+						0,
+					);
 				}
 			}
 		}
@@ -103,7 +114,12 @@ var alien = function alien() {
 
 			if (isOn) {
 				bmp.ctx.fillStyle = fillStyle;
-				bmp.ctx.fillRect((1 + x) * cellSize - strokeWidth, (1 + y) * cellSize - strokeWidth, cellSize + strokeWidth * 2, cellSize + strokeWidth * 2);
+				bmp.ctx.fillRect(
+					(1 + x) * cellSize - strokeWidth,
+					(1 + y) * cellSize - strokeWidth,
+					cellSize + strokeWidth * 2,
+					cellSize + strokeWidth * 2,
+				);
 			}
 		}
 
@@ -118,9 +134,9 @@ var alien = function alien() {
 		}
 		function q() {
 			var l = r(11),
-			    g = r(5),
-			    a = [],
-			    i = 0;
+				g = r(5),
+				a = [],
+				i = 0;
 			while (i < l) {
 				var j = i * g;
 				a.push(j);
@@ -129,13 +145,13 @@ var alien = function alien() {
 			}
 			return a;
 		}
-		return { x: q(), y: q() };
+		return {x: q(), y: q()};
 	}
 
 	var experiment = {
 		init: init,
 		render: render,
-		stage: stage.canvas
+		stage: stage.canvas,
 	};
 
 	return experiment;

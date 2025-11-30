@@ -2,7 +2,6 @@
 
 // 3d to 2d code from: https://gist.github.com/1334810/0cb4cf5d1fa5d22d85bd4c51078af0f12c707e53
 
-
 //focal length to determine perspective scaling
 var focalLength = 1200;
 
@@ -70,7 +69,6 @@ function calc2D(points, axisRotations) {
 	// loop through all the points in your object/scene/space
 	// whatever - those points passed - so each is transformed
 
-
 	for (var i = 0, il = points.length; i < il; i++) {
 		//apply Math to making transformations
 		// based on rotations
@@ -108,7 +106,6 @@ function calc2D(points, axisRotations) {
 }
 
 function calcNormal(p1, p2, p3) {
-
 	var u = {};
 	u.x = p2.x - p1.x;
 	u.y = p2.y - p1.y;
@@ -127,33 +124,37 @@ function calcNormal(p1, p2, p3) {
 	return n;
 }
 
-renderPlanes = function renderPlanes(group, planesArray, options) {
-
+renderPlanes = function renderPlanes(
+	group,
+	planesArray,
+	options,
+) {
 	// var zeds = []
 
 	var list = [];
 
 	// for (var i = 0, il = 4; i< il; i++) {
 	for (var i = 0, il = planesArray.length; i < il; i++) {
-
-		var screenPoints = calc2D(planesArray[i], cubeAxisRotations);
+		var screenPoints = calc2D(
+			planesArray[i],
+			cubeAxisRotations,
+		);
 
 		var minX = 1e6,
-		    minY = 1e6,
-		    minZ = 1e6,
-		    maxX = 0,
-		    maxY = 0,
-		    maxZ = 0;
+			minY = 1e6,
+			minZ = 1e6,
+			maxX = 0,
+			maxY = 0,
+			maxZ = 0;
 
 		var vertices = [];
 
-		var av = { x: 0, y: 0 };
+		var av = {x: 0, y: 0};
 
 		var vil = screenPoints.length;
 		for (var vi = 0; vi < vil; vi++) {
-
 			var v = screenPoints[vi];
-			vertices.push({ x: v.x, y: v.y });
+			vertices.push({x: v.x, y: v.y});
 			// vertices[vi] = v.y
 
 			if (v.x < minX) minX = v.x;
@@ -172,12 +173,20 @@ renderPlanes = function renderPlanes(group, planesArray, options) {
 
 		var zIndex = minZ + (maxZ - minZ) / 2;
 
-		var normal3D = calcNormal(screenPoints[0], screenPoints[1], screenPoints[2]);
-		var normalLength = Math.sqrt(normal3D.x * normal3D.x + normal3D.y * normal3D.y + normal3D.z * normal3D.z);
+		var normal3D = calcNormal(
+			screenPoints[0],
+			screenPoints[1],
+			screenPoints[2],
+		);
+		var normalLength = Math.sqrt(
+			normal3D.x * normal3D.x +
+				normal3D.y * normal3D.y +
+				normal3D.z * normal3D.z,
+		);
 		var normalised3D = {
 			x: normal3D.x / normalLength,
 			y: normal3D.y / normalLength,
-			z: normal3D.z / normalLength
+			z: normal3D.z / normalLength,
 
 			// var normal2D = calc2D([normal3D], make3DPoint(0,0,0))
 			// normal2D = normal2D[0];
@@ -206,27 +215,26 @@ renderPlanes = function renderPlanes(group, planesArray, options) {
 			// 	var txtZ = display.newText(o, math.round(v.z*10)/10, v.x - o.x, v.y - o.y, "helvetica", 15)
 			// 	txtZ:setFillColor(0, 1, 1, 1)
 			// }
-
-		};var fillStyle;
+		};
+		var fillStyle;
 
 		var face = {
 			z: zIndex,
-			o: vertices
+			o: vertices,
 		};
 
 		if (options) {
-
 			var slope = {
 				x: Math.acos(normalised3D.x),
 				// y = math.acos(normalised3D.y),
 				y: Math.asin(normal3D.y / normalLength),
-				z: Math.acos(normalised3D.z)
+				z: Math.acos(normalised3D.z),
 			};
 
 			var params = {
 				slope: slope,
 				bounds: [minX, minY, maxX, maxY],
-				vertices: vil
+				vertices: vil,
 			};
 			face.params = params;
 		}
@@ -246,20 +254,19 @@ renderPlanes = function renderPlanes(group, planesArray, options) {
 	// }
 	// con.log(vertices);
 
-
 	// group.fillStyle = "red"
 	for (var i = 0, il = list.length; i < il; i++) {
-
 		var vertices = list[i].o;
 
-		if (options.fillColor) group.fillStyle = options.fillColor(list[i].params);
+		if (options.fillColor)
+			group.fillStyle = options.fillColor(list[i].params);
 		// if (options.strokeWidth) p.strokeWidth = options.strokeWidth(params)
 		// if (options.strokeColor) p:setStrokeColor( options.strokeColor(params) )
 
 		group.beginPath();
 		for (var v = 0, vl = vertices.length; v < vl; v++) {
 			var x = vertices[v].x,
-			    y = vertices[v].y;
+				y = vertices[v].y;
 			// var dot = 5;group.fillRect(x - dot / 2, y - dot / 2, dot, dot);
 			if (v == 0) {
 				group.moveTo(x, y);
@@ -288,6 +295,5 @@ renderPlanes = function renderPlanes(group, planesArray, options) {
 		// drawLine(0);
 		// drawLine(01);
 		// drawLine(2);
-
 	}
 };

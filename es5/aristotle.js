@@ -1,6 +1,44 @@
 "use strict";
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _slicedToArray = (function () {
+	function sliceIterator(arr, i) {
+		var _arr = [];
+		var _n = true;
+		var _d = false;
+		var _e = undefined;
+		try {
+			for (
+				var _i = arr[Symbol.iterator](), _s;
+				!(_n = (_s = _i.next()).done);
+				_n = true
+			) {
+				_arr.push(_s.value);
+				if (i && _arr.length === i) break;
+			}
+		} catch (err) {
+			_d = true;
+			_e = err;
+		} finally {
+			try {
+				if (!_n && _i["return"]) _i["return"]();
+			} finally {
+				if (_d) throw _e;
+			}
+		}
+		return _arr;
+	}
+	return function (arr, i) {
+		if (Array.isArray(arr)) {
+			return arr;
+		} else if (Symbol.iterator in Object(arr)) {
+			return sliceIterator(arr, i);
+		} else {
+			throw new TypeError(
+				"Invalid attempt to destructure non-iterable instance",
+			);
+		}
+	};
+})();
 
 var isNode = typeof module !== "undefined";
 
@@ -18,14 +56,19 @@ if (isNode) {
 var log = function log() {};
 
 var aristotle = function aristotle() {
-	var isSvg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	var isSvg =
+		arguments.length > 0 && arguments[0] !== undefined
+			? arguments[0]
+			: false;
 
 	var r = rand.instance();
 	var c = colours.instance(r);
-	var stage = isSvg ? dom.svg("svg", { width: 1, height: 1 }) : dom.canvas(1, 1);
+	var stage = isSvg
+		? dom.svg("svg", {width: 1, height: 1})
+		: dom.canvas(1, 1);
 	var inner = isSvg && dom.svg("g");
 	var defs = isSvg && dom.svg("defs");
-	var angle60 = Math.PI * 2 / 3;
+	var angle60 = (Math.PI * 2) / 3;
 
 	var initialSettings = {
 		time: {
@@ -33,18 +76,18 @@ var aristotle = function aristotle() {
 			label: "Time",
 			min: 0,
 			max: 20,
-			cur: 10
+			cur: 10,
 		},
 		edge: {
 			type: "Boolean",
 			label: "Fill Screen",
-			cur: true
+			cur: true,
 		},
 		background: {
 			type: "Boolean",
 			label: "Background",
-			cur: false
-		}
+			cur: false,
+		},
 	};
 	var settings = initialSettings;
 
@@ -57,7 +100,6 @@ var aristotle = function aristotle() {
 
 	var init = function init(options) {
 		var seed = options.seed;
-
 
 		var targets = [];
 
@@ -74,7 +116,9 @@ var aristotle = function aristotle() {
 		if (options.size) {
 			size = options.size;
 		}
-		settings = JSON.parse(JSON.stringify(options.settings || initialSettings));
+		settings = JSON.parse(
+			JSON.stringify(options.settings || initialSettings),
+		);
 
 		// log("settings", settings.background);
 
@@ -93,13 +137,23 @@ var aristotle = function aristotle() {
 		var outOfBounds = radiusOuter * 6;
 		var minHeight = radiusOuter * Math.sin(angle60); // this is edge to edge of the bounding box, not corner to corner.
 		var pixelSize = Math.ceil(radiusOuter * 2 * size);
-		var lineWidth = r.getNumber(0, 1) > 0.5 ? radiusOuter * r.getNumber(0, 0.3) : 0;
+		var lineWidth =
+			r.getNumber(0, 1) > 0.5
+				? radiusOuter * r.getNumber(0, 0.3)
+				: 0;
 		var gap = r.getNumber(0, 0.01);
-		var radiusInner = gap < radiusOuter ? radiusOuter - gap : radiusOuter;
+		var radiusInner =
+			gap < radiusOuter ? radiusOuter - gap : radiusOuter;
 
 		// log("init", {lineWidth, settings, gap, triggerLimit, radiusOuter, outOfBounds, pixelSize});
 
-		isSvg ? dom.setAttributes(stage, { width: size, height: size, viewBox: "0 0 " + size + " " + size }) : stage.setSize(size, size);
+		isSvg
+			? dom.setAttributes(stage, {
+					width: size,
+					height: size,
+					viewBox: "0 0 " + size + " " + size,
+				})
+			: stage.setSize(size, size);
 
 		var renderBackground = function renderBackground() {
 			if (settings.background.cur) {
@@ -115,10 +169,13 @@ var aristotle = function aristotle() {
 		// colour control
 		var timeA = new Date().getTime();
 
-		var sample = { w: 300, h: 1 };
+		var sample = {w: 300, h: 1};
 		var gradientSamplesCanvas = dom.canvas(sample.w, sample.h);
 
-		var createGradient = function createGradient(gradientSetIndex, gradientIndex) {
+		var createGradient = function createGradient(
+			gradientSetIndex,
+			gradientIndex,
+		) {
 			var numColours = 2; // r.getInteger(2, 3);
 			// following logic is good for numColours over 3, over complicated for 2, but 2 looks better.
 			// basically want to spread gradients from -100% -> 200% so they are smoother
@@ -126,42 +183,86 @@ var aristotle = function aristotle() {
 			var start = r.getNumber(-100, 0);
 			var end = r.getNumber(100, 200);
 			var delta = end - start;
-			var stops = Array(numColours).fill().map(function (_, colourIndex) {
-				var zeroToOne = colourIndex / (numColours - 1);
-				var offset = start + zeroToOne * delta;
-				var stopColour = c.getRandomColour();
-				if (isSvg) {
-					return "<stop offset=\"" + offset + "%\" stop-color=\"" + stopColour + "\"/>";
-				} else {
-					return { offset: offset, stopColour: stopColour };
-				}
-			});
+			var stops = Array(numColours)
+				.fill()
+				.map(function (_, colourIndex) {
+					var zeroToOne = colourIndex / (numColours - 1);
+					var offset = start + zeroToOne * delta;
+					var stopColour = c.getRandomColour();
+					if (isSvg) {
+						return (
+							'<stop offset="' +
+							offset +
+							'%" stop-color="' +
+							stopColour +
+							'"/>'
+						);
+					} else {
+						return {offset: offset, stopColour: stopColour};
+					}
+				});
 
 			if (isSvg) {
-				return "<linearGradient id=\"Gradient" + gradientIndex + "\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"0\">" + stops.join("") + "</linearGradient>";
+				return (
+					'<linearGradient id="Gradient' +
+					gradientIndex +
+					'" x1="0" x2="1" y1="0" y2="0">' +
+					stops.join("") +
+					"</linearGradient>"
+				);
 			} else {
-				var alreadyGenerated = gradientSets && gradientSets[gradientSetIndex] && gradientSets[gradientSetIndex][gradientIndex];
+				var alreadyGenerated =
+					gradientSets &&
+					gradientSets[gradientSetIndex] &&
+					gradientSets[gradientSetIndex][gradientIndex];
 				if (alreadyGenerated) {
 					// previous pass generated all gradient data, including gradientSampleCanvas + sampling <- expensive operations
 					return alreadyGenerated;
 				}
 
 				// svg allows color stops outside 0-100%, canvas doesn't. so draw a canvas from -100% -> 200% (sample.w) to sample colours from.
-				var gradientSampleCanvas = dom.canvas(sample.w, sample.h);
+				var gradientSampleCanvas = dom.canvas(
+					sample.w,
+					sample.h,
+				);
 
-				var gradientFill = gradientSampleCanvas.ctx.createLinearGradient(0, 0, sample.w, sample.h);
+				var gradientFill =
+					gradientSampleCanvas.ctx.createLinearGradient(
+						0,
+						0,
+						sample.w,
+						sample.h,
+					);
 				stops.forEach(function (_ref) {
 					var offset = _ref.offset,
-					    stopColour = _ref.stopColour;
+						stopColour = _ref.stopColour;
 
-					gradientFill.addColorStop((offset + 100) / sample.w, stopColour);
+					gradientFill.addColorStop(
+						(offset + 100) / sample.w,
+						stopColour,
+					);
 				});
 				gradientSampleCanvas.ctx.fillStyle = gradientFill;
-				gradientSampleCanvas.ctx.fillRect(0, 0, sample.w, sample.h);
+				gradientSampleCanvas.ctx.fillRect(
+					0,
+					0,
+					sample.w,
+					sample.h,
+				);
 
-				gradientSamplesCanvas.ctx.drawImage(gradientSampleCanvas.canvas, 0, 11 * gradientIndex);
+				gradientSamplesCanvas.ctx.drawImage(
+					gradientSampleCanvas.canvas,
+					0,
+					11 * gradientIndex,
+				);
 
-				var gradientData = gradientSampleCanvas.ctx.getImageData(0, 0, sample.w, sample.h).data;
+				var gradientData =
+					gradientSampleCanvas.ctx.getImageData(
+						0,
+						0,
+						sample.w,
+						sample.h,
+					).data;
 
 				var getPixel = function getPixel(perc) {
 					var index = Math.floor(perc) * 4;
@@ -176,10 +277,10 @@ var aristotle = function aristotle() {
 					var offset = _ref2.offset;
 
 					var lerpedColour = getPixel(offset + 100);
-					return { offset: index, stopColour: lerpedColour };
+					return {offset: index, stopColour: lerpedColour};
 				});
 
-				return { start: start, end: end, stops: canvasStops };
+				return {start: start, end: end, stops: canvasStops};
 			}
 		};
 
@@ -187,16 +288,25 @@ var aristotle = function aristotle() {
 		var currentGradient = void 0;
 		var currentGradientIndex = 0;
 
-		var setGradients = function setGradients(_, gradientSetIndex) {
+		var setGradients = function setGradients(
+			_,
+			gradientSetIndex,
+		) {
 			c.getRandomPalette();
 			// TODO unpure yuck
 			backgrounds[gradientSetIndex] = c.getRandomColour();
-			return Array(gradients).fill().map(function (_, gradientIndex) {
-				return createGradient(gradientSetIndex, gradientIndex);
-			});
+			return Array(gradients)
+				.fill()
+				.map(function (_, gradientIndex) {
+					return createGradient(
+						gradientSetIndex,
+						gradientIndex,
+					);
+				});
 		};
 		gradientSets = Array(3) // each fxhash has only gets this many gradients. not relevant for FunkyVector which is a still image: only one gradient.
-		.fill().map(setGradients);
+			.fill()
+			.map(setGradients);
 
 		var pickNextGradient = function pickNextGradient() {
 			currentGradientIndex++;
@@ -230,23 +340,38 @@ var aristotle = function aristotle() {
 
 			stage.appendChild(defs);
 			stage.appendChild(inner);
-		} else {}
+		} else {
+		}
 		// document.body.appendChild(gradientSamplesCanvas.canvas);
-
 
 		// shape generation
 
 		var scaleGroup = function scaleGroup(group, scale) {
 			var rotate = group.rotate,
-			    x = group.x,
-			    y = group.y;
+				x = group.x,
+				y = group.y;
 
 			if (isSvg) {
-				group.setAttribute("transform", "translate(" + x * size + "," + y * size + ") rotate(" + rotate + ") scale(" + scale + ")");
+				group.setAttribute(
+					"transform",
+					"translate(" +
+						x * size +
+						"," +
+						y * size +
+						") rotate(" +
+						rotate +
+						") scale(" +
+						scale +
+						")",
+				);
 			}
 		};
 
-		var calcTriangleScale = function calcTriangleScale(group, distance, amount) {
+		var calcTriangleScale = function calcTriangleScale(
+			group,
+			distance,
+			amount,
+		) {
 			var halfD = triggerLimit / 2;
 			var scale = Math.abs((distance - halfD) / halfD);
 			var shapesAmount = 1 - (1 - scale) * amount;
@@ -263,7 +388,8 @@ var aristotle = function aristotle() {
 		var iteration = 0;
 		var timeC = new Date().getTime();
 
-		var gradientBox = !isSvg && dom.canvas(pixelSize, pixelSize);
+		var gradientBox =
+			!isSvg && dom.canvas(pixelSize, pixelSize);
 
 		if (!generationRequired) {
 			// the while loop is not happening, so:
@@ -274,7 +400,7 @@ var aristotle = function aristotle() {
 			});
 		}
 
-		log({ generationRequired: generationRequired });
+		log({generationRequired: generationRequired});
 
 		// only need to calculate shapes on first pass, settings changes etc can reuse last pass.
 		// creating dom.canvas and applying gradients are expensive operations!
@@ -312,14 +438,24 @@ var aristotle = function aristotle() {
 				return "break";
 			}
 
-			var group = isSvg ? dom.svg("g") : dom.canvas(pixelSize, pixelSize);
+			var group = isSvg
+				? dom.svg("g")
+				: dom.canvas(pixelSize, pixelSize);
 			if (isSvg) inner.appendChild(group);
 
 			var pathCorner = function pathCorner(_, j) {
-				var angle = ((second + colIndex) % 2 ? 0 : angle60 / 2) + j * angle60;
+				var angle =
+					((second + colIndex) % 2 ? 0 : angle60 / 2) +
+					j * angle60;
 				var tx = (radiusInner - lineWidth) * Math.cos(angle);
 				var ty = (radiusInner - lineWidth) * Math.sin(angle);
-				return isSvg ? "" + (j === 0 ? "M" : "L") + tx * size + "," + ty * size : { tx: tx, ty: ty };
+				return isSvg
+					? "" +
+							(j === 0 ? "M" : "L") +
+							tx * size +
+							"," +
+							ty * size
+					: {tx: tx, ty: ty};
 			};
 
 			var path = Array(3).fill(0).map(pathCorner);
@@ -327,19 +463,30 @@ var aristotle = function aristotle() {
 			var gradientId = r.getInteger(0, gradients - 1);
 
 			if (isSvg) {
-				var triangle = dom.svg("path", { id: "triangle-" + row + "-" + col, d: path.concat("Z").join(" "), fill: "url(#Gradient" + gradientId + ")" });
+				var triangle = dom.svg("path", {
+					id: "triangle-" + row + "-" + col,
+					d: path.concat("Z").join(" "),
+					fill: "url(#Gradient" + gradientId + ")",
+				});
 				// svg is no longer centred properly in canvas conversion, also no rotation on svg!
 				group.appendChild(triangle);
 			} else {
 				var ctx = group.ctx;
 
-				var gradient = ctx.createLinearGradient(-pixelSize, 0, pixelSize, 0);
-				currentGradient[gradientId].stops.forEach(function (_ref4) {
-					var offset = _ref4.offset,
-					    stopColour = _ref4.stopColour;
+				var gradient = ctx.createLinearGradient(
+					-pixelSize,
+					0,
+					pixelSize,
+					0,
+				);
+				currentGradient[gradientId].stops.forEach(
+					function (_ref4) {
+						var offset = _ref4.offset,
+							stopColour = _ref4.stopColour;
 
-					gradient.addColorStop(offset, stopColour);
-				});
+						gradient.addColorStop(offset, stopColour);
+					},
+				);
 
 				gradientBox.ctx.fillStyle = gradient;
 				gradientBox.ctx.fillRect(0, 0, pixelSize, pixelSize);
@@ -353,7 +500,7 @@ var aristotle = function aristotle() {
 				shapeBox.ctx.beginPath();
 				path.forEach(function (_ref5, index) {
 					var tx = _ref5.tx,
-					    ty = _ref5.ty;
+						ty = _ref5.ty;
 
 					var x = tx * size;
 					var y = ty * size;
@@ -397,11 +544,12 @@ var aristotle = function aristotle() {
 					continue;
 
 				case "break":
-					break _loop2;}
+					break _loop2;
+			}
 		}
 
 		shapes.forEach(function (group) {
-			return group.scale = 1;
+			return (group.scale = 1);
 		});
 
 		var timeD = new Date().getTime();
@@ -433,16 +581,27 @@ var aristotle = function aristotle() {
 
 		// animation modifiers
 		var m0 = void 0,
-		    m1 = void 0,
-		    m2 = void 0,
-		    m3 = void 0;
+			m1 = void 0,
+			m2 = void 0,
+			m3 = void 0;
 		var setModifier = function setModifier() {
-			return { o: r.getNumber(-Math.PI, Math.PI), s: r.getNumber(0.001, 0.002) };
+			return {
+				o: r.getNumber(-Math.PI, Math.PI),
+				s: r.getNumber(0.001, 0.002),
+			};
 		};
 		var setModifiers = function setModifiers() {
 			var _Array$fill$map, _Array$fill$map2;
 
-			return _Array$fill$map = Array(4).fill().map(setModifier), _Array$fill$map2 = _slicedToArray(_Array$fill$map, 4), m0 = _Array$fill$map2[0], m1 = _Array$fill$map2[1], m2 = _Array$fill$map2[2], m3 = _Array$fill$map2[3], _Array$fill$map;
+			return (
+				(_Array$fill$map = Array(4).fill().map(setModifier)),
+				(_Array$fill$map2 = _slicedToArray(_Array$fill$map, 4)),
+				(m0 = _Array$fill$map2[0]),
+				(m1 = _Array$fill$map2[1]),
+				(m2 = _Array$fill$map2[2]),
+				(m3 = _Array$fill$map2[3]),
+				_Array$fill$map
+			);
 		};
 		setModifiers();
 
@@ -451,14 +610,13 @@ var aristotle = function aristotle() {
 			var fadeStyle = r.getInteger(0, 5);
 			return function (group, offset) {
 				switch (fadeStyle) {
-					case 0:
-						{
-							// circle sweep from in to out:
-							var dx = group.x - 0.5;
-							var dy = group.y - 0.5;
-							var d = Math.sqrt(dx * dx + dy * dy);
-							return offset + d;
-						}
+					case 0: {
+						// circle sweep from in to out:
+						var dx = group.x - 0.5;
+						var dy = group.y - 0.5;
+						var d = Math.sqrt(dx * dx + dy * dy);
+						return offset + d;
+					}
 					case 1:
 						// random
 						return offset + Math.random() * 2000;
@@ -504,14 +662,17 @@ var aristotle = function aristotle() {
 			}, 11500);
 		};
 
-		var calculateTargets = function calculateTargets(t, amount) {
+		var calculateTargets = function calculateTargets(
+			t,
+			amount,
+		) {
 			var i = t * 0.001;
 			var triggerDistance = (Math.sin(Math.PI + i) + 0.6) * 0.5;
 
 			// center moving everywhere
 			var fn = function fn(acc, _ref3, i) {
 				var o = _ref3.o,
-				    s = _ref3.s;
+					s = _ref3.s;
 				return acc + Math[i % 2 ? "sin" : "cos"](o + t * s);
 			};
 			var cx = [m0, m1].reduce(fn, 0) * 0.5 + 0.5;
@@ -521,9 +682,18 @@ var aristotle = function aristotle() {
 				var dx = group.x - cx;
 				var dy = group.y - cy;
 				var d = Math.sqrt(dx * dx + dy * dy);
-				if (d > triggerDistance && d < triggerDistance + triggerLimit) {
+				if (
+					d > triggerDistance &&
+					d < triggerDistance + triggerLimit
+				) {
 					// console.log("triggering", t);
-					isSvg ? morphOne(group) : calcTriangleScale(group, d - triggerDistance, amount);
+					isSvg
+						? morphOne(group)
+						: calcTriangleScale(
+								group,
+								d - triggerDistance,
+								amount,
+							);
 				} else {
 					// console.log("not triggering", t);
 					if (!isSvg) {
@@ -553,11 +723,20 @@ var aristotle = function aristotle() {
 				return animate(0);
 			}, 500);
 		} else {
-			calculateTargets(settings.time.cur * 40 + r.getInteger(0, 1e7), r.getNumber(0, 1));
-			calculateTargets(settings.time.cur * 60 + r.getInteger(0, 1e7), r.getNumber(0, 1));
+			calculateTargets(
+				settings.time.cur * 40 + r.getInteger(0, 1e7),
+				r.getNumber(0, 1),
+			);
+			calculateTargets(
+				settings.time.cur * 60 + r.getInteger(0, 1e7),
+				r.getNumber(0, 1),
+			);
 
 			targets = [];
-			calculateTargets(settings.time.cur * 80 + r.getInteger(0, 1e7), r.getNumber(0, 1));
+			calculateTargets(
+				settings.time.cur * 80 + r.getInteger(0, 1e7),
+				r.getNumber(0, 1),
+			);
 
 			renderBackground();
 
@@ -566,22 +745,24 @@ var aristotle = function aristotle() {
 				// but we need the previous calculations to remain for deterministic randoms...
 
 				targets = shapes.map(function (group) {
-					return Object.assign(group, { scale: 1 });
+					return Object.assign(group, {scale: 1});
 				});
 			}
 
 			targets.forEach(function (group) {
 				var canvas = group.canvas,
-				    rotate = group.rotate,
-				    scale = group.scale,
-				    x = group.x,
-				    y = group.y;
-
+					rotate = group.rotate,
+					scale = group.scale,
+					x = group.x,
+					y = group.y;
 
 				var dx = x - 0.5;
 				var dy = y - 0.5;
 				var h = Math.hypot(dx, dy);
-				if (settings.edge.cur == false && h > 0.2 + r.getNumber(0, 0.3) - radiusOuter) {
+				if (
+					settings.edge.cur == false &&
+					h > 0.2 + r.getNumber(0, 0.3) - radiusOuter
+				) {
 					// filter out some hidden ones if not drawing to edge of screen square
 					return;
 				}
@@ -596,7 +777,7 @@ var aristotle = function aristotle() {
 				// translate triangle
 				stage.ctx.translate(x * size, y * size);
 				stage.ctx.scale(scale, scale);
-				stage.ctx.rotate(rotate / 180 * Math.PI);
+				stage.ctx.rotate((rotate / 180) * Math.PI);
 				stage.ctx.translate(-pixelSize / 2, -pixelSize / 2);
 
 				// render
@@ -613,12 +794,17 @@ var aristotle = function aristotle() {
 		var then = new Date().getTime();
 		// log("aristotle update", settings, seed);
 
-		init({ settings: settings, seed: seed });
+		init({settings: settings, seed: seed});
 		var now = new Date().getTime();
 		log("update time:", now - then);
 	};
 
-	return { init: init, settings: settings, stage: isSvg ? stage : stage.canvas, update: update };
+	return {
+		init: init,
+		settings: settings,
+		stage: isSvg ? stage : stage.canvas,
+		update: update,
+	};
 };
 
 if (isNode) {

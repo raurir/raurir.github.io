@@ -23,26 +23,31 @@ var hexagon_tile = function hexagon_tile() {
 		// more notes on this in a further blog post: backwards compatibility!
 		function getJitter() {
 			spreadSeed += 1.89127398;
-			return (Math.sin(spreadSeed) + Math.cos(spreadSeed * 2.12387891)) / 2 * 0.1;
+			return (
+				((Math.sin(spreadSeed) +
+					Math.cos(spreadSeed * 2.12387891)) /
+					2) *
+				0.1
+			);
 		}
 
 		var size = 100,
-		    vector = false,
-		    sw = size,
-		    sh = size,
-		    angle60 = 2 * Math.PI / 6,
-		    radiusOuter,
-		    strokeSize,
-		    radiusInner,
-		    smoothSize,
-		    randomHexes,
-		    stage,
-		    inner,
-		    hexagons,
-		    hexs,
-		    batchSize = 1000,
-		    batches,
-		    currentBatch = 0;
+			vector = false,
+			sw = size,
+			sh = size,
+			angle60 = (2 * Math.PI) / 6,
+			radiusOuter,
+			strokeSize,
+			radiusInner,
+			smoothSize,
+			randomHexes,
+			stage,
+			inner,
+			hexagons,
+			hexs,
+			batchSize = 1000,
+			batches,
+			currentBatch = 0;
 
 		var initialSettings = {
 			spread: {
@@ -50,18 +55,18 @@ var hexagon_tile = function hexagon_tile() {
 				label: "Spread",
 				min: 1,
 				max: 10,
-				cur: 10
+				cur: 10,
 			},
 			background: {
 				type: "Boolean",
 				label: "Background",
-				cur: true
-			}
+				cur: true,
+			},
 		};
 		var settings = Object.assign({}, initialSettings);
 
 		if (vector) {
-			stage = dom.svg("svg", { width: sw, height: sh });
+			stage = dom.svg("svg", {width: sw, height: sh});
 			inner = dom.svg("g");
 			stage.appendChild(inner);
 		} else {
@@ -69,9 +74,11 @@ var hexagon_tile = function hexagon_tile() {
 		}
 
 		function init(options) {
-			progress = options.progress || function () {
-				log("hexagon_tile - no progress defined");
-			};
+			progress =
+				options.progress ||
+				function () {
+					log("hexagon_tile - no progress defined");
+				};
 			r.setSeed(options.seed);
 			spreadSeed = r.getSeed();
 			// spreadGradient = r.getLastRandom() * 0.5;
@@ -93,7 +100,9 @@ var hexagon_tile = function hexagon_tile() {
 			// settings.spread.cur = 10;
 			// settings.background.cur = true;
 
-			settings = JSON.parse(JSON.stringify(options.settings || initialSettings));
+			settings = JSON.parse(
+				JSON.stringify(options.settings || initialSettings),
+			);
 
 			progress("settings:initialised", settings);
 
@@ -103,14 +112,20 @@ var hexagon_tile = function hexagon_tile() {
 			// progress("render:start");
 
 			radiusOuter = (5 + r.random() * 25) / 1000;
-			strokeSize = r.random() * r.random() * r.random() * radiusOuter;
-			radiusInner = radiusOuter - strokeSize + strokeSize * 0.01;
+			strokeSize =
+				r.random() * r.random() * r.random() * radiusOuter;
+			radiusInner =
+				radiusOuter - strokeSize + strokeSize * 0.01;
 			smoothSize = 0.01 + r.random() * 10;
 
 			if (vector) {
 				while (inner.firstChild) {
 					inner.removeChild(inner.firstChild);
-				}stage.setAttribute("style", "background-color:" + backgroundColor);
+				}
+				stage.setAttribute(
+					"style",
+					"background-color:" + backgroundColor,
+				);
 			} else {
 				if (settings.background.cur) {
 					stage.ctx.fillStyle = backgroundColor;
@@ -125,13 +140,13 @@ var hexagon_tile = function hexagon_tile() {
 			// c.setPalette(["#f3512f", "#faa584", "#575757", "#ffffff"]);
 
 			var path = [],
-			    points = [];
+				points = [];
 			for (var i = 0; i < 6; i++) {
 				var angle = i * angle60,
-				    x = radiusInner * Math.cos(angle),
-				    y = radiusInner * Math.sin(angle);
+					x = radiusInner * Math.cos(angle),
+					y = radiusInner * Math.sin(angle);
 				path[i] = (i === 0 ? "M" : "L") + x + "," + y;
-				points[i] = { x: x, y: y };
+				points[i] = {x: x, y: y};
 			}
 			path.push("Z");
 
@@ -148,7 +163,7 @@ var hexagon_tile = function hexagon_tile() {
 			for (i = 0; i < hexagons; i++) {
 				var row = Math.floor(i / cols);
 				var second = row % 2 == 0;
-				var col = i % cols + (second ? 0.5 : 0);
+				var col = (i % cols) + (second ? 0.5 : 0);
 				x = col * radiusOuter * 3;
 				y = row * minHeight;
 
@@ -158,10 +173,13 @@ var hexagon_tile = function hexagon_tile() {
 				var hex;
 				if (vector) {
 					var group = dom.svg("g");
-					group.setAttribute("transform", "translate(" + x + "," + y + ")");
+					group.setAttribute(
+						"transform",
+						"translate(" + x + "," + y + ")",
+					);
 					inner.appendChild(group);
 					hex = dom.svg("path", {
-						d: path.join(" ")
+						d: path.join(" "),
 					});
 					group.appendChild(hex);
 				} else {
@@ -234,7 +252,7 @@ var hexagon_tile = function hexagon_tile() {
 					x: x,
 					y: y,
 					colour: null,
-					rendered: false
+					rendered: false,
 					// neighbours: neighbours
 				};
 			}
@@ -247,11 +265,12 @@ var hexagon_tile = function hexagon_tile() {
 		}
 
 		function batch() {
-			var shouldRender = settings.spread.cur / settings.spread.max * 10;
+			var shouldRender =
+				(settings.spread.cur / settings.spread.max) * 10;
 			// log("shouldRender", shouldRender);
 			var maxRender = hexagons;
 			var loopStart = currentBatch * batchSize,
-			    loopEnd = loopStart + batchSize;
+				loopEnd = loopStart + batchSize;
 			if (loopEnd > maxRender) loopEnd = maxRender;
 			for (var h = loopStart; h < loopEnd; h++) {
 				var index = randomHexes[h].index;
@@ -297,14 +316,16 @@ var hexagon_tile = function hexagon_tile() {
 				} else {
 					dx = item.x - 0.5 + getJitter();
 					dy = item.y - 0.5 + getJitter();
-					var distanceFromCenter = Math.round(Math.sqrt(dx * dx + dy * dy) * 10);
+					var distanceFromCenter = Math.round(
+						Math.sqrt(dx * dx + dy * dy) * 10,
+					);
 
 					if (distanceFromCenter < shouldRender) {
 						stage.ctx.fillStyle = colour;
 						stage.ctx.beginPath();
 						for (i = 0; i < 6; i++) {
 							var x = (item.x + item.hex[i].x) * size,
-							    y = (item.y + item.hex[i].y) * size;
+								y = (item.y + item.hex[i].y) * size;
 							if (i === 0) {
 								stage.ctx.moveTo(x, y);
 							} else {
@@ -346,7 +367,12 @@ var hexagon_tile = function hexagon_tile() {
 		}
 
 		var update = function update(settings, seed) {
-			init({ progress: progress, size: size, settings: settings, seed: seed });
+			init({
+				progress: progress,
+				size: size,
+				settings: settings,
+				seed: seed,
+			});
 		};
 
 		var experiment = {
@@ -354,7 +380,7 @@ var hexagon_tile = function hexagon_tile() {
 			render: render,
 			settings: settings,
 			stage: vector ? stage : stage.canvas,
-			update: update
+			update: update,
 		};
 
 		return experiment;

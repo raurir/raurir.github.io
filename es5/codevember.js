@@ -1,6 +1,8 @@
 "use strict";
 
-define("codevember", ["exps_details"], function (experimentsDetails) {
+define("codevember", ["exps_details"], function (
+	experimentsDetails,
+) {
 	var pixels = 10;
 	var cubeSize = 400;
 	var gridSize = 440;
@@ -8,9 +10,9 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 	var grid = [];
 	var holder;
 	var camera, scene, renderer;
-	var camPos = { x: 0, y: 0, z: 0 };
+	var camPos = {x: 0, y: 0, z: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 	var lightA, lightB, lightC;
 	var ambientLight;
 
@@ -18,9 +20,13 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 		var material = new THREE.MeshPhongMaterial({
 			color: 0x00487b,
 			specular: 0x99e6ff,
-			shininess: 30
+			shininess: 30,
 		});
-		var geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeDepth);
+		var geometry = new THREE.BoxGeometry(
+			cubeSize,
+			cubeSize,
+			cubeDepth,
+		);
 		var mesh = new THREE.Mesh(geometry, material);
 		return mesh;
 	}
@@ -31,29 +37,45 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 	}
 
 	function createText() {
-		var codevember = experimentsDetails.getFeature("codevember");
+		var codevember =
+			experimentsDetails.getFeature("codevember");
 
-		document.body.appendChild(dom.element("style", {
-			innerText: ["a { color: white; }", "a:hover { color: #87d9ff; text-shadow: 0px 0px 16px #fff; }", "div { box-sizing: border-box;}", ".holder { color: white; display: block; position: absolute; overflow: auto;", "top: 20%; left: 10%; height: 50%; border: 1px dashed rgba(255,255,255,0.4);", " transform: rotate3d(0.3, 0.5, 0.9, 8deg); width: 80%; z-index: 50; }", ".item { display: block; clear: both; line-height: 25px; }", ".day { color: #bcd1d6; display: inline-block; float: left; padding-right: 10px; text-align: right; width: 20%; }", ".title { color: #999; display: inline-block; float: left; width: 80%; }", ".clickable .title { color: #fff; }"].join(" ")
-		}));
+		document.body.appendChild(
+			dom.element("style", {
+				innerText: [
+					"a { color: white; }",
+					"a:hover { color: #87d9ff; text-shadow: 0px 0px 16px #fff; }",
+					"div { box-sizing: border-box;}",
+					".holder { color: white; display: block; position: absolute; overflow: auto;",
+					"top: 20%; left: 10%; height: 50%; border: 1px dashed rgba(255,255,255,0.4);",
+					" transform: rotate3d(0.3, 0.5, 0.9, 8deg); width: 80%; z-index: 50; }",
+					".item { display: block; clear: both; line-height: 25px; }",
+					".day { color: #bcd1d6; display: inline-block; float: left; padding-right: 10px; text-align: right; width: 20%; }",
+					".title { color: #999; display: inline-block; float: left; width: 80%; }",
+					".clickable .title { color: #fff; }",
+				].join(" "),
+			}),
+		);
 
 		var textHolder = dom.element("div", {
 			className: "holder",
-			innerHTML: "<h1>CODEVEMBER</H1>"
+			innerHTML: "<h1>CODEVEMBER</H1>",
 		});
 
 		codevember.forEach(function (exp) {
-			var codeItem = exp.link ? dom.element("a", {
-				className: "item clickable",
-				href: "/?" + exp.link
-			}) : dom.element("div", { className: "item" });
+			var codeItem = exp.link
+				? dom.element("a", {
+						className: "item clickable",
+						href: "/?" + exp.link,
+					})
+				: dom.element("div", {className: "item"});
 			var codeItemDay = dom.element("div", {
 				className: "day",
-				innerHTML: "Day " + exp.day
+				innerHTML: "Day " + exp.day,
 			});
 			var codeItemTitle = dom.element("div", {
 				className: "title",
-				innerHTML: exp.title
+				innerHTML: exp.title,
 			});
 			textHolder.appendChild(codeItem);
 			codeItem.appendChild(codeItemDay);
@@ -66,7 +88,12 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2(0x000000, 0.002);
 
-		camera = new THREE.PerspectiveCamera(120, sw / sh, 1, 20000);
+		camera = new THREE.PerspectiveCamera(
+			120,
+			sw / sh,
+			1,
+			20000,
+		);
 		scene.add(camera);
 
 		lightA = new THREE.DirectionalLight(0xffe0ff, 0.19);
@@ -81,7 +108,7 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 		lightC.position.set(0, -1, 0.25);
 		scene.add(lightC);
 
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(sw, sh);
 
 		holder = new THREE.Group();
@@ -93,7 +120,7 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 		for (var p = 0; p < pixels * pixels; p++) {
 			var c = cube();
 			holder.add(c);
-			var xi = p % pixels - pixels / 2 + 0.5;
+			var xi = (p % pixels) - pixels / 2 + 0.5;
 			var yi = Math.floor(p / pixels) - pixels / 2 + 0.5;
 			var x = xi * gridSize;
 			var y = -yi * gridSize;
@@ -101,7 +128,7 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 			c.position.set(x, y, z);
 			c.shift = {
 				speed: (0.1 + Math.random()) * 0.0001,
-				position: 0
+				position: 0,
 			};
 			grid.push(c);
 		}
@@ -118,7 +145,11 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 
 		function moveLight(light, x, y, z) {
 			var sc = 0.00001;
-			light.position.set(Math.sin((time + 10000) * x * sc), Math.sin((time + 10000) * y * sc), Math.sin((time + 10000) * z * sc));
+			light.position.set(
+				Math.sin((time + 10000) * x * sc),
+				Math.sin((time + 10000) * y * sc),
+				Math.sin((time + 10000) * z * sc),
+			);
 		}
 
 		moveLight(lightA, 15, 17, 12);
@@ -141,6 +172,6 @@ define("codevember", ["exps_details"], function (experimentsDetails) {
 			renderer.setSize(w, h);
 			camera.aspect = w / h;
 			camera.updateProjectionMatrix();
-		}
+		},
 	};
 });

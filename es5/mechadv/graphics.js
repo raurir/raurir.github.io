@@ -1,6 +1,44 @@
 "use strict";
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _slicedToArray = (function () {
+	function sliceIterator(arr, i) {
+		var _arr = [];
+		var _n = true;
+		var _d = false;
+		var _e = undefined;
+		try {
+			for (
+				var _i = arr[Symbol.iterator](), _s;
+				!(_n = (_s = _i.next()).done);
+				_n = true
+			) {
+				_arr.push(_s.value);
+				if (i && _arr.length === i) break;
+			}
+		} catch (err) {
+			_d = true;
+			_e = err;
+		} finally {
+			try {
+				if (!_n && _i["return"]) _i["return"]();
+			} finally {
+				if (_d) throw _e;
+			}
+		}
+		return _arr;
+	}
+	return function (arr, i) {
+		if (Array.isArray(arr)) {
+			return arr;
+		} else if (Symbol.iterator in Object(arr)) {
+			return sliceIterator(arr, i);
+		} else {
+			throw new TypeError(
+				"Invalid attempt to destructure non-iterable instance",
+			);
+		}
+	};
+})();
 
 /*global fxrand, pi, pi2*/
 
@@ -21,14 +59,23 @@ var integer = function integer(min, max) {
 
 var colourMutate = function colourMutate(_ref) {
 	var _ref2 = _slicedToArray(_ref, 3),
-	    r = _ref2[0],
-	    g = _ref2[1],
-	    b = _ref2[2];
+		r = _ref2[0],
+		g = _ref2[1],
+		b = _ref2[2];
 
-	var amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-	return "rgb(" + [r, g, b].map(function (channel) {
-		return ~~number(channel - amount, channel + amount);
-	}).join(",") + ")";
+	var amount =
+		arguments.length > 1 && arguments[1] !== undefined
+			? arguments[1]
+			: 0;
+	return (
+		"rgb(" +
+		[r, g, b]
+			.map(function (channel) {
+				return ~~number(channel - amount, channel + amount);
+			})
+			.join(",") +
+		")"
+	);
 };
 
 var limitVisible = function limitVisible(v) {
@@ -44,14 +91,17 @@ var highlight = [0, 0, 0].map(function (_, i) {
 
 // eslint-disable-next-line no-unused-vars
 function colourGrey(options) {
-	var defaults = { darkest: 0, lightest: 255, alpha: 1 };
+	var defaults = {darkest: 0, lightest: 255, alpha: 1};
 	for (var p in options) {
 		defaults[p] = options[p];
-	}var white = defaults.white || integer(defaults.darkest, defaults.lightest);
+	}
+	var white =
+		defaults.white ||
+		integer(defaults.darkest, defaults.lightest);
 	var r = limitVisible(white + greyMod[0]),
-	    g = limitVisible(white + greyMod[1]),
-	    b = limitVisible(white + greyMod[2]),
-	    a = defaults.alpha;
+		g = limitVisible(white + greyMod[1]),
+		b = limitVisible(white + greyMod[2]),
+		a = defaults.alpha;
 	return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 }
 
@@ -64,10 +114,16 @@ function makeCanvas(w, h) {
 }
 
 function generateNoise(w, h, options) {
-	var defaults = { darkest: 1, lightest: 4, alpha: 0.3, percentage: 0 };
+	var defaults = {
+		darkest: 1,
+		lightest: 4,
+		alpha: 0.3,
+		percentage: 0,
+	};
 	for (var p in options) {
 		defaults[p] = options[p];
-	}var canvas = makeCanvas(w, h);
+	}
+	var canvas = makeCanvas(w, h);
 	var ctx = canvas.getContext("2d");
 	for (var x = 0; x < w; x++) {
 		for (var y = 0; y < h; y++) {
@@ -83,10 +139,14 @@ var noise = void 0;
 
 // eslint-disable-next-line no-unused-vars
 function generateMetal(w, h) {
-	noise = noise || generateNoise(300, 300, { percentage: 0.1 });
+	noise = noise || generateNoise(300, 300, {percentage: 0.1});
 	var canvas = makeCanvas(w, h);
 	var ctx = canvas.getContext("2d");
-	ctx.fillStyle = colourGrey({ darkest: 0, lightest: 90, alpha: 1 });
+	ctx.fillStyle = colourGrey({
+		darkest: 0,
+		lightest: 90,
+		alpha: 1,
+	});
 	ctx.fillRect(0, 0, w, h);
 	ctx.drawImage(noise, 0, 0);
 	return canvas;
@@ -97,11 +157,12 @@ function drawCircle(c, x, y, r, style) {
 	var defaults = {
 		fillStyle: "#fff",
 		lineWidth: 0,
-		strokeStyle: "#000"
+		strokeStyle: "#000",
 	};
 	for (var p in style) {
 		defaults[p] = style[p];
-	}c.fillStyle = defaults.fillStyle;
+	}
+	c.fillStyle = defaults.fillStyle;
 	c.lineWidth = defaults.lineWidth;
 	c.strokeStyle = defaults.strokeStyle;
 	c.beginPath();
@@ -122,9 +183,12 @@ function drawBand(ctx, minRadius, maxRadius) {
 		// 	lightest: 40,
 		// 	alpha: 0.5,
 		// }),
-		strokeStyle: number(0, 1) > 0.7 ? colourMutate(highlight, 20) : colourGrey(),
+		strokeStyle:
+			number(0, 1) > 0.7
+				? colourMutate(highlight, 20)
+				: colourGrey(),
 		// colour rust removed from original
-		lineWidth: bandSize
+		lineWidth: bandSize,
 	};
 	drawCircle(ctx, 0, 0, midRadius, style);
 }
@@ -146,41 +210,80 @@ function drawCutouts(ctx, teeth, minRadius, maxRadius) {
 
 function generateHoles(ctx, teeth, midRadius, bandSize) {
 	//var holes = ~~(teeth * integer(1,3) / integer(1,2));
-	var holeSize = bandSize / 2 * number(0.6, 0.9);
-	var holes = ~~(number(0.5, 0.9) * pi2 * midRadius / holeSize / 2);
+	var holeSize = (bandSize / 2) * number(0.6, 0.9);
+	var holes = ~~(
+		(number(0.5, 0.9) * pi2 * midRadius) /
+		holeSize /
+		2
+	);
 	holeSize *= number(0.5, 0.9);
 	for (var i = 0; i < holes; i++) {
-		var angle = i / holes * pi2; // + step / 2;
-		drawCircle(ctx, midRadius * Math.cos(angle), midRadius * Math.sin(angle), holeSize);
+		var angle = (i / holes) * pi2; // + step / 2;
+		drawCircle(
+			ctx,
+			midRadius * Math.cos(angle),
+			midRadius * Math.sin(angle),
+			holeSize,
+		);
 	}
 }
 
 function generateSegment(ctx, teeth, midRadius, bandSize) {
 	// capped specifies segments to be rounded or angular... angular with many segments will be akin to spokes
 	var capped = integer(0, 1) == 0;
-	var segments = ~~Math.pow(teeth, 1 / (capped ? integer(2, 4) : integer(2, 3))) + 1;
+	var segments =
+		~~Math.pow(
+			teeth,
+			1 / (capped ? integer(2, 4) : integer(2, 3)),
+		) + 1;
 	var holeSize = number(0.5, 0.8) * bandSize;
 	// if capped, remove the capping from segment size... on second thoughts, otherwise remove a little anyway!
-	var segmentSize = (pi2 / segments - (Math.asin(holeSize / midRadius) * capped ? 1 : 0.5)) * number(0.5, 0.9);
+	var segmentSize =
+		(pi2 / segments -
+			(Math.asin(holeSize / midRadius) * capped ? 1 : 0.5)) *
+		number(0.5, 0.9);
 	var innerRadius = midRadius - holeSize / 2;
 	var outerRadius = midRadius + holeSize / 2;
 
 	for (var i = 0; i < segments; i++) {
-		var startAngle = i / segments * pi2;
+		var startAngle = (i / segments) * pi2;
 		var endAngle = startAngle + segmentSize;
 		ctx.beginPath();
-		ctx.moveTo(Math.cos(startAngle) * innerRadius, Math.sin(startAngle) * innerRadius);
+		ctx.moveTo(
+			Math.cos(startAngle) * innerRadius,
+			Math.sin(startAngle) * innerRadius,
+		);
 		ctx.arc(0, 0, innerRadius, startAngle, endAngle, false);
 		if (capped) {
-			ctx.arc(Math.cos(endAngle) * midRadius, Math.sin(endAngle) * midRadius, holeSize / 2, endAngle + pi, endAngle, true);
+			ctx.arc(
+				Math.cos(endAngle) * midRadius,
+				Math.sin(endAngle) * midRadius,
+				holeSize / 2,
+				endAngle + pi,
+				endAngle,
+				true,
+			);
 		} else {
-			ctx.lineTo(Math.cos(endAngle) * outerRadius, Math.sin(endAngle) * outerRadius);
+			ctx.lineTo(
+				Math.cos(endAngle) * outerRadius,
+				Math.sin(endAngle) * outerRadius,
+			);
 		}
 		ctx.arc(0, 0, outerRadius, endAngle, startAngle, true);
 		if (capped) {
-			ctx.arc(Math.cos(startAngle) * midRadius, Math.sin(startAngle) * midRadius, holeSize / 2, startAngle, startAngle + pi, true);
+			ctx.arc(
+				Math.cos(startAngle) * midRadius,
+				Math.sin(startAngle) * midRadius,
+				holeSize / 2,
+				startAngle,
+				startAngle + pi,
+				true,
+			);
 		} else {
-			ctx.lineTo(Math.cos(startAngle) * innerRadius, Math.sin(startAngle) * innerRadius);
+			ctx.lineTo(
+				Math.cos(startAngle) * innerRadius,
+				Math.sin(startAngle) * innerRadius,
+			);
 		}
 		ctx.closePath();
 		ctx.fill();
@@ -189,14 +292,21 @@ function generateSegment(ctx, teeth, midRadius, bandSize) {
 
 // eslint-disable-next-line no-unused-vars
 function drawSpokes(ctx, teeth, minRadius, maxRadius) {
-	var spokes = Math.min(Math.max(2, Math.floor(teeth * number(0.2, 1))), 50);
+	var spokes = Math.min(
+		Math.max(2, Math.floor(teeth * number(0.2, 1))),
+		50,
+	);
 
-	var shaftBase = minRadius * Math.atan(pi / spokes) * number(0.6, 1);
-	var shaftTop = spokes > 20 ? shaftBase : maxRadius * Math.atan(pi / spokes) * number(0.1, 0.3);
+	var shaftBase =
+		minRadius * Math.atan(pi / spokes) * number(0.6, 1);
+	var shaftTop =
+		spokes > 20
+			? shaftBase
+			: maxRadius * Math.atan(pi / spokes) * number(0.1, 0.3);
 
 	ctx.beginPath();
 	for (var i = 0; i < spokes; i++) {
-		var angle = i / spokes * pi2;
+		var angle = (i / spokes) * pi2;
 
 		var tangent = pi / 2 - angle;
 		var baseOffsetX = shaftBase * Math.cos(tangent);
@@ -205,10 +315,22 @@ function drawSpokes(ctx, teeth, minRadius, maxRadius) {
 		var topOffsetX = shaftTop * Math.cos(tangent);
 		var topOffsetY = shaftTop * Math.sin(tangent);
 
-		ctx[i == 0 ? "moveTo" : "lineTo"](Math.cos(angle) * minRadius + baseOffsetX, Math.sin(angle) * minRadius - baseOffsetY);
-		ctx.lineTo(Math.cos(angle) * maxRadius + topOffsetX, Math.sin(angle) * maxRadius - topOffsetY);
-		ctx.lineTo(Math.cos(angle) * maxRadius - topOffsetX, Math.sin(angle) * maxRadius + topOffsetY);
-		ctx.lineTo(Math.cos(angle) * minRadius - baseOffsetX, Math.sin(angle) * minRadius + baseOffsetY);
+		ctx[i == 0 ? "moveTo" : "lineTo"](
+			Math.cos(angle) * minRadius + baseOffsetX,
+			Math.sin(angle) * minRadius - baseOffsetY,
+		);
+		ctx.lineTo(
+			Math.cos(angle) * maxRadius + topOffsetX,
+			Math.sin(angle) * maxRadius - topOffsetY,
+		);
+		ctx.lineTo(
+			Math.cos(angle) * maxRadius - topOffsetX,
+			Math.sin(angle) * maxRadius + topOffsetY,
+		);
+		ctx.lineTo(
+			Math.cos(angle) * minRadius - baseOffsetX,
+			Math.sin(angle) * minRadius + baseOffsetY,
+		);
 	}
 	ctx.closePath();
 	ctx.fill();
@@ -225,29 +347,40 @@ function drawBike(ctx, minRadius, maxRadius) {
 	var positive = 2 * integer(0, 1) - 1;
 
 	var o = 0;
-	var offsets = Array(corners).fill().map(function () {
-		o += positive * number(0, 0.3);
-		return {
-			offsetAngle: o,
-			offsetRadius: number(innerRadius + (outerRadius - innerRadius) * 0.3, outerRadius)
-		};
-	});
+	var offsets = Array(corners)
+		.fill()
+		.map(function () {
+			o += positive * number(0, 0.3);
+			return {
+				offsetAngle: o,
+				offsetRadius: number(
+					innerRadius + (outerRadius - innerRadius) * 0.3,
+					outerRadius,
+				),
+			};
+		});
 
 	var lineWidth = maxRadius / 10;
 
 	// console.log(JSON.stringify(offsets));
 
 	var _loop = function _loop() {
-		var angle = i / spokes * pi2;
+		var angle = (i / spokes) * pi2;
 
 		ctx.beginPath();
-		ctx.moveTo(Math.cos(angle) * innerRadius, Math.sin(angle) * innerRadius);
+		ctx.moveTo(
+			Math.cos(angle) * innerRadius,
+			Math.sin(angle) * innerRadius,
+		);
 		offsets.forEach(function (_ref3, index) {
 			var offsetAngle = _ref3.offsetAngle,
-			    offsetRadius = _ref3.offsetRadius;
+				offsetRadius = _ref3.offsetRadius;
 
 			var r = index < 2 ? outerRadius : offsetRadius;
-			ctx.lineTo(Math.cos(angle + offsetAngle) * r, Math.sin(angle + offsetAngle) * r);
+			ctx.lineTo(
+				Math.cos(angle + offsetAngle) * r,
+				Math.sin(angle + offsetAngle) * r,
+			);
 		});
 		ctx.lineJoin = "round";
 		ctx.closePath();
@@ -273,18 +406,24 @@ function drawSeeds(ctx, minRadius, maxRadius) {
 	var layers = Math.floor(delta / 10);
 	var cGap = 0;
 	for (var j = 1; j < layers; j++) {
-		var distance = startDistance + Math.pow(j * (delta / layers), 2) * 1; // + cGap * 1;
+		var distance =
+			startDistance + Math.pow(j * (delta / layers), 2) * 1; // + cGap * 1;
 
 		cGap = Math.sin(theta / 2) * distance * 1.3;
 
-		var circleSize = cGap / 2 * 0.8; //1.2 * Math.pow(j + 1, 2);
+		var circleSize = (cGap / 2) * 0.8; //1.2 * Math.pow(j + 1, 2);
 		if (distance + circleSize > maxRadius * 0.95) {
 			break; // too big, bail...
 			// circleSize -= distance - maxRadius;
 		}
 		for (var i = 0; i < rays; i++) {
-			var _angle = (i + j % 2 * 0.5) * theta;
-			drawCircle(ctx, Math.cos(_angle) * distance, Math.sin(_angle) * distance, circleSize);
+			var _angle = (i + (j % 2) * 0.5) * theta;
+			drawCircle(
+				ctx,
+				Math.cos(_angle) * distance,
+				Math.sin(_angle) * distance,
+				circleSize,
+			);
 		}
 	}
 }

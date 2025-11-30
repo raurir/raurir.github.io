@@ -53,7 +53,7 @@ var mining_branches = function mining_branches() {
 				megaNodes: r.random() > 0.5,
 				megaSubNodes: r.random() > 0.5,
 				constantMegaNodeSize: r.random() > 0.5,
-				constantMegaSubNodeSize: r.random() > 0.5
+				constantMegaSubNodeSize: r.random() > 0.5,
 			};
 
 			// con.log(settings);
@@ -71,15 +71,21 @@ var mining_branches = function mining_branches() {
 				rotation: 0,
 				// hue: ~~(r.random() * 360),
 				colour: fgColour,
-				mutationRate: 10 //r.random()
+				mutationRate: 10, //r.random()
 			});
 
 			function newPlanet(index) {
 				var planet = {
-					x: cx + Math.sin(rotation) * diameter + (r.random() - 0.5) * 0.05,
-					y: cy + Math.cos(rotation) * diameter + (r.random() - 0.5) * 0.05,
+					x:
+						cx +
+						Math.sin(rotation) * diameter +
+						(r.random() - 0.5) * 0.05,
+					y:
+						cy +
+						Math.cos(rotation) * diameter +
+						(r.random() - 0.5) * 0.05,
 					rotation: rotation,
-					distance: diameter
+					distance: diameter,
 				};
 
 				var ok = true;
@@ -109,7 +115,10 @@ var mining_branches = function mining_branches() {
 					i--;
 				}
 
-				if (planet.x == lastPlanet.x && planet.y == lastPlanet.y) {
+				if (
+					planet.x == lastPlanet.x &&
+					planet.y == lastPlanet.y
+				) {
 					ok = false;
 				}
 
@@ -118,17 +127,23 @@ var mining_branches = function mining_branches() {
 
 					// planet.colour = planet.closest.colour;
 					if (settings.increaseMutation) {
-						planet.mutationRate = planet.closest.mutationRate * 1.04;
+						planet.mutationRate =
+							planet.closest.mutationRate * 1.04;
 					} else {
-						planet.mutationRate = planet.closest.mutationRate * 0.9;
+						planet.mutationRate =
+							planet.closest.mutationRate * 0.9;
 					}
 
-					planet.colour = c.mutateColour(planet.closest.colour, planet.mutationRate);
+					planet.colour = c.mutateColour(
+						planet.closest.colour,
+						planet.mutationRate,
+					);
 
 					createPlanet(index, planet);
 				} else {
 					if (attempts < 40) {
-						rotation += r.random() * 20 + Math.atan(1 / diameter);
+						rotation +=
+							r.random() * 20 + Math.atan(1 / diameter);
 					} else {
 						ringIndex++;
 						arrRings[ringIndex] = [];
@@ -216,18 +231,30 @@ var mining_branches = function mining_branches() {
 						ctx.lineTo(closest.x * sw, closest.y * sh);
 					} else {
 						if (closest.closest) {
-							var phx = closest.x + (closest.closest.x - closest.x) / 2;
-							var phy = closest.y + (closest.closest.y - closest.y) / 2;
+							var phx =
+								closest.x + (closest.closest.x - closest.x) / 2;
+							var phy =
+								closest.y + (closest.closest.y - closest.y) / 2;
 
 							var nx = closest.x + (closest.x - phx);
 							var ny = closest.y + (closest.y - phy);
 
-							ctx.quadraticCurveTo(nx * sw, ny * sh, closest.x * sw, closest.y * sh);
+							ctx.quadraticCurveTo(
+								nx * sw,
+								ny * sh,
+								closest.x * sw,
+								closest.y * sh,
+							);
 						} else {
 							var hx = closest.x + (xp - closest.x) / 2;
 							var hy = closest.y + (yp - closest.y) / 2;
 
-							ctx.quadraticCurveTo(hx * sw, hy * sh, closest.x * sw, closest.y * sh);
+							ctx.quadraticCurveTo(
+								hx * sw,
+								hy * sh,
+								closest.x * sw,
+								closest.y * sh,
+							);
 						}
 					}
 					ctx.stroke();
@@ -247,13 +274,27 @@ var mining_branches = function mining_branches() {
 				if (settings.megaNodes) {
 					ctx.beginPath();
 					ctx.fillStyle = bgColour;
-					ctx.drawCircle(planet.x * sw, planet.y * sh, radius * 0.7 * (settings.constantMegaNodeSize ? 1 : r.random()));
+					ctx.drawCircle(
+						planet.x * sw,
+						planet.y * sh,
+						radius *
+							0.7 *
+							(settings.constantMegaNodeSize ? 1 : r.random()),
+					);
 					ctx.fill();
 
 					if (settings.megaSubNodes && r.random() > 0.5) {
 						ctx.beginPath();
 						ctx.fillStyle = planet.colour;
-						ctx.drawCircle(planet.x * sw, planet.y * sh, radius * 0.9 * (settings.constantMegaSubNodeSize ? 1 : r.random()));
+						ctx.drawCircle(
+							planet.x * sw,
+							planet.y * sh,
+							radius *
+								0.9 *
+								(settings.constantMegaSubNodeSize
+									? 1
+									: r.random()),
+						);
 						ctx.fill();
 					}
 				}
@@ -306,7 +347,8 @@ var mining_branches = function mining_branches() {
 			// bmp.setSize(sw, sh);
 			while (canvases.childNodes.length) {
 				canvases.removeChild(canvases.childNodes[0]);
-			}c.getRandomPalette();
+			}
+			c.getRandomPalette();
 			fgColour = c.getRandomColour();
 			bgColour = c.getNextColour();
 
@@ -334,7 +376,7 @@ var mining_branches = function mining_branches() {
 
 		var experiment = {
 			stage: canvases,
-			init: generate
+			init: generate,
 		};
 		return experiment;
 	};

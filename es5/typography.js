@@ -20,7 +20,7 @@ var typography = function typography() {
 				min: 2,
 				max: 64,
 				cur: 4,
-				type: "Number"
+				type: "Number",
 			},
 			// phrase: {
 			//   label: "Phrase",
@@ -32,8 +32,8 @@ var typography = function typography() {
 			background: {
 				type: "Boolean",
 				label: "Background",
-				cur: false
-			}
+				cur: false,
+			},
 		};
 
 		var bmp = dom.canvas(100, 100);
@@ -70,7 +70,8 @@ var typography = function typography() {
 			var phrase = "Typography";
 			// var strings = [settings.phrase.cur, numerals];
 			var strings = [phrase, numerals];
-			var str = strings[Math.floor(r.random() * strings.length)];
+			var str =
+				strings[Math.floor(r.random() * strings.length)];
 			var ss = Math.round(r.random() * str.length);
 			var se = ss + Math.round(r.random() * (str.length - ss));
 			str = str.substr(ss, se);
@@ -139,7 +140,12 @@ var typography = function typography() {
 		function drawInnerBlock() {
 			var border = 0.1 * block;
 			ctx.fillStyle = c.getRandomColour();
-			ctx.fillRect(border, border, block - border * 2, block - border * 2);
+			ctx.fillRect(
+				border,
+				border,
+				block - border * 2,
+				block - border * 2,
+			);
 		}
 
 		function drawSubdivion() {
@@ -159,16 +165,16 @@ var typography = function typography() {
 			ctx.rotate(angle * Math.PI * 2);
 			var majors = Math.pow(2, typoInteger(1, 4));
 			var minors = typoInteger(1, 4);
-			var majorSize = typoInteger(5, 10) * size / 400;
+			var majorSize = (typoInteger(5, 10) * size) / 400;
 			var minorSize = majorSize * r.getNumber(0.2, 0.8);
 			ctx.fillStyle = c.getRandomColour();
-			var width = 1 * size / 300;
+			var width = (1 * size) / 300;
 			for (var m = 0; m < majors; m++) {
-				var x = m / majors * block;
+				var x = (m / majors) * block;
 				var y = 0;
 				ctx.fillRect(x, y, width, majorSize);
 				for (var n = 0; n < minors; n++) {
-					var xn = x + n / minors * block / majors;
+					var xn = x + ((n / minors) * block) / majors;
 					var yn = 0;
 					ctx.fillRect(xn, yn, width, minorSize);
 				}
@@ -177,21 +183,31 @@ var typography = function typography() {
 		}
 
 		function drawPattern() {
-			var rotation = Math.round(r.random() * 4) / 4 * Math.PI;
-			var rowSize = Math.round((2 + Math.floor(r.random() * 8)) * size / 1000);
+			var rotation = (Math.round(r.random() * 4) / 4) * Math.PI;
+			var rowSize = Math.round(
+				((2 + Math.floor(r.random() * 8)) * size) / 1000,
+			);
 			var patternColoured = dom.canvas(rowSize, rowSize * 2);
 			ctx.save();
 			ctx.beginPath();
 			ctx.rect(0, 0, block, block);
 			ctx.rotate(rotation);
 			patternColoured.ctx.fillStyle = c.getNextColour(); // getRandomColour();
-			for (var py = 0; py < block / rowSize * 4; py++) {
-				patternColoured.ctx.fillRect(0, py * rowSize * 2, block * rowSize, rowSize);
+			for (var py = 0; py < (block / rowSize) * 4; py++) {
+				patternColoured.ctx.fillRect(
+					0,
+					py * rowSize * 2,
+					block * rowSize,
+					rowSize,
+				);
 			}
 			// document.body.appendChild(patternColoured.canvas);
 			// patternColoured.canvas.style.border = "2px solid green";
 			// patternColoured.canvas.style.width = "100px";
-			ctx.fillStyle = ctx.createPattern(patternColoured.canvas, "repeat");
+			ctx.fillStyle = ctx.createPattern(
+				patternColoured.canvas,
+				"repeat",
+			);
 			ctx.fill();
 			ctx.restore();
 		}
@@ -200,7 +216,9 @@ var typography = function typography() {
 			var angle = Math.floor(r.random() * 4) / 4;
 			var xo = r.random() * block;
 			var yo = r.random() * block;
-			var fontSize = Math.round(Math.pow(2, 2 + r.random() * 6) * size / 400);
+			var fontSize = Math.round(
+				(Math.pow(2, 2 + r.random() * 6) * size) / 400,
+			);
 			// console.log(fontSize);
 			var font = "Helvetica";
 			ctx.rotate(angle * Math.PI * 2);
@@ -212,9 +230,11 @@ var typography = function typography() {
 
 		function init(options) {
 			console.log("typography", options);
-			progress = options.progress || function () {
-				console.log("typography - no progress defined");
-			};
+			progress =
+				options.progress ||
+				function () {
+					console.log("typography - no progress defined");
+				};
 			r.setSeed(options.seed);
 			size = options.size;
 			sw = size;
@@ -231,7 +251,7 @@ var typography = function typography() {
 			cols = settings.boxes.cur;
 			rows = settings.boxes.cur;
 
-			block = Math.ceil(1 / cols * size);
+			block = Math.ceil((1 / cols) * size);
 			bmp.setSize(sw, sh);
 			ctx.clearRect(0, 0, sw, sh);
 			c.getRandomPalette();
@@ -269,7 +289,12 @@ var typography = function typography() {
 		}
 
 		function update(settings, seed) {
-			init({ progress: progress, size: size, settings: settings, seed: seed });
+			init({
+				progress: progress,
+				size: size,
+				settings: settings,
+				seed: seed,
+			});
 		}
 
 		var experiment = {
@@ -277,7 +302,7 @@ var typography = function typography() {
 			init: init,
 			render: render,
 			settings: settings,
-			update: update
+			update: update,
 		};
 
 		return experiment;

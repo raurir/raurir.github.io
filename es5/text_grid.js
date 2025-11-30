@@ -23,20 +23,20 @@ var text_grid = function text_grid() {
 			min: 2,
 			max: 64,
 			cur: 7,
-			type: "Number"
+			type: "Number",
 		},
 		phrase: {
 			label: "Phrase",
 			// min: 1,
 			// max: 100,
 			cur: "D Q36RUCN    FGVNFVGQax6q2 b",
-			type: "String"
+			type: "String",
 		},
 		background: {
 			type: "Boolean",
 			label: "Background",
-			cur: true
-		}
+			cur: true,
+		},
 	};
 
 	var bmp = dom.canvas(100, 100);
@@ -49,7 +49,7 @@ var text_grid = function text_grid() {
 
 	function drawBlock(index, x, y) {
 		var w = 1,
-		    h = 1;
+			h = 1;
 		ctx.save();
 		ctx.translate(x * blockW, y * blockH);
 
@@ -110,7 +110,7 @@ var text_grid = function text_grid() {
 		cols = settings.boxes.cur;
 		rows = Math.floor(phrase.length / cols);
 
-		blockW = Math.ceil(1 / cols * size);
+		blockW = Math.ceil((1 / cols) * size);
 		blockH = Math.ceil(blockW / widthOnHeight);
 		bmp.setSize(sw, sh);
 		ctx.clearRect(0, 0, sw, sh);
@@ -144,7 +144,7 @@ var text_grid = function text_grid() {
 	}
 
 	function update(settings) {
-		init({ size: size, settings: settings });
+		init({size: size, settings: settings});
 	}
 
 	var experiment = {
@@ -152,7 +152,7 @@ var text_grid = function text_grid() {
 		init: init,
 		render: render,
 		settings: settings,
-		update: update
+		update: update,
 	};
 
 	return experiment;

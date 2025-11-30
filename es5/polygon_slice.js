@@ -10,11 +10,11 @@ if (isNode) {
 }
 
 var getRotationRange = function getRotationRange(sides) {
-	var angleInner = 180 * (sides - 2) / sides;
+	var angleInner = (180 * (sides - 2)) / sides;
 	// range a square, rotationRange would be zero, so set to 45 instead
 	var rotationRange = 90 - angleInner || 45;
 	// multiple by 3 to get a decent chunk of variation
-	return rotationRange * 3 / 180 * Math.PI;
+	return ((rotationRange * 3) / 180) * Math.PI;
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -49,20 +49,20 @@ var polygon_slice = function polygon_slice() {
 				label: "Rotation",
 				min: 0,
 				max: 9, // 0-9 allows one edge to be parallel with T,R,B,L when cur is: 0..3..6..9
-				cur: 0
+				cur: 0,
 			},
 			maxDepth: {
 				type: "Number",
 				label: "Max Depth",
 				min: 2,
 				max: 8,
-				cur: 2
+				cur: 2,
 			},
 			background: {
 				type: "Boolean",
 				label: "Background",
-				cur: false
-			}
+				cur: false,
+			},
 		};
 
 		// been listening to GOTO80 for most of this: https://www.youtube.com/watch?v=2ZXlofdWtWw
@@ -72,8 +72,8 @@ var polygon_slice = function polygon_slice() {
 		// copied from recursive_polygon
 		var drawPolygon = function drawPolygon(points, _ref) {
 			var lineWidth = _ref.lineWidth,
-			    strokeStyle = _ref.strokeStyle,
-			    fillStyle = _ref.fillStyle;
+				strokeStyle = _ref.strokeStyle,
+				fillStyle = _ref.fillStyle;
 
 			if (!points) {
 				return; // console.warn("null array", points)
@@ -100,7 +100,9 @@ var polygon_slice = function polygon_slice() {
 			// pick two edges to slice into.
 			// to do so we pick the corner of the start of the edge.
 			var cornerAlpha = r.getInteger(0, array.length - 1);
-			var cornerBeta = (cornerAlpha + r.getInteger(1, array.length - 1)) % array.length;
+			var cornerBeta =
+				(cornerAlpha + r.getInteger(1, array.length - 1)) %
+				array.length;
 
 			var cornerMin = Math.min(cornerAlpha, cornerBeta);
 			var cornerMax = Math.max(cornerAlpha, cornerBeta);
@@ -114,8 +116,16 @@ var polygon_slice = function polygon_slice() {
 			// pick actual slice points somewhere along each edge
 			// it is quite pleasant to slice the polygon half way along an edge
 			// so going to bias towards that with `cutHalf`
-			var pointA = geom.lerp(pointA0, pointA1, cutHalf ? 0.5 : r.getNumber(0.1, 0.9));
-			var pointB = geom.lerp(pointB0, pointB1, cutHalf ? 0.5 : r.getNumber(0.1, 0.9));
+			var pointA = geom.lerp(
+				pointA0,
+				pointA1,
+				cutHalf ? 0.5 : r.getNumber(0.1, 0.9),
+			);
+			var pointB = geom.lerp(
+				pointB0,
+				pointB1,
+				cutHalf ? 0.5 : r.getNumber(0.1, 0.9),
+			);
 
 			// min and max are confusing, but one poly starts from 0 which is arrayMin.
 			var arrayMin = [];
@@ -172,7 +182,12 @@ var polygon_slice = function polygon_slice() {
 					} else {
 						height = radius * 2; // vertical
 					}
-					gradient = ctx.createLinearGradient(0.5 - radius, 0.5 - radius, width * sw, height * sh);
+					gradient = ctx.createLinearGradient(
+						0.5 - radius,
+						0.5 - radius,
+						width * sw,
+						height * sh,
+					);
 					gradient.addColorStop(0, c.getRandomColour());
 					gradient.addColorStop(1, c.getRandomColour());
 					style.fillStyle = gradient;
@@ -191,11 +206,12 @@ var polygon_slice = function polygon_slice() {
 			// recurse
 			depth++;
 			polygons.forEach(function (poly) {
-				if (depth < settings.maxDepth.cur && ( // always honour max recursions else we crash...
-				minArea === 0 || geom.polygonArea(poly) > minArea) // only honour minArea if not zero!
+				if (
+					depth < settings.maxDepth.cur && // always honour max recursions else we crash...
+					(minArea === 0 || geom.polygonArea(poly) > minArea) // only honour minArea if not zero!
 				) {
-						drawAndSplit(poly, depth);
-					} else {
+					drawAndSplit(poly, depth);
+				} else {
 					var polyInset = geom.insetPoints(poly, border);
 					if (!polyInset) return;
 					// then check if they are similar, if not it has been inverted due to excessive inset.
@@ -209,9 +225,11 @@ var polygon_slice = function polygon_slice() {
 		};
 
 		var init = function init(options) {
-			progress = options.progress || function () {
-				console.log("polygon_slice - no progress defined");
-			};
+			progress =
+				options.progress ||
+				function () {
+					console.log("polygon_slice - no progress defined");
+				};
 			r.setSeed(options.seed);
 			size = options.size;
 			sw = options.sw || size;
@@ -222,8 +240,10 @@ var polygon_slice = function polygon_slice() {
 			border = -r.getNumber(0.002, 0.01);
 			radius = r.getNumber(0.3, 0.5);
 			cutHalf = r.getNumber(0, 1) > 0.2; // cutting in half is nice!
-			minArea = r.getInteger(0, 1) === 0 ? 0 // either 0, which means ignore minArea altogether
-			: r.getNumber(0.05, radius * 0.8); // or randomize it.
+			minArea =
+				r.getInteger(0, 1) === 0
+					? 0 // either 0, which means ignore minArea altogether
+					: r.getNumber(0.05, radius * 0.8); // or randomize it.
 			maxDepth = r.getInteger(2, 8);
 
 			settings.rotation.cur = r.getInteger(0, 9);
@@ -236,14 +256,18 @@ var polygon_slice = function polygon_slice() {
 			progress("settings:initialised", settings);
 
 			var sides = r.getInteger(3, 7);
-			startAngle = settings.rotation.cur / settings.rotation.max * getRotationRange(sides);
+			startAngle =
+				(settings.rotation.cur / settings.rotation.max) *
+				getRotationRange(sides);
 
-			var points = new Array(sides).fill().map(function (side, i) {
-				var a = i / sides * -TAU;
-				var x = Math.sin(a) * radius;
-				var y = Math.cos(a) * radius;
-				return { x: x, y: y };
-			});
+			var points = new Array(sides)
+				.fill()
+				.map(function (side, i) {
+					var a = (i / sides) * -TAU;
+					var x = Math.sin(a) * radius;
+					var y = Math.cos(a) * radius;
+					return {x: x, y: y};
+				});
 
 			// perf.start('polygon')
 			backgroundColour = c.getRandomColour();
@@ -259,7 +283,7 @@ var polygon_slice = function polygon_slice() {
 			// draw a border around shape
 			drawPolygon(points, {
 				strokeStyle: c.getNextColour(),
-				lineWidth: 0.001
+				lineWidth: 0.001,
 			});
 			// inset the shape before recursion begins
 			drawAndSplit(geom.insetPoints(points, border), 0);
@@ -270,14 +294,19 @@ var polygon_slice = function polygon_slice() {
 
 		var update = function update(settings, seed) {
 			// console.log("update", settings);
-			init({ progress: progress, seed: seed, size: size, settings: settings });
+			init({
+				progress: progress,
+				seed: seed,
+				size: size,
+				settings: settings,
+			});
 		};
 
 		return {
 			stage: bmp.canvas,
 			init: init,
 			settings: settings,
-			update: update
+			update: update,
 		};
 	};
 };

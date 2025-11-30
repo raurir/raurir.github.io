@@ -17,20 +17,25 @@ var circle_packing = function circle_packing() {
 		var TAU = Math.PI * 2;
 		var sw, sh;
 		var cx = 0.5,
-		    cy = 0.5;
+			cy = 0.5;
 		var bmp = dom.canvas(1, 1);
 
 		function error(site, depth, err) {
 			return;
 			bmp.ctx.fillStyle = err || "green";
 			var siteSize = err ? 1 : 7;
-			bmp.ctx.fillRect(site.x * sw - siteSize / 2, site.y * sh - siteSize / 2, siteSize, siteSize);
+			bmp.ctx.fillRect(
+				site.x * sw - siteSize / 2,
+				site.y * sh - siteSize / 2,
+				siteSize,
+				siteSize,
+			);
 		}
 
 		var experiment = {
 			stage: bmp.canvas,
 			init: init,
-			settings: {} // or null
+			settings: {}, // or null
 		};
 
 		// var output = dom.element("div");
@@ -41,15 +46,20 @@ var circle_packing = function circle_packing() {
 		function init(options) {
 			console.time("process time");
 
-			progress = options.progress || function () {
-				console.log("circle_packing - no progress defined");
-			};
+			progress =
+				options.progress ||
+				function () {
+					console.log("circle_packing - no progress defined");
+				};
 			var size = options.size;
 			sw = size;
 			sh = size;
 			bmp.setSize(sw, sh);
 			rnd.setSeed(options.seed);
-			console.log("circle_packing setting seed.", rnd.getSeed());
+			console.log(
+				"circle_packing setting seed.",
+				rnd.getSeed(),
+			);
 
 			c.getRandomPalette();
 			// bmp.ctx.clearRect(0, 0, sw, sh);
@@ -59,8 +69,8 @@ var circle_packing = function circle_packing() {
 			var threads = 0;
 			var iterations = 0;
 			var circles = 0,
-			    circlesLast = 0,
-			    circlesSame = 0;
+				circlesLast = 0,
+				circlesSame = 0;
 			var gap = rnd.getNumber(0.001, 0.02);
 			// var gap = 0.0005;
 			console.log("gap", gap);
@@ -108,7 +118,12 @@ var circle_packing = function circle_packing() {
 				attempt++;
 
 				progressTicker++;
-				threadOutput.ctx.fillRect(progressTicker / 500, 0, 1, threads / 50);
+				threadOutput.ctx.fillRect(
+					progressTicker / 500,
+					0,
+					1,
+					threads / 50,
+				);
 
 				if (circles % 100 == 0) {
 					fakeProgress -= (fakeProgress - 1) * 0.02;
@@ -138,7 +153,17 @@ var circle_packing = function circle_packing() {
 				threads--;
 				iterations++;
 
-				var colour, depth, distance, dx, dy, other, r, radius, site, y, x;
+				var colour,
+					depth,
+					distance,
+					dx,
+					dy,
+					other,
+					r,
+					radius,
+					site,
+					y,
+					x;
 				if (parent) {
 					if (!parent.sites.length) {
 						// no sites left
@@ -154,7 +179,9 @@ var circle_packing = function circle_packing() {
 					// banding
 
 					// pick a sot
-					var index = Math.floor(rnd.random() * parent.sites.length);
+					var index = Math.floor(
+						rnd.random() * parent.sites.length,
+					);
 					site = parent.sites.splice(index, 1)[0];
 					x = site.x;
 					y = site.y;
@@ -177,11 +204,13 @@ var circle_packing = function circle_packing() {
 						// case 0 - ignore, adopt global maxRadius
 						case 1:
 							// set a varying maxRadius based on distance, growing smaller towards edges
-							maxRadius = 0.01 + Math.pow(0.5 - distance, powerMaxRadius);
+							maxRadius =
+								0.01 + Math.pow(0.5 - distance, powerMaxRadius);
 							break;
 						case 2:
 							// set a varying maxRadius based on distance, growing larger towards edges
-							maxRadius = 0.01 + Math.pow(distance, powerMaxRadius);
+							maxRadius =
+								0.01 + Math.pow(distance, powerMaxRadius);
 							break;
 					}
 
@@ -212,13 +241,13 @@ var circle_packing = function circle_packing() {
 
 					if (options) {
 						if (options.r) {
-							/* console.log("overriding r"); */r = options.r;
+							/* console.log("overriding r"); */ r = options.r;
 						}
 						if (options.x) {
-							/* console.log("overriding x"); */x = options.x;
+							/* console.log("overriding x"); */ x = options.x;
 						}
 						if (options.y) {
-							/* console.log("overriding y"); */y = options.y;
+							/* console.log("overriding y"); */ y = options.y;
 						}
 					}
 
@@ -230,7 +259,11 @@ var circle_packing = function circle_packing() {
 
 					// check all other children
 					var ok = true;
-					for (var i = 0, il = parent.children.length; i < il && ok; i++) {
+					for (
+						var i = 0, il = parent.children.length;
+						i < il && ok;
+						i++
+					) {
 						other = parent.children[i];
 						dx = x - other.x;
 						dy = y - other.y;
@@ -270,7 +303,8 @@ var circle_packing = function circle_packing() {
 
 				if (alternatePunchOut) {
 					// every second level punch the circle out rather than draw on top.
-					bmp.ctx.globalCompositeOperation = (depth + 1) % 2 ? "destination-out" : "source-over";
+					bmp.ctx.globalCompositeOperation =
+						(depth + 1) % 2 ? "destination-out" : "source-over";
 				}
 				bmp.ctx.beginPath();
 				bmp.ctx.fillStyle = colour;
@@ -292,19 +326,25 @@ var circle_packing = function circle_packing() {
 					var segments = Math.ceil(perimeter / grid) || 6;
 					for (var segment = 0; segment < segments; segment++) {
 						// vary siteRadius and siteAngle by rnd.getNumber(0, 1) for some jitter
-						var siteRadius = (ring + rnd.getNumber(0, 1)) * grid,
-						    siteAngle = (segment + rnd.getNumber(0, 1)) / segments * TAU,
-						    siteX = x + Math.sin(siteAngle) * siteRadius,
-						    siteY = y + Math.cos(siteAngle) * siteRadius,
-						    site = {
-							x: siteX,
-							y: siteY
-						};
+						var siteRadius =
+								(ring + rnd.getNumber(0, 1)) * grid,
+							siteAngle =
+								((segment + rnd.getNumber(0, 1)) / segments) *
+								TAU,
+							siteX = x + Math.sin(siteAngle) * siteRadius,
+							siteY = y + Math.cos(siteAngle) * siteRadius,
+							site = {
+								x: siteX,
+								y: siteY,
+							};
 						// if (Math.sin(siteAngle) < 0.75) { // pacman
 						// if (Math.sin(siteAngle) > 0) { // semi circle
 						// if (parseInt(siteAngle) % 2 == 0) // radioactive sign
 						if (banding) {
-							if (parseInt(siteRadius * bandScale) % bandModulo == 0) {
+							if (
+								parseInt(siteRadius * bandScale) % bandModulo ==
+								0
+							) {
 								sites.push(site);
 							}
 						} else {
@@ -324,7 +364,7 @@ var circle_packing = function circle_packing() {
 					y: y,
 					r: r,
 					children: [],
-					sites: sites
+					sites: sites,
 				};
 				// console.log(r, circle.childrenMax);
 
@@ -334,13 +374,19 @@ var circle_packing = function circle_packing() {
 				}
 
 				if (depth < maxDepth) {
-					for (var i = 0, il = circle.sites.length; i < il; i++) {
+					for (
+						var i = 0, il = circle.sites.length;
+						i < il;
+						i++
+					) {
 						attemptNextCircle(circle, 0);
 					}
 				}
 			}
 
-			var container = attemptCircle(null, 0, { colour: "transparent" });
+			var container = attemptCircle(null, 0, {
+				colour: "transparent",
+			});
 			// var inner = attemptCircle(parent, 0, {x: 0.5, y: 0.5, r: 0.3, colour: "rgba(0,0,0,0)"});
 			// var inner2 = attemptCircle(inner, 0, {x: 0.5, y: 0.5, r: 0.1, colour: c.getNextColour()});
 		}

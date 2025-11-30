@@ -8,14 +8,14 @@ define("aegean_sun", ["perlin"], function (perlin) {
 	var sw = window.innerWidth;
 	var sh = window.innerHeight;
 	var w = sw,
-	    h = sh;
+		h = sh;
 
 	var channelX = perlin.noise(w, h);
 	var channelY = perlin.noise(w, h);
 
 	var maxSize = rndI.getInteger(100, 300);
 	var minSize = rndI.getInteger(4, 10);
-	var maxBoxes = Math.floor(sw * sh / 200);
+	var maxBoxes = Math.floor((sw * sh) / 200);
 	var cols = c.getRandomPalette();
 	var canvas = dom.canvas(sw, sh);
 	var ctx = canvas.ctx;
@@ -39,8 +39,8 @@ define("aegean_sun", ["perlin"], function (perlin) {
 		var steps = 40;
 
 		function contour() {
-			var p0 = { x: rndI.getNumber(0.4, 0.6) * w, y: 0 * h };
-			var p1 = { x: rndI.getNumber(0.4, 0.6) * w, y: 1 * h };
+			var p0 = {x: rndI.getNumber(0.4, 0.6) * w, y: 0 * h};
+			var p1 = {x: rndI.getNumber(0.4, 0.6) * w, y: 1 * h};
 			var line = [];
 			for (var i = 0; i < segments; i++) {
 				var p = geom.lerp(p0, p1, i / segments);
@@ -58,7 +58,7 @@ define("aegean_sun", ["perlin"], function (perlin) {
 			for (var i = 0; i < segments; i++) {
 				var p = {
 					x: line[i].x + offset.x,
-					y: line[i].y + offset.y
+					y: line[i].y + offset.y,
 				};
 
 				var noiseIndex = Math.floor(p.y * w + p.x);
@@ -88,10 +88,10 @@ define("aegean_sun", ["perlin"], function (perlin) {
 
 		var line = contour();
 		var next = line,
-		    prev = line;
+			prev = line;
 		for (var i = 0; i < steps; i++) {
-			next = recurse(next, { x: 4, y: 0 });
-			prev = recurse(prev, { x: -4, y: 0 });
+			next = recurse(next, {x: 4, y: 0});
+			prev = recurse(prev, {x: -4, y: 0});
 		}
 	}
 
@@ -105,6 +105,6 @@ define("aegean_sun", ["perlin"], function (perlin) {
 	}
 	return {
 		init: init,
-		stage: canvas.canvas
+		stage: canvas.canvas,
 	};
 });

@@ -51,8 +51,8 @@ var perlin_dots = function perlin_dots(perlin) {
 			// d.save();
 			// d.setTransform( 1, 0, 0, 1, 0, 0 );
 			var r = ~~(red[i] * 255),
-			    g = ~~(red[i] * 255),
-			    b = ~~(red[i] * 255);
+				g = ~~(red[i] * 255),
+				b = ~~(red[i] * 255);
 			d.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
 			d.fillRect(xp * pixel, yp * pixel, pixel, pixel);
 
@@ -73,7 +73,7 @@ var perlin_dots = function perlin_dots(perlin) {
 		var d = dots.map(function (dotA) {
 			var pressure = {
 				x: 0,
-				y: 0
+				y: 0,
 			};
 			var pa = dotA.position();
 
@@ -105,8 +105,8 @@ var perlin_dots = function perlin_dots(perlin) {
 				var attraction = push * 0.008;
 				// pressure.x += (50 - Math.abs(dx)) * (dx < 0 ? -1 : 1) * 0.01;
 				// pressure.y += (50 - Math.abs(dy)) * (dy < 0 ? -1 : 1) * 0.01;
-				pressure.x += dx / d * attraction; // (50 - Math.abs(dx)) * (dx < 0 ? -1 : 1) * 0.01;
-				pressure.y += dy / d * attraction; //(50 - Math.abs(dy)) * (dy < 0 ? -1 : 1) * 0.01;
+				pressure.x += (dx / d) * attraction; // (50 - Math.abs(dx)) * (dx < 0 ? -1 : 1) * 0.01;
+				pressure.y += (dy / d) * attraction; //(50 - Math.abs(dy)) * (dy < 0 ? -1 : 1) * 0.01;
 
 				// if (isNaN(pressure.x)) {
 				// 	console.log(pressure, dx, d, attraction);
@@ -136,12 +136,12 @@ var perlin_dots = function perlin_dots(perlin) {
 			y += distance.y;
 		};
 		var position = function position() {
-			return { x: x, y: y };
+			return {x: x, y: y};
 		};
 		return {
 			position: position,
 			draw: draw,
-			move: move
+			move: move,
 		};
 	};
 
@@ -152,7 +152,7 @@ var perlin_dots = function perlin_dots(perlin) {
 			}
 			drawFrame();
 		},
-		stage: c.canvas
+		stage: c.canvas,
 	};
 };
 

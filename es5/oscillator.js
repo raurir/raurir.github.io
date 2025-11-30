@@ -91,6 +91,6 @@ define("oscillator", function () {
 	}
 	return {
 		init: init,
-		stage: canvas.canvas
+		stage: canvas.canvas,
 	};
 });

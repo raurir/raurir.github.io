@@ -3,7 +3,7 @@
 define("infinite_stairs", function () {
 	var camera, scene, renderer;
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 
 	var flightWidth = 300;
 	var stepDepth = 40;
@@ -29,7 +29,9 @@ define("infinite_stairs", function () {
 		var flight = new THREE.Group();
 		holder.add(flight);
 
-		var materialWood = new THREE.MeshPhongMaterial({ map: textures["wood-dark.jpg"] });
+		var materialWood = new THREE.MeshPhongMaterial({
+			map: textures["wood-dark.jpg"],
+		});
 		// var materialWall = new THREE.MeshPhongMaterial({map: textures["mouldy-white-paint.png"]});
 		// materialWood = new THREE.MeshPhongMaterial({wireframe: true});
 		// materialWall = new THREE.MeshPhongMaterial({wireframe: true});
@@ -39,15 +41,21 @@ define("infinite_stairs", function () {
 			for (var f = 0; f < uvs; f += 2) {
 				// 2 sets of uv triangles per face
 				var u0 = rndI.getNumber(0, 0.75),
-				    u1 = u0 + rndI.getNumber(0.1, 0.25);
+					u1 = u0 + rndI.getNumber(0.1, 0.25);
 				var v0 = rndI.getNumber(0, 0.75),
-				    v1 = v0 + rndI.getNumber(0.1, 0.25);
+					v1 = v0 + rndI.getNumber(0.1, 0.25);
 				geometry.faceVertexUvs[0][f] = [
-				// triangle A: [0,1], [0,0], [1,1]
-				new THREE.Vector2(u0, v1), new THREE.Vector2(u0, v0), new THREE.Vector2(u1, v1)];
+					// triangle A: [0,1], [0,0], [1,1]
+					new THREE.Vector2(u0, v1),
+					new THREE.Vector2(u0, v0),
+					new THREE.Vector2(u1, v1),
+				];
 				geometry.faceVertexUvs[0][f + 1] = [
-				// triangle B: [0,0], [1,0], [1,1]
-				new THREE.Vector2(u0, v0), new THREE.Vector2(u1, v0), new THREE.Vector2(u1, v1)];
+					// triangle B: [0,0], [1,0], [1,1]
+					new THREE.Vector2(u0, v0),
+					new THREE.Vector2(u1, v0),
+					new THREE.Vector2(u1, v1),
+				];
 			}
 			return geometry;
 		}
@@ -93,10 +101,16 @@ define("infinite_stairs", function () {
 			var wall = new THREE.Group();
 			flight.add(wall);
 			// wall.position.set(xFlip * flightWidth / 2, wallHeight / 2 - stepHeight / 2, wallWidth / 2 - stepDepth / 2);
-			wall.position.set(xFlip * flightWidth / 2, 0, 0);
+			wall.position.set((xFlip * flightWidth) / 2, 0, 0);
 
 			for (var i = 0; i < numWallPanels; i++) {
-				var wallGeom = randUV(new THREE.BoxGeometry(wallPanelDepth, wallPanelHeight, wallPanelWidth));
+				var wallGeom = randUV(
+					new THREE.BoxGeometry(
+						wallPanelDepth,
+						wallPanelHeight,
+						wallPanelWidth,
+					),
+				);
 				var wallPanel = new THREE.Mesh(wallGeom, materialWood);
 				wallPanel.position.set(0, 0, i * wallPanelSpacing);
 				wallPanel.castShadow = true;
@@ -124,14 +138,20 @@ define("infinite_stairs", function () {
 			end: {
 				x: 0,
 				y: numSteps * stepHeight,
-				z: (numSteps - 1) * stepDepth + numLandingSteps * treadDepth
-			}
+				z:
+					(numSteps - 1) * stepDepth +
+					numLandingSteps * treadDepth,
+			},
 		};
 	}
 
 	function makeLight(color, intensity, distance) {
 		var lightHolder = new THREE.Group();
-		var light = new THREE.PointLight(color, intensity, distance);
+		var light = new THREE.PointLight(
+			color,
+			intensity,
+			distance,
+		);
 		light.castShadow = true;
 		light.shadow.mapSize.width = 512;
 		light.shadow.mapSize.height = 512;
@@ -151,13 +171,19 @@ define("infinite_stairs", function () {
 
 	function init() {
 		rndI.setSeed(Math.random());
-		loadTextures(["wood-dark.jpg"]
-		// "mouldy-white-paint.png"
+		loadTextures(
+			["wood-dark.jpg"],
+			// "mouldy-white-paint.png"
 		);
 
 		scene = new THREE.Scene();
 
-		camera = new THREE.PerspectiveCamera(100, sw / sh, 1, 20000);
+		camera = new THREE.PerspectiveCamera(
+			100,
+			sw / sh,
+			1,
+			20000,
+		);
 		scene.add(camera);
 
 		camera.position.set(0, 250, -100);
@@ -167,7 +193,7 @@ define("infinite_stairs", function () {
 
 		controls = new THREE.OrbitControls(camera);
 
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(sw, sh);
 		renderer.shadowMap.enabled = true;
 		// renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -205,6 +231,6 @@ define("infinite_stairs", function () {
 	}
 
 	return {
-		init: init
+		init: init,
 	};
 });

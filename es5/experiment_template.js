@@ -1,6 +1,6 @@
 "use strict";
 
-var isNode = typeof module !== 'undefined';
+var isNode = typeof module !== "undefined";
 
 var experiment_template = function experiment_template() {
 	var TAU = Math.PI * 2;
@@ -21,7 +21,7 @@ var experiment_template = function experiment_template() {
 	}
 	var experiment = {
 		stage: stage.canvas,
-		init: init
+		init: init,
 	};
 
 	progress("render:complete", stage.canvas);

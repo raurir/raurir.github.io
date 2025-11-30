@@ -2,21 +2,28 @@
 
 // hack of https://github.com/hughsk/web-audio-analyser
 
-var AudioContext = window.AudioContext || window.webkitAudioContext;
+var AudioContext =
+	window.AudioContext || window.webkitAudioContext;
 
 // module.exports = WebAudioAnalyser
 
 var fftSize = 128;
 
 function WebAudioAnalyser(audio, ctx, opts) {
-	if (!(this instanceof WebAudioAnalyser)) return new WebAudioAnalyser(audio, ctx, opts);
-	if (!(ctx instanceof AudioContext)) opts = ctx, ctx = null;
+	if (!(this instanceof WebAudioAnalyser))
+		return new WebAudioAnalyser(audio, ctx, opts);
+	if (!(ctx instanceof AudioContext))
+		((opts = ctx), (ctx = null));
 
 	opts = opts || {};
 	this.ctx = ctx = ctx || new AudioContext();
 
 	if (!(audio instanceof AudioNode)) {
-		audio = audio instanceof Audio || audio instanceof HTMLAudioElement ? ctx.createMediaElementSource(audio) : ctx.createMediaStreamSource(audio);
+		audio =
+			audio instanceof Audio ||
+			audio instanceof HTMLAudioElement
+				? ctx.createMediaElementSource(audio)
+				: ctx.createMediaStreamSource(audio);
 	}
 
 	this.analyser = ctx.createAnalyser();
@@ -54,24 +61,44 @@ function WebAudioAnalyser(audio, ctx, opts) {
 	}
 }
 
-WebAudioAnalyser.prototype.waveform = function (output, channel) {
-	if (!output) output = this.wavedata || (this.wavedata = new Uint8Array((this.analyser[0] || this.analyser).frequencyBinCount));
+WebAudioAnalyser.prototype.waveform = function (
+	output,
+	channel,
+) {
+	if (!output)
+		output =
+			this.wavedata ||
+			(this.wavedata = new Uint8Array(
+				(this.analyser[0] || this.analyser).frequencyBinCount,
+			));
 
 	// con.log("this.wavedata", this.wavedata.length)
 
-	var analyser = this.stereo ? this.analyser[channel || 0] : this.analyser;
+	var analyser = this.stereo
+		? this.analyser[channel || 0]
+		: this.analyser;
 
 	analyser.getByteTimeDomainData(output);
 
 	return output;
 };
 
-WebAudioAnalyser.prototype.frequencies = function (output, channel) {
-	if (!output) output = this.freqdata || (this.freqdata = new Uint8Array((this.analyser[0] || this.analyser).frequencyBinCount));
+WebAudioAnalyser.prototype.frequencies = function (
+	output,
+	channel,
+) {
+	if (!output)
+		output =
+			this.freqdata ||
+			(this.freqdata = new Uint8Array(
+				(this.analyser[0] || this.analyser).frequencyBinCount,
+			));
 
 	// con.log("this.freqdata", this.freqdata.length)
 
-	var analyser = this.stereo ? this.analyser[channel || 0] : this.analyser;
+	var analyser = this.stereo
+		? this.analyser[channel || 0]
+		: this.analyser;
 
 	analyser.getByteFrequencyData(output);
 
@@ -102,12 +129,16 @@ for (var i = 0; i < numBands; i++) {
 }
 
 var audio = new Audio();
-audio.crossOrigin = 'Anonymous';
-audio.src = 'exebeche.mp3'; //'tribal.mp3'
+audio.crossOrigin = "Anonymous";
+audio.src = "exebeche.mp3"; //'tribal.mp3'
 audio.loop = true;
-audio.addEventListener('canplay', function () {
-	console.log('playing!');
-	analyser = analyse(audio, { audible: true, stereo: false, fftSize: 16 });
+audio.addEventListener("canplay", function () {
+	console.log("playing!");
+	analyser = analyse(audio, {
+		audible: true,
+		stereo: false,
+		fftSize: 16,
+	});
 
 	// var bufferLength = analyser.frequencyBinCount;
 
@@ -119,22 +150,28 @@ audio.addEventListener('canplay', function () {
 	audio.currentTime = 150;
 	render(0);
 });
-audio.addEventListener('error', function (e) {
+audio.addEventListener("error", function (e) {
 	switch (e.target.error.code) {
 		case e.target.error.MEDIA_ERR_ABORTED:
-			alert('You aborted the video playback.');
+			alert("You aborted the video playback.");
 			break;
 		case e.target.error.MEDIA_ERR_NETWORK:
-			alert('A network error caused the audio download to fail.');
+			alert(
+				"A network error caused the audio download to fail.",
+			);
 			break;
 		case e.target.error.MEDIA_ERR_DECODE:
-			alert('The audio playback was aborted due to a corruption problem or because the video used features your browser did not support.');
+			alert(
+				"The audio playback was aborted due to a corruption problem or because the video used features your browser did not support.",
+			);
 			break;
 		case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-			alert('The video audio not be loaded, either because the server or network failed or because the format is not supported.');
+			alert(
+				"The video audio not be loaded, either because the server or network failed or because the format is not supported.",
+			);
 			break;
 		default:
-			alert('An unknown error occurred.');
+			alert("An unknown error occurred.");
 			break;
 	}
 });
@@ -174,7 +211,7 @@ function render(time) {
 		var frequencies = analyser.frequencies();
 		var size = frequencies.length;
 
-		//  	if (time < 4000) 
+		//  	if (time < 4000)
 		requestAnimationFrame(render);
 		// else
 		// 	con.log("fail", frequencies)
@@ -184,8 +221,8 @@ function render(time) {
 		// 	var now = getBand(frequencies, i);
 		// 	var last = getBand(lastBars, i);
 		// 	var peak = now > last && time - lastPeak[i] > 200;
-		// 	bands[i].style.background = peak ? 
-		// 		"rgba(255,255,255,0.7)" : 
+		// 	bands[i].style.background = peak ?
+		// 		"rgba(255,255,255,0.7)" :
 		// 		"rgba(255,255,255,0.5)";
 		// 	bands[i].style.width = now;
 		// 	if (peak) {
@@ -198,7 +235,6 @@ function render(time) {
 		// 	lastBars[i] = frequencies[i];
 		// }
 
-
 		//https://www.airtightinteractive.com/demos/js/uberviz/audioanalysis/js/AudioHandler.js
 
 		//normalize levelsData from freqByteData
@@ -207,7 +243,7 @@ function render(time) {
 			for (var j = 0; j < levelBins; j++) {
 				sum += frequencies[i * levelBins + j];
 			}
-			levelsData[i] = sum / levelBins / 256 * 1; //freqData maxs at 256
+			levelsData[i] = (sum / levelBins / 256) * 1; //freqData maxs at 256
 
 			//adjust for the fact that lower levels are percieved more quietly
 			//make lower levels smaller
@@ -231,7 +267,6 @@ function render(time) {
 		var BEAT_DECAY_RATE = 0.98;
 		var BEAT_MIN = 0.15; //a volume less than this is no beat
 
-
 		//BEAT DETECTION
 		if (level > beatCutOff && level > BEAT_MIN) {
 			// onBeat();
@@ -241,14 +276,13 @@ function render(time) {
 			beatCutOff = level * 1.1;
 			beatTime = 0;
 		} else {
-
 			document.body.style.background = "#444";
 
 			if (beatTime <= 50) {
 				// 0 - 100
 				beatTime++;
 			} else {
-				beatCutOff *= 0.98; // 0.9 - 1 
+				beatCutOff *= 0.98; // 0.9 - 1
 				beatCutOff = Math.max(beatCutOff, BEAT_MIN);
 			}
 		}
@@ -256,7 +290,7 @@ function render(time) {
 		var b2 = [];
 		levelsData.concat([level * 10]).forEach(function (freq) {
 			var f = 0,
-			    bar = "#";
+				bar = "#";
 			while (f++ < freq * 10) {
 				bar += "#";
 			}

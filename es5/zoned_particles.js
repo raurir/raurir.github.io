@@ -3,7 +3,7 @@
 var con = console;
 
 var sw = window.innerWidth,
-    sh = window.innerHeight;
+	sh = window.innerHeight;
 // sw = sh = 100;
 var canvas = dom.canvas(sw, sh);
 var hit = dom.canvas(sw, sh);
@@ -95,7 +95,11 @@ function moveParticle(p) {
 
 	if (p.dying && p.age > 500) {
 		killParticle(p);
-	} else if (p.children == 0 && numCurrent < numMax && Math.random() > 0.99) {
+	} else if (
+		p.children == 0 &&
+		numCurrent < numMax &&
+		Math.random() > 0.99
+	) {
 		spawnParticle(p);
 	}
 }
@@ -121,11 +125,11 @@ function generateParticle(parent) {
 			x: parent.x,
 			y: parent.y,
 			px: parent.x,
-			py: parent.y
+			py: parent.y,
 		};
 	} else {
 		var x = Math.random() * sw,
-		    y = Math.random() * sh;
+			y = Math.random() * sh;
 		return {
 			age: 0,
 			children: 0,
@@ -139,7 +143,7 @@ function generateParticle(parent) {
 			x: x,
 			y: y,
 			px: x,
-			py: y
+			py: y,
 		};
 	}
 }
@@ -156,19 +160,19 @@ function generate() {
 		x: 50,
 		y: 50,
 		w: 100,
-		h: 100
+		h: 100,
 	});
 	zones.push({
 		x: 100,
 		y: 250,
 		w: 20,
-		h: 100
+		h: 100,
 	});
 	zones.push({
 		x: 300,
 		y: 50,
 		w: 100,
-		h: 300
+		h: 300,
 	});
 
 	for (var j = 0; j < zones.length; j++) {

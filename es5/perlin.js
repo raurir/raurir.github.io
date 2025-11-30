@@ -30,7 +30,11 @@ var perlin = function perlin() {
 		function z(uIndex, k, t, j) {
 			var F = 0.5 - t * t - j * j;
 			try {
-				var zz = F < 0 ? 0 : Math.pow(F, 4) * (s[k % 8][0] * t + s[k % 8][1] * j);
+				var zz =
+					F < 0
+						? 0
+						: Math.pow(F, 4) *
+							(s[k % 8][0] * t + s[k % 8][1] * j);
 			} catch (err) {
 				con.log(err, k, uIndex);
 			}
@@ -52,7 +56,11 @@ var perlin = function perlin() {
 			var u0 = m + u[b];
 			var u1 = m + C + u[b + !C];
 			var u2 = m + 1 + u[b + 1];
-			var out = 38 * (z(u0, u[u0], c, j) + z(u1, u[u1], c - C + e, j - !C + e) + z(u2, u[u2], c - 0.6, j - 0.6));
+			var out =
+				38 *
+				(z(u0, u[u0], c, j) +
+					z(u1, u[u1], c - C + e, j - !C + e) +
+					z(u2, u[u2], c - 0.6, j - 0.6));
 
 			// var clamp = 0.2;
 			// out = out > clamp ? ( out -= clamp ) : ( out < - clamp ? ( out += clamp ) : out = 0 );
@@ -66,7 +74,7 @@ var perlin = function perlin() {
 			}
 			var channel = [];
 			for (var i = 0, il = width * height; i < il; i++) {
-				var xp = i % width * scale;
+				var xp = (i % width) * scale;
 				var yp = Math.floor(i / width) * scale;
 				channel.push(q(xp, yp) + 0.5);
 			}
@@ -76,12 +84,12 @@ var perlin = function perlin() {
 		init();
 
 		return {
-			cycle: cycle
+			cycle: cycle,
 		};
 	}
 
 	return {
-		noise: noise
+		noise: noise,
 	};
 };
 

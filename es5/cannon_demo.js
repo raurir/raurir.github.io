@@ -12,7 +12,7 @@ define("cannon_demo", function () {
 		this.start = start;
 
 		// Global settings
-		var settings = this.settings = {
+		var settings = (this.settings = {
 			stepFrequency: 60,
 			quatNormalizeSkip: 2,
 			quatNormalizeFast: true,
@@ -35,32 +35,39 @@ define("cannon_demo", function () {
 			shadows: false,
 			aabbs: false,
 			profiling: false,
-			maxSubSteps: 3
-		};
+			maxSubSteps: 3,
+		});
 
 		if (settings.stepFrequency % 60 !== 0) {
-			throw new Error("stepFrequency must be a multiple of 60.");
+			throw new Error(
+				"stepFrequency must be a multiple of 60.",
+			);
 		}
 
-		var bodies = this.bodies = [];
-		var visuals = this.visuals = [];
+		var bodies = (this.bodies = []);
+		var visuals = (this.visuals = []);
 		var demo;
 
-		var particleGeo = this.particleGeo = new THREE.SphereGeometry(1, 16, 8);
+		var particleGeo = (this.particleGeo =
+			new THREE.SphereGeometry(1, 16, 8));
 
 		// Material
 		var solidMaterial = new THREE.MeshPhongMaterial({
 			color: 0x302c2a,
 			emissive: 0,
 			specular: 0x513a30,
-			shininess: 80
+			shininess: 80,
 		});
-		this.wireframeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: true });
+		this.wireframeMaterial = new THREE.MeshLambertMaterial({
+			color: 0xff0000,
+			wireframe: true,
+		});
 		this.currentMaterial = solidMaterial;
-		var particleMaterial = this.particleMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+		var particleMaterial = (this.particleMaterial =
+			new THREE.MeshLambertMaterial({color: 0xff0000}));
 
 		// Create physics world
-		var world = this.world = new CANNON.World();
+		var world = (this.world = new CANNON.World());
 		world.broadphase = new CANNON.NaiveBroadphase();
 
 		var light, scene, ambient, stats, info;
@@ -87,7 +94,7 @@ define("cannon_demo", function () {
 			// Read position data into visuals
 			for (var i = 0; i < N; i++) {
 				var b = bodies[i],
-				    visual = visuals[i];
+					visual = visuals[i];
 				visual.position.copy(b.position);
 				if (b.quaternion) {
 					visual.quaternion.copy(b.quaternion);
@@ -103,7 +110,7 @@ define("cannon_demo", function () {
 		var camera, controls, renderer;
 		var container;
 		var NEAR = 5,
-		    FAR = 500;
+			FAR = 500;
 
 		init();
 		animate();
@@ -112,7 +119,12 @@ define("cannon_demo", function () {
 			container = document.getElementById("experiment-holder");
 
 			// Camera
-			camera = new THREE.PerspectiveCamera(24, SCREEN_WIDTH / SCREEN_HEIGHT, NEAR, FAR);
+			camera = new THREE.PerspectiveCamera(
+				24,
+				SCREEN_WIDTH / SCREEN_HEIGHT,
+				NEAR,
+				FAR,
+			);
 
 			// camera.up.set(0, 0, 1);
 			camera.position.set(0, -100, 50);
@@ -152,13 +164,20 @@ define("cannon_demo", function () {
 			scene.add(camera);
 
 			// RENDERER
-			renderer = new THREE.WebGLRenderer({ clearColor: 0x000000, clearAlpha: 1, antialias: false });
+			renderer = new THREE.WebGLRenderer({
+				clearColor: 0x000000,
+				clearAlpha: 1,
+				antialias: false,
+			});
 			renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 			renderer.domElement.style.position = "relative";
 			renderer.domElement.style.top = MARGIN + "px";
 			container.appendChild(renderer.domElement);
 
-			document.addEventListener("mousemove", onDocumentMouseMove);
+			document.addEventListener(
+				"mousemove",
+				onDocumentMouseMove,
+			);
 			window.addEventListener("resize", onWindowResize);
 
 			// renderer.setClearColor( scene.fog.color, 1 );
@@ -169,7 +188,10 @@ define("cannon_demo", function () {
 
 			// Trackball controls
 			if (options.trackballControls) {
-				controls = new THREE.TrackballControls(camera, renderer.domElement);
+				controls = new THREE.TrackballControls(
+					camera,
+					renderer.domElement,
+				);
 				controls.rotateSpeed = 1.0;
 				controls.zoomSpeed = 1.2;
 				controls.panSpeed = 0.2;
@@ -188,8 +210,8 @@ define("cannon_demo", function () {
 		}
 
 		var t = 0,
-		    newTime,
-		    delta;
+			newTime,
+			delta;
 
 		function animate() {
 			requestAnimationFrame(animate);
@@ -214,7 +236,11 @@ define("cannon_demo", function () {
 
 			var timeSinceLastCall = now - lastCallTime;
 
-			world.step(timeStep, timeSinceLastCall, settings.maxSubSteps);
+			world.step(
+				timeStep,
+				timeSinceLastCall,
+				settings.maxSubSteps,
+			);
 
 			lastCallTime = now;
 		}
@@ -266,7 +292,7 @@ define("cannon_demo", function () {
 	};
 
 	Demo.prototype = {
-		constructor: Demo
+		constructor: Demo,
 	};
 
 	Demo.prototype.getWorld = function () {
@@ -301,10 +327,10 @@ define("cannon_demo", function () {
 	Demo.prototype.removeVisual = function (body) {
 		if (body.visualref) {
 			var bodies = this.bodies,
-			    visuals = this.visuals,
-			    old_b = [],
-			    old_v = [],
-			    n = bodies.length;
+				visuals = this.visuals,
+				old_b = [],
+				old_v = [],
+				n = bodies.length;
 
 			for (var i = 0; i < n; i++) {
 				old_b.unshift(bodies.pop());
@@ -372,8 +398,15 @@ define("cannon_demo", function () {
 			// allow for ball_and_chain demo
 			switch (body.customType) {
 				case "CHAIN_LINK":
-					var box_geometry = new THREE.BoxGeometry(shape.halfExtents.x * 2, shape.halfExtents.y * 2, shape.halfExtents.z * 2);
-					var submeshFrame = new THREE.Mesh(box_geometry, this.wireframeMaterial);
+					var box_geometry = new THREE.BoxGeometry(
+						shape.halfExtents.x * 2,
+						shape.halfExtents.y * 2,
+						shape.halfExtents.z * 2,
+					);
+					var submeshFrame = new THREE.Mesh(
+						box_geometry,
+						this.wireframeMaterial,
+					);
 					// mesh.add(submeshFrame);
 
 					var link = new THREE.Object3D();
@@ -385,10 +418,20 @@ define("cannon_demo", function () {
 					var wireSizeHalf = 0.3;
 					var segments = 10;
 					for (var i = 0; i <= divisions; i++) {
-						var a = i / divisions * Math.PI * -2;
-						points.push(new THREE.Vector2(widthHalf + Math.sin(a) * wireSizeHalf, Math.cos(a) * wireSizeHalf));
+						var a = (i / divisions) * Math.PI * -2;
+						points.push(
+							new THREE.Vector2(
+								widthHalf + Math.sin(a) * wireSizeHalf,
+								Math.cos(a) * wireSizeHalf,
+							),
+						);
 					}
-					var geometry = new THREE.LatheBufferGeometry(points, segments, 0, Math.PI);
+					var geometry = new THREE.LatheBufferGeometry(
+						points,
+						segments,
+						0,
+						Math.PI,
+					);
 					var linkEnd0 = new THREE.Mesh(geometry, material);
 					linkEnd0.position.set(0, 0, pitch);
 					linkEnd0.rotation.set(0, -Math.PI / 2, 0);
@@ -400,7 +443,12 @@ define("cannon_demo", function () {
 					link.add(linkEnd1);
 
 					// CylinderBufferGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments)
-					var geometry = new THREE.CylinderBufferGeometry(wireSizeHalf, wireSizeHalf, pitch * 2, segments);
+					var geometry = new THREE.CylinderBufferGeometry(
+						wireSizeHalf,
+						wireSizeHalf,
+						pitch * 2,
+						segments,
+					);
 					var cylinder0 = new THREE.Mesh(geometry, material);
 					cylinder0.rotation.set(Math.PI / 2, 0, 0);
 					cylinder0.position.set(widthHalf, 0, 0);
@@ -421,7 +469,7 @@ define("cannon_demo", function () {
 
 					mesh.add(link);
 
-					link.rotation.z = hackyMcHack++ % 2 * Math.PI / 2;
+					link.rotation.z = ((hackyMcHack++ % 2) * Math.PI) / 2;
 					break;
 				default:
 					throw new Error("need to supply customType!");
@@ -437,23 +485,37 @@ define("cannon_demo", function () {
 
 			switch (shape.type) {
 				case CANNON.Shape.types.SPHERE:
-					var sphere_geometry = new THREE.SphereGeometry(shape.radius, 18, 18);
+					var sphere_geometry = new THREE.SphereGeometry(
+						shape.radius,
+						18,
+						18,
+					);
 					mesh = new THREE.Mesh(sphere_geometry, material);
 					break;
 
 				case CANNON.Shape.types.PARTICLE:
-					mesh = new THREE.Mesh(this.particleGeo, this.particleMaterial);
+					mesh = new THREE.Mesh(
+						this.particleGeo,
+						this.particleMaterial,
+					);
 					var s = this.settings;
-					mesh.scale.set(s.particleSize, s.particleSize, s.particleSize);
+					mesh.scale.set(
+						s.particleSize,
+						s.particleSize,
+						s.particleSize,
+					);
 					break;
 
 				case CANNON.Shape.types.PLANE:
 					var geometry = new THREE.PlaneGeometry(10, 10, 4, 4);
 					mesh = new THREE.Object3D();
 					var submesh = new THREE.Object3D();
-					var ground = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({
-						color: 0x909090
-					}));
+					var ground = new THREE.Mesh(
+						geometry,
+						new THREE.MeshLambertMaterial({
+							color: 0x909090,
+						}),
+					);
 					ground.scale.set(100, 100, 100);
 					submesh.add(ground);
 
@@ -464,7 +526,11 @@ define("cannon_demo", function () {
 					break;
 
 				case CANNON.Shape.types.BOX:
-					var box_geometry = new THREE.BoxGeometry(shape.halfExtents.x * 2, shape.halfExtents.y * 2, shape.halfExtents.z * 2);
+					var box_geometry = new THREE.BoxGeometry(
+						shape.halfExtents.x * 2,
+						shape.halfExtents.y * 2,
+						shape.halfExtents.z * 2,
+					);
 					mesh = new THREE.Mesh(box_geometry, material);
 					break;
 
@@ -500,7 +566,11 @@ define("cannon_demo", function () {
 					var v1 = new CANNON.Vec3();
 					var v2 = new CANNON.Vec3();
 					for (var xi = 0; xi < shape.data.length - 1; xi++) {
-						for (var yi = 0; yi < shape.data[xi].length - 1; yi++) {
+						for (
+							var yi = 0;
+							yi < shape.data[xi].length - 1;
+							yi++
+						) {
 							for (var k = 0; k < 2; k++) {
 								shape.getConvexTrianglePillar(xi, yi, k === 0);
 								v0.copy(shape.pillarConvex.vertices[0]);
@@ -509,9 +579,15 @@ define("cannon_demo", function () {
 								v0.vadd(shape.pillarOffset, v0);
 								v1.vadd(shape.pillarOffset, v1);
 								v2.vadd(shape.pillarOffset, v2);
-								geometry.vertices.push(new THREE.Vector3(v0.x, v0.y, v0.z), new THREE.Vector3(v1.x, v1.y, v1.z), new THREE.Vector3(v2.x, v2.y, v2.z));
+								geometry.vertices.push(
+									new THREE.Vector3(v0.x, v0.y, v0.z),
+									new THREE.Vector3(v1.x, v1.y, v1.z),
+									new THREE.Vector3(v2.x, v2.y, v2.z),
+								);
 								var i = geometry.vertices.length - 3;
-								geometry.faces.push(new THREE.Face3(i, i + 1, i + 2));
+								geometry.faces.push(
+									new THREE.Face3(i, i + 1, i + 2),
+								);
 							}
 						}
 					}
@@ -528,9 +604,15 @@ define("cannon_demo", function () {
 					var v2 = new CANNON.Vec3();
 					for (var i = 0; i < shape.indices.length / 3; i++) {
 						shape.getTriangleVertices(i, v0, v1, v2);
-						geometry.vertices.push(new THREE.Vector3(v0.x, v0.y, v0.z), new THREE.Vector3(v1.x, v1.y, v1.z), new THREE.Vector3(v2.x, v2.y, v2.z));
+						geometry.vertices.push(
+							new THREE.Vector3(v0.x, v0.y, v0.z),
+							new THREE.Vector3(v1.x, v1.y, v1.z),
+							new THREE.Vector3(v2.x, v2.y, v2.z),
+						);
 						var j = geometry.vertices.length - 3;
-						geometry.faces.push(new THREE.Face3(j, j + 1, j + 2));
+						geometry.faces.push(
+							new THREE.Face3(j, j + 1, j + 2),
+						);
 					}
 					geometry.computeBoundingSphere();
 					geometry.computeFaceNormals();

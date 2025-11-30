@@ -1,7 +1,7 @@
 "use strict";
 
 var sw = window.innerWidth,
-    sh = window.innerHeight;
+	sh = window.innerHeight;
 var bmp = dom.canvas(sw, sh);
 var ctx = bmp.ctx;
 var patternMonochrome;
@@ -20,7 +20,10 @@ var r = rand.instance();
 r.setSeed(Math.random());
 var c = colours.instance(r);
 
-var container = dom.element("div", { className: "container", style: { width: sw + "px", height: sh + "px" } });
+var container = dom.element("div", {
+	className: "container",
+	style: {width: sw + "px", height: sh + "px"},
+});
 document.body.appendChild(container);
 container.appendChild(bmp.canvas);
 
@@ -32,7 +35,9 @@ function newStripes() {
 	var lines = 2 + ~~(Math.random() * 5);
 	widths = [0];
 	while (widths.length < lines) {
-		widths.push(Math.ceil(1 + Math.random() * (size - 1) / 2) * 2);
+		widths.push(
+			Math.ceil(1 + (Math.random() * (size - 1)) / 2) * 2,
+		);
 	} // all patternColoureds should be multiples of 2
 	widths.push(size);
 	// con.log("widths", widths)
@@ -107,11 +112,15 @@ function render() {
 
 	patternColoured = dom.canvas(size * dot, size * dot);
 
-	if (patternMonochrome) patternDetails.removeChild(patternMonochrome.canvas);
+	if (patternMonochrome)
+		patternDetails.removeChild(patternMonochrome.canvas);
 
 	patternMonochrome = dom.canvas(size * dot, size * dot);
 
-	var colourMonochrome = [["#666", "#aaa"], ["#333", "#888"]];
+	var colourMonochrome = [
+		["#666", "#aaa"],
+		["#333", "#888"],
+	];
 
 	for (var i = 0; i < widths.length - 1; i++) {
 		var x = widths[i];
@@ -125,10 +134,22 @@ function render() {
 			var monoRow = colourMonochrome[1][j % 2];
 			for (var px = 0; px < w; px++) {
 				for (var py = 0; py < h; py++) {
-					patternColoured.ctx.fillStyle = (px + py) % 2 == 0 ? colourColumn : colourRow;
-					patternColoured.ctx.fillRect((x + px) * dot, (y + py) * dot, dot, dot);
-					patternMonochrome.ctx.fillStyle = (px + py) % 2 == 0 ? monoColumn : monoRow;
-					patternMonochrome.ctx.fillRect((x + px) * dot, (y + py) * dot, dot, dot);
+					patternColoured.ctx.fillStyle =
+						(px + py) % 2 == 0 ? colourColumn : colourRow;
+					patternColoured.ctx.fillRect(
+						(x + px) * dot,
+						(y + py) * dot,
+						dot,
+						dot,
+					);
+					patternMonochrome.ctx.fillStyle =
+						(px + py) % 2 == 0 ? monoColumn : monoRow;
+					patternMonochrome.ctx.fillRect(
+						(x + px) * dot,
+						(y + py) * dot,
+						dot,
+						dot,
+					);
 				}
 			}
 		}
@@ -139,44 +160,62 @@ function render() {
 	ctx.save();
 	ctx.rect(0, 0, sw, sh);
 	ctx.rotate(rotation);
-	ctx.fillStyle = ctx.createPattern(patternColoured.canvas, "repeat");
+	ctx.fillStyle = ctx.createPattern(
+		patternColoured.canvas,
+		"repeat",
+	);
 	ctx.fill();
 	ctx.restore();
 }
 
-var buttonsTop = dom.element("div", { className: "buttons top" });
+var buttonsTop = dom.element("div", {className: "buttons top"});
 container.appendChild(buttonsTop);
-var buttonsBottom = dom.element("div", { className: "buttons bottom" });
+var buttonsBottom = dom.element("div", {
+	className: "buttons bottom",
+});
 container.appendChild(buttonsBottom);
 
-var patternDetails = dom.element("div", { className: "pattern" });
+var patternDetails = dom.element("div", {className: "pattern"});
 container.appendChild(patternDetails);
 patternDetails.addEventListener("click", changeStripes);
 
-var buttonExport = dom.button("get css", { className: "button export" });
+var buttonExport = dom.button("get css", {
+	className: "button export",
+});
 buttonExport.addEventListener("click", function (e) {
 	var img = patternColoured.canvas.toDataURL("image/jpeg");
 
 	if (preview === undefined) {
-		preview = dom.element("div", { className: "preview" });
+		preview = dom.element("div", {className: "preview"});
 
-		var title = dom.element("div", { className: "title", innerHTML: "And the CSS..." });
+		var title = dom.element("div", {
+			className: "title",
+			innerHTML: "And the CSS...",
+		});
 		preview.appendChild(title);
 
-		var close = dom.button("close", { className: "close" });
+		var close = dom.button("close", {className: "close"});
 		close.addEventListener("click", function (e) {
 			container.removeChild(preview);
 		});
 		preview.appendChild(close);
 
-		preview.css = dom.element("div", { className: "css" });
+		preview.css = dom.element("div", {className: "css"});
 		preview.appendChild(preview.css);
 	}
 
 	container.appendChild(preview);
 
 	var r = "rotate(" + rotation + "rad)";
-	var cssArr = ["background-image: url(" + img + ");", "background-repeat: repeat;", "-webkit-transform: " + r + ";", "-moz-transform: " + r + ";", "-ms-transform: " + r + ";", "-o-transform: " + r + ";", "transform: " + r + ";"];
+	var cssArr = [
+		"background-image: url(" + img + ");",
+		"background-repeat: repeat;",
+		"-webkit-transform: " + r + ";",
+		"-moz-transform: " + r + ";",
+		"-ms-transform: " + r + ";",
+		"-o-transform: " + r + ";",
+		"transform: " + r + ";",
+	];
 
 	preview.css.innerHTML = cssArr.join("<br>"); // wrap?? #.match(/.{1,20}/g).join("<br>")
 });
@@ -184,8 +223,16 @@ buttonsTop.appendChild(buttonExport);
 
 function save(canvas, type) {
 	var dataURL = canvas.toDataURL("image/jpeg");
-	var filename = "check_" + type + "_" + (Math.random() * 1e9 << 0).toString(16) + "-.jpg";
-	var link = dom.element("a", { href: dataURL, download: filename });
+	var filename =
+		"check_" +
+		type +
+		"_" +
+		((Math.random() * 1e9) << 0).toString(16) +
+		"-.jpg";
+	var link = dom.element("a", {
+		href: dataURL,
+		download: filename,
+	});
 	link.click();
 
 	// not on my server you don't...
@@ -200,13 +247,17 @@ function save(canvas, type) {
 	// });
 }
 
-var buttonSaveOne = dom.button("pattern image", { className: "button" });
+var buttonSaveOne = dom.button("pattern image", {
+	className: "button",
+});
 buttonSaveOne.addEventListener("click", function (e) {
 	save(patternColoured.canvas, "pattern");
 });
 buttonsTop.appendChild(buttonSaveOne);
 
-var buttonSaveTiled = dom.button("tiled image", { className: "button" });
+var buttonSaveTiled = dom.button("tiled image", {
+	className: "button",
+});
 buttonSaveTiled.addEventListener("click", function (e) {
 	save(bmp.canvas, "tiled");
 });
@@ -215,14 +266,19 @@ buttonsTop.appendChild(buttonSaveTiled);
 var sizes = [1, 2, 3, 4];
 for (var s in sizes) {
 	var size = sizes[s];
-	var buttonSize = dom.button(size + "x", { className: "button", size: size });
+	var buttonSize = dom.button(size + "x", {
+		className: "button",
+		size: size,
+	});
 	buttonSize.addEventListener("click", function () {
 		changeSize(this.size);
 	});
 	buttonsBottom.appendChild(buttonSize);
 }
 
-var buttonRotation = dom.button("rotation", { className: "button" });
+var buttonRotation = dom.button("rotation", {
+	className: "button",
+});
 buttonRotation.addEventListener("click", function () {
 	changeRotation();
 });

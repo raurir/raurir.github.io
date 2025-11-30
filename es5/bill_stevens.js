@@ -1,6 +1,44 @@
 "use strict";
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _slicedToArray = (function () {
+	function sliceIterator(arr, i) {
+		var _arr = [];
+		var _n = true;
+		var _d = false;
+		var _e = undefined;
+		try {
+			for (
+				var _i = arr[Symbol.iterator](), _s;
+				!(_n = (_s = _i.next()).done);
+				_n = true
+			) {
+				_arr.push(_s.value);
+				if (i && _arr.length === i) break;
+			}
+		} catch (err) {
+			_d = true;
+			_e = err;
+		} finally {
+			try {
+				if (!_n && _i["return"]) _i["return"]();
+			} finally {
+				if (_d) throw _e;
+			}
+		}
+		return _arr;
+	}
+	return function (arr, i) {
+		if (Array.isArray(arr)) {
+			return arr;
+		} else if (Symbol.iterator in Object(arr)) {
+			return sliceIterator(arr, i);
+		} else {
+			throw new TypeError(
+				"Invalid attempt to destructure non-iterable instance",
+			);
+		}
+	};
+})();
 
 // must solve this for...
 define("bill_stevens", function () {
@@ -9,11 +47,11 @@ define("bill_stevens", function () {
 	var stage = document.createElement("div");
 
 	var camera, controls, scene, projector, renderer, holder;
-	var mouse = { x: 0, y: 0 };
+	var mouse = {x: 0, y: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 	var theta = 0,
-	    gamma = 0;
+		gamma = 0;
 	var dim = 4;
 	var size = 30;
 	var cubes = [];
@@ -34,24 +72,28 @@ define("bill_stevens", function () {
 		return array[index]++;
 	};
 
-	var getPositionFromIndex = function getPositionFromIndex(grid) {
+	var getPositionFromIndex = function getPositionFromIndex(
+		grid,
+	) {
 		return function (index) {
 			var x = index % grid;
 			var y = Math.floor(index / grid) % grid;
 			var z = Math.floor(index / (grid * grid));
-			return { x: x, y: y, z: z };
+			return {x: x, y: y, z: z};
 		};
 	};
 
-	var getIndexFromPosition = function getIndexFromPosition(_ref) {
+	var getIndexFromPosition = function getIndexFromPosition(
+		_ref,
+	) {
 		var x = _ref.x,
-		    y = _ref.y,
-		    z = _ref.z;
+			y = _ref.y,
+			z = _ref.z;
 		return x + y * dim + z * dim * dim;
 	};
 
 	var pieces = [
-	/*
+		/*
  {
  	id: 0,
  	structure: [
@@ -74,16 +116,17 @@ define("bill_stevens", function () {
  	]
  },
  */
-	{
-		id: 3,
-		structure: [[[1, 1, 1, 1]]]
-	}].map(function (piece) {
+		{
+			id: 3,
+			structure: [[[1, 1, 1, 1]]],
+		},
+	].map(function (piece) {
 		// calculate dimensions (bounds)
 		var structure = piece.structure;
 
 		var w = 0,
-		    h = 0,
-		    d = 0;
+			h = 0,
+			d = 0;
 		structure.forEach(function (xLayer, x) {
 			w = Math.max(w, x + 1);
 			xLayer.forEach(function (yRow, y) {
@@ -94,25 +137,24 @@ define("bill_stevens", function () {
 			});
 		});
 		return Object.assign(piece, {
-			dimensions: { w: w, h: h, d: d }
+			dimensions: {w: w, h: h, d: d},
 		});
 	});
 	// console.log(pieces);
 
 	var cube = function cube(scale) {
 		var d = scale * size;
-		var material = new THREE.MeshLambertMaterial({ color: 0 });
+		var material = new THREE.MeshLambertMaterial({color: 0});
 		var geometry = new THREE.BoxGeometry(d, d, d);
 		return new THREE.Mesh(geometry, material);
 	};
 
 	var getBlock = function getBlock() {
-
 		var test = occupied.slice();
 		// con.log(test);
-		var piece = pieces[Math.floor(Math.random() * pieces.length)];
+		var piece =
+			pieces[Math.floor(Math.random() * pieces.length)];
 		var structure = piece.structure;
-
 
 		var p = position(dim);
 
@@ -128,11 +170,24 @@ define("bill_stevens", function () {
 		holder.add(containerTest);
 		holder.add(containerReal);
 
-		containerTest.x = rand.getInteger(0, dim - piece.dimensions.w);
-		containerTest.y = rand.getInteger(0, dim - piece.dimensions.h);
-		containerTest.z = rand.getInteger(0, dim - piece.dimensions.d);
+		containerTest.x = rand.getInteger(
+			0,
+			dim - piece.dimensions.w,
+		);
+		containerTest.y = rand.getInteger(
+			0,
+			dim - piece.dimensions.h,
+		);
+		containerTest.z = rand.getInteger(
+			0,
+			dim - piece.dimensions.d,
+		);
 
-		containerTest.rotation.set(rand.getInteger(-1, 1) * Math.PI / 2, rand.getInteger(-1, 1) * Math.PI / 2, rand.getInteger(-1, 1) * Math.PI / 2);
+		containerTest.rotation.set(
+			(rand.getInteger(-1, 1) * Math.PI) / 2,
+			(rand.getInteger(-1, 1) * Math.PI) / 2,
+			(rand.getInteger(-1, 1) * Math.PI) / 2,
+		);
 
 		// create initial guess at 0,0
 		structure.forEach(function (xLayer, x) {
@@ -149,31 +204,41 @@ define("bill_stevens", function () {
 		});
 
 		// now shift container within bounds
-		containerTest.position.set(containerTest.x * size, containerTest.y * size, containerTest.z * size);
+		containerTest.position.set(
+			containerTest.x * size,
+			containerTest.y * size,
+			containerTest.z * size,
+		);
 		containerTest.updateMatrixWorld();
 
 		// calculate absolute positions using THREE's nested bodies calculation.
-		var min = { x: 10, y: 10, z: 10 };
-		var max = { x: 0, y: 0, z: 0 };
+		var min = {x: 10, y: 10, z: 10};
+		var max = {x: 0, y: 0, z: 0};
 
-		var vectors = containerTest.children.map(function (c, index) {
-			var vector = new THREE.Vector3();
-			vector.setFromMatrixPosition(c.matrixWorld);
-			var cleansed = {};
-			Object.entries(vector).forEach(function (_ref2) {
-				var _ref3 = _slicedToArray(_ref2, 2),
-				    key = _ref3[0],
-				    value = _ref3[1];
+		var vectors = containerTest.children.map(
+			function (c, index) {
+				var vector = new THREE.Vector3();
+				vector.setFromMatrixPosition(c.matrixWorld);
+				var cleansed = {};
+				Object.entries(vector).forEach(function (_ref2) {
+					var _ref3 = _slicedToArray(_ref2, 2),
+						key = _ref3[0],
+						value = _ref3[1];
 
-				// remove infinitely small numbers created by matrix rotations.
-				var v = value > 0 && value < 0.001 || value < 0 && value > -0.001 ? 0 : value;
-				cleansed[key] = v / size;
-				// work out if they are out of bounds.
-				min[key] = Math.min(min[key], cleansed[key]);
-				max[key] = Math.max(max[key], cleansed[key]);
-			});
-			return cleansed;
-		});
+					// remove infinitely small numbers created by matrix rotations.
+					var v =
+						(value > 0 && value < 0.001) ||
+						(value < 0 && value > -0.001)
+							? 0
+							: value;
+					cleansed[key] = v / size;
+					// work out if they are out of bounds.
+					min[key] = Math.min(min[key], cleansed[key]);
+					max[key] = Math.max(max[key], cleansed[key]);
+				});
+				return cleansed;
+			},
+		);
 
 		// con.log("min", min, "min", max);
 		var shift = function shift(newV, oldV, d) {
@@ -206,17 +271,19 @@ define("bill_stevens", function () {
 
 		// con.log("test", test);
 
-		if (test.some(function (item) {
-			return item > 1;
-		})) {
+		if (
+			test.some(function (item) {
+				return item > 1;
+			})
+		) {
 			return con.log("invalid!");
 		}
 
 		// populate real!
 		shifted.forEach(function (v) {
 			var x = v.x,
-			    y = v.y,
-			    z = v.z;
+				y = v.y,
+				z = v.z;
 
 			var c = cube(0.95);
 			c.position.set(p(x), p(y), p(z));
@@ -228,7 +295,6 @@ define("bill_stevens", function () {
 	};
 
 	var init = function init() {
-
 		colours.getRandomPalette();
 
 		scene = new THREE.Scene();
@@ -248,7 +314,10 @@ define("bill_stevens", function () {
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize(sw, sh);
 
-		controls = new THREE.OrbitControls(camera, renderer.domElement);
+		controls = new THREE.OrbitControls(
+			camera,
+			renderer.domElement,
+		);
 
 		holder = new THREE.Group();
 		scene.add(holder);
@@ -258,12 +327,18 @@ define("bill_stevens", function () {
 		for (var i = 0; i < Math.pow(dim + 1, 3); i++) {
 			var c = cube(0.1);
 
-			var _getPositionFromIndex = getPositionFromIndex(dim + 1)(i),
-			    x = _getPositionFromIndex.x,
-			    y = _getPositionFromIndex.y,
-			    z = _getPositionFromIndex.z;
+			var _getPositionFromIndex = getPositionFromIndex(dim + 1)(
+					i,
+				),
+				x = _getPositionFromIndex.x,
+				y = _getPositionFromIndex.y,
+				z = _getPositionFromIndex.z;
 
-			c.position.set(p(x) - size / 2, p(y) - size / 2, p(z) - size / 2);
+			c.position.set(
+				p(x) - size / 2,
+				p(y) - size / 2,
+				p(z) - size / 2,
+			);
 			c.material.color.setHex(0xff7700);
 			cubes.push(c);
 			holder.add(c);
@@ -271,7 +346,7 @@ define("bill_stevens", function () {
 
 		stage.appendChild(renderer.domElement);
 
-		document.addEventListener('keydown', onKeyDown, false);
+		document.addEventListener("keydown", onKeyDown, false);
 
 		render();
 		animate();
@@ -282,9 +357,11 @@ define("bill_stevens", function () {
 	var attemptBlock = function attemptBlock() {
 		getBlock();
 
-		if (occupied.every(function (item) {
-			return item === 1;
-		})) {
+		if (
+			occupied.every(function (item) {
+				return item === 1;
+			})
+		) {
 			return con.log("we're done here!!", occupied);
 		}
 
@@ -300,13 +377,17 @@ define("bill_stevens", function () {
 
 		switch (event.key) {
 			case "ArrowLeft":
-				b.x--;break;
+				b.x--;
+				break;
 			case "ArrowUp":
-				b.y--;break;
+				b.y--;
+				break;
 			case "ArrowRight":
-				b.x++;break;
+				b.x++;
+				break;
 			case "ArrowDown":
-				b.y++;break;
+				b.y++;
+				break;
 		}
 
 		var mesh = b;
@@ -314,7 +395,7 @@ define("bill_stevens", function () {
 		TweenMax.to(mesh.position, 0.5, {
 			x: b.x * size,
 			y: b.y * size,
-			z: b.z * size
+			z: b.z * size,
 		});
 
 		// event.preventDefault();
@@ -331,5 +412,5 @@ define("bill_stevens", function () {
 		render();
 	};
 
-	return { stage: stage, init: init };
+	return {stage: stage, init: init};
 });

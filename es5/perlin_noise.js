@@ -43,8 +43,8 @@ var perlin_noise = function perlin_noise(perlin) {
 			// d.save();
 			// d.setTransform( 1, 0, 0, 1, 0, 0 );
 			var r = ~~(red[i] * 255),
-			    g = ~~(green[i] * 255),
-			    b = ~~(blue[i] * 255);
+				g = ~~(green[i] * 255),
+				b = ~~(blue[i] * 255);
 			d.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
 			d.fillRect(xp * pixel, yp * pixel, pixel, pixel);
 
@@ -74,13 +74,21 @@ var perlin_noise = function perlin_noise(perlin) {
 			var yp = Math.floor(i / w);
 			d.fillStyle = "rgba(20,50,120,1)";
 			d.beginPath();
-			d.drawCircle(xp * pixel, yp * pixel, c01(white[i]) * pixel / 2);
+			d.drawCircle(
+				xp * pixel,
+				yp * pixel,
+				(c01(white[i]) * pixel) / 2,
+			);
 			d.closePath();
 			d.fill();
 
 			d.fillStyle = "rgba(200,245,255,1)";
 			d.beginPath();
-			d.drawCircle(xp * pixel, yp * pixel, c01(blue[i]) * pixel / 2);
+			d.drawCircle(
+				xp * pixel,
+				yp * pixel,
+				(c01(blue[i]) * pixel) / 2,
+			);
 			d.closePath();
 			d.fill();
 		}
@@ -92,7 +100,7 @@ var perlin_noise = function perlin_noise(perlin) {
 		init: function init() {
 			drawCircles(0);
 		},
-		stage: c.canvas
+		stage: c.canvas,
 	};
 };
 

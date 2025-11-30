@@ -2,10 +2,10 @@
 
 var tunnel_tour_three = function tunnel_tour_three() {
 	var camera, scene, renderer;
-	var mouse = { x: 0, y: 0 };
-	var camPos = { x: 0, y: 0, z: 0 };
+	var mouse = {x: 0, y: 0};
+	var camPos = {x: 0, y: 0, z: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 
 	function num(min, max) {
 		return Math.random() * (max - min) + min;
@@ -18,26 +18,57 @@ var tunnel_tour_three = function tunnel_tour_three() {
 	var sharedMaterial;
 	var uniforms;
 
-	var vertexShader = ["varying vec3 vPosition;", "varying vec3 vNormal;", "void main() {", "  vPosition = position;", "  vNormal = normalize(normalMatrix * normal);", "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);", "}"].join("\n");
+	var vertexShader = [
+		"varying vec3 vPosition;",
+		"varying vec3 vNormal;",
+		"void main() {",
+		"  vPosition = position;",
+		"  vNormal = normalize(normalMatrix * normal);",
+		"  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+		"}",
+	].join("\n");
 
-	var fragmentShader = ["uniform float time;", "uniform vec3 fogColor;", "uniform float fogNear;", "uniform float fogFar;", "varying vec3 vPosition;", "varying vec3 vNormal;", "void main() {",
-	// Create wavy patterns for color mixing
-	"  float wave1 = sin(vPosition.x * 0.1 + time * 0.001) * 0.5 + 0.5;", "  float wave2 = sin(vPosition.y * 0.1 + time * 0.0015 + 2.0) * 0.5 + 0.5;", "  float wave3 = sin(vPosition.z * 0.05 + time * 0.0008 + 4.0) * 0.5 + 0.5;",
+	var fragmentShader = [
+		"uniform float time;",
+		"uniform vec3 fogColor;",
+		"uniform float fogNear;",
+		"uniform float fogFar;",
+		"varying vec3 vPosition;",
+		"varying vec3 vNormal;",
+		"void main() {",
+		// Create wavy patterns for color mixing
+		"  float wave1 = sin(vPosition.x * 0.1 + time * 0.001) * 0.5 + 0.5;",
+		"  float wave2 = sin(vPosition.y * 0.1 + time * 0.0015 + 2.0) * 0.5 + 0.5;",
+		"  float wave3 = sin(vPosition.z * 0.05 + time * 0.0008 + 4.0) * 0.5 + 0.5;",
 
-	// Define color palette: green, cyan, white, light blue
-	"  vec3 green = vec3(0.2, 1.0, 0.3);", "  vec3 cyan = vec3(0.0, 1.0, 1.0);", "  vec3 white = vec3(1.0, 1.0, 1.0);", "  vec3 lightBlue = vec3(0.4, 0.8, 1.0);",
+		// Define color palette: green, cyan, white, light blue
+		"  vec3 green = vec3(0.2, 1.0, 0.3);",
+		"  vec3 cyan = vec3(0.0, 1.0, 1.0);",
+		"  vec3 white = vec3(1.0, 1.0, 1.0);",
+		"  vec3 lightBlue = vec3(0.4, 0.8, 1.0);",
 
-	// Mix colors based on waves
-	"  vec3 color1 = mix(green, cyan, wave1);", "  vec3 color2 = mix(lightBlue, white, wave2);", "  vec3 color = mix(color1, color2, wave3);",
+		// Mix colors based on waves
+		"  vec3 color1 = mix(green, cyan, wave1);",
+		"  vec3 color2 = mix(lightBlue, white, wave2);",
+		"  vec3 color = mix(color1, color2, wave3);",
 
-	// Add some brightness variation based on distance
-	"  float dist = length(vPosition);", "  float pulse = sin(dist * 0.05 - time * 0.002) * 0.2 + 0.8;", "  color *= pulse;",
+		// Add some brightness variation based on distance
+		"  float dist = length(vPosition);",
+		"  float pulse = sin(dist * 0.05 - time * 0.002) * 0.2 + 0.8;",
+		"  color *= pulse;",
 
-	// Simple lambert lighting
-	"  vec3 lightDir = normalize(vec3(0.0, 1.0, 0.5));", "  float diff = max(dot(vNormal, lightDir), 0.4);", "  color *= diff;",
+		// Simple lambert lighting
+		"  vec3 lightDir = normalize(vec3(0.0, 1.0, 0.5));",
+		"  float diff = max(dot(vNormal, lightDir), 0.4);",
+		"  color *= diff;",
 
-	// Apply fog
-	"  float depth = gl_FragCoord.z / gl_FragCoord.w;", "  float fogFactor = smoothstep(fogNear, fogFar, depth);", "  color = mix(color, fogColor, fogFactor);", "  gl_FragColor = vec4(color, 1.0);", "}"].join("\n");
+		// Apply fog
+		"  float depth = gl_FragCoord.z / gl_FragCoord.w;",
+		"  float fogFactor = smoothstep(fogNear, fogFar, depth);",
+		"  color = mix(color, fogColor, fogFactor);",
+		"  gl_FragColor = vec4(color, 1.0);",
+		"}",
+	].join("\n");
 
 	var maxBits = parseInt(num(10, 100));
 
@@ -51,7 +82,7 @@ var tunnel_tour_three = function tunnel_tour_three() {
 		var startAngle = num(0, Math.PI);
 
 		for (var i = 0, il = bits; i < il; i++) {
-			var a = startAngle + i / il * Math.PI * 2;
+			var a = startAngle + (i / il) * Math.PI * 2;
 			var x = Math.sin(a) * radius;
 			var y = Math.cos(a) * radius;
 			var z = 0;
@@ -65,7 +96,7 @@ var tunnel_tour_three = function tunnel_tour_three() {
 	}
 
 	function createSection(index) {
-		createStraight({ x: 0, y: 0, z: index * -segmentLength });
+		createStraight({x: 0, y: 0, z: index * -segmentLength});
 	}
 
 	function init() {
@@ -76,7 +107,12 @@ var tunnel_tour_three = function tunnel_tour_three() {
 		scene.fog = new THREE.Fog(fogColor, 100, 1500);
 		scene.background = new THREE.Color(fogColor);
 
-		camera = new THREE.PerspectiveCamera(100, sw / sh, 1, 10000);
+		camera = new THREE.PerspectiveCamera(
+			100,
+			sw / sh,
+			1,
+			10000,
+		);
 		scene.add(camera);
 
 		// Create shared geometry and material for better performance
@@ -84,19 +120,19 @@ var tunnel_tour_three = function tunnel_tour_three() {
 
 		// Funky animated shader material
 		uniforms = {
-			time: { value: 0.0 },
-			fogColor: { value: new THREE.Color(fogColor) },
-			fogNear: { value: 100 },
-			fogFar: { value: 1500 }
+			time: {value: 0.0},
+			fogColor: {value: new THREE.Color(fogColor)},
+			fogNear: {value: 100},
+			fogFar: {value: 1500},
 		};
 
 		sharedMaterial = new THREE.ShaderMaterial({
 			uniforms: uniforms,
 			vertexShader: vertexShader,
-			fragmentShader: fragmentShader
+			fragmentShader: fragmentShader,
 		});
 
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(sw, sh);
 
 		for (var j = 0, jl = segmentsInitial; j < jl; j++) {
@@ -107,7 +143,11 @@ var tunnel_tour_three = function tunnel_tour_three() {
 
 		function listen(eventNames, callback, options) {
 			for (var i = 0; i < eventNames.length; i++) {
-				window.addEventListener(eventNames[i], callback, options);
+				window.addEventListener(
+					eventNames[i],
+					callback,
+					options,
+				);
 			}
 		}
 		listen(["resize"], function (_e) {
@@ -119,16 +159,21 @@ var tunnel_tour_three = function tunnel_tour_three() {
 		});
 
 		listen(["mousemove"], function (e) {
-			mouse.x = e.clientX / sw * 2 - 1;
+			mouse.x = (e.clientX / sw) * 2 - 1;
 			mouse.y = -(e.clientY / sh) * 2 + 1;
 		});
 
-		listen(["touchmove"], function (e) {
-			e.preventDefault();
-			if (e.changedTouches && e.changedTouches[0]) e = e.changedTouches[0];
-			mouse.x = e.clientX / sw * 2 - 1;
-			mouse.y = -(e.clientY / sh) * 2 + 1;
-		}, { passive: false });
+		listen(
+			["touchmove"],
+			function (e) {
+				e.preventDefault();
+				if (e.changedTouches && e.changedTouches[0])
+					e = e.changedTouches[0];
+				mouse.x = (e.clientX / sw) * 2 - 1;
+				mouse.y = -(e.clientY / sh) * 2 + 1;
+			},
+			{passive: false},
+		);
 
 		render(0);
 	}
@@ -158,7 +203,7 @@ var tunnel_tour_three = function tunnel_tour_three() {
 
 	return {
 		init: init,
-		resize: function resize() {}
+		resize: function resize() {},
 	};
 };
 

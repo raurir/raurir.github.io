@@ -10,7 +10,7 @@ define("frame_inverse", function () {
 
 	var maxSize = rndI.getInteger(100, 300);
 	var minSize = rndI.getInteger(4, 10);
-	var maxBoxes = Math.floor(sw * sh / 200);
+	var maxBoxes = Math.floor((sw * sh) / 200);
 	var cols = c.getRandomPalette();
 	var canvas = dom.canvas(sw, sh);
 	var ctx = canvas.ctx;
@@ -22,8 +22,8 @@ define("frame_inverse", function () {
 	var f = rndI.getNumber(0, 1);
 	var force = null;
 	var VERTICAL = 1,
-	    HORIZONTAL = 2,
-	    SQUARE = 3;
+		HORIZONTAL = 2,
+		SQUARE = 3;
 	if (f > 0.9) {
 		force = VERTICAL;
 	} else if (f > 0.8) {
@@ -148,6 +148,6 @@ define("frame_inverse", function () {
 	}
 	return {
 		init: init,
-		stage: canvas.canvas
+		stage: canvas.canvas,
 	};
 });

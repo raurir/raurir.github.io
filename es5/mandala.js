@@ -16,8 +16,8 @@ var mandala = function mandala() {
 				label: "Spread",
 				min: 1,
 				max: 10,
-				cur: 10
-			}
+				cur: 10,
+			},
 		};
 
 		var TAU = Math.PI * 2;
@@ -25,9 +25,11 @@ var mandala = function mandala() {
 		var stage = dom.canvas(1, 1);
 
 		function init(options) {
-			progress = options.progress || function () {
-				console.log("mandala - no progress defined");
-			};
+			progress =
+				options.progress ||
+				function () {
+					console.log("mandala - no progress defined");
+				};
 			size = options.size;
 			sw = options.sw || size;
 			sh = options.sh || size;
@@ -53,7 +55,7 @@ var mandala = function mandala() {
 		function render() {
 			var spread = settings.spread.cur / settings.spread.max;
 			console.log("spread", spread);
-			var a = 1 / spokes * TAU;
+			var a = (1 / spokes) * TAU;
 			var maxR = Math.sqrt(0.5 * 0.5 * 2);
 			var r = maxR * size;
 			var bgColour = c.getRandomColour();
@@ -98,7 +100,8 @@ var mandala = function mandala() {
 			function drawBands() {
 				for (var i = 0; i < 1; i++) {
 					var drawBand = function drawBand(colour, widthMod) {
-						pattern.ctx.lineWidth = stripeSize * widthMod * size * 0.01;
+						pattern.ctx.lineWidth =
+							stripeSize * widthMod * size * 0.01;
 						pattern.ctx.strokeStyle = colour;
 						for (var j = 0; j < bands; j++) {
 							var x0 = -0.1;
@@ -117,7 +120,6 @@ var mandala = function mandala() {
 					};
 					// drawBand(bgColour, 2);
 
-
 					// for (var i = 0; i < bandSets; i++) {
 					var bands = rndI.getInteger(3, 40);
 					var bandSize = rndI.getNumber(0.01, 0.1);
@@ -131,7 +133,7 @@ var mandala = function mandala() {
 			function drawRegions() {
 				var regionSizes = {
 					left: [],
-					right: []
+					right: [],
 				};
 				for (var i = 0; i < regionSets; i++) {
 					regionSizes.left.push(rndI.random());
@@ -159,7 +161,12 @@ var mandala = function mandala() {
 					pattern.ctx.strokeStyle = "black";
 					pattern.ctx.stroke();
 
-					var points = [{ x: x0, y: y0 }, { x: x1, y: y1 }, { x: x2, y: y2 }, { x: x3, y: y3 }];
+					var points = [
+						{x: x0, y: y0},
+						{x: x1, y: y1},
+						{x: x2, y: y2},
+						{x: x3, y: y3},
+					];
 					var insetPoints = geom.insetPoints(points, -0.01);
 					console.log("duble", points, insetPoints);
 					if (insetPoints) {
@@ -167,7 +174,10 @@ var mandala = function mandala() {
 						pattern.ctx.fillStyle = c.getNextColour();
 						for (var i = 0; i < insetPoints.length; i++) {
 							var p = insetPoints[i];
-							pattern.ctx[i == 0 ? "moveTo" : "lineTo"](p.x * r, p.y * r);
+							pattern.ctx[i == 0 ? "moveTo" : "lineTo"](
+								p.x * r,
+								p.y * r,
+							);
 						}
 						pattern.ctx.fill();
 					}
@@ -243,13 +253,17 @@ var mandala = function mandala() {
 					stage.ctx.translate(centre, centre);
 					stage.ctx.rotate(i * a);
 				}
-				stage.ctx.drawImage(pattern.canvas, -maskBorder, -maskBorder);
+				stage.ctx.drawImage(
+					pattern.canvas,
+					-maskBorder,
+					-maskBorder,
+				);
 				stage.ctx.restore();
 			}
 		}
 
 		function update(settings) {
-			init({ size: size, settings: settings });
+			init({size: size, settings: settings});
 		}
 
 		var experiment = {
@@ -257,7 +271,7 @@ var mandala = function mandala() {
 			render: render,
 			settings: settings,
 			stage: stage.canvas,
-			update: update
+			update: update,
 		};
 
 		return experiment;

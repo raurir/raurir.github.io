@@ -6,7 +6,7 @@ define("fur", ["perlin"], function (perlin) {
 	var w = 160;
 	var h = 160;
 	var sw = w * pixel,
-	    sh = h * pixel;
+		sh = h * pixel;
 
 	var c = dom.canvas(sw, sh);
 	var d = c.ctx;
@@ -18,7 +18,7 @@ define("fur", ["perlin"], function (perlin) {
 	rndI.setSeed(987654);
 
 	var distort = [],
-	    distortion = 4;
+		distortion = 4;
 	for (var i = 0, il = w * h; i < il; i++) {
 		// 135, 117, 87
 		var r = rndI.getInteger(125, 145);
@@ -27,7 +27,7 @@ define("fur", ["perlin"], function (perlin) {
 		distort.push({
 			x: rndI.getNumber(-1, 1) * distortion,
 			y: rndI.getNumber(-1, 1) * distortion,
-			colour: "rgba(" + r + "," + g + "," + b + ",0.5)"
+			colour: "rgba(" + r + "," + g + "," + b + ",0.5)",
 		});
 	}
 
@@ -61,6 +61,6 @@ define("fur", ["perlin"], function (perlin) {
 		init: function init() {
 			drawIt(0);
 		},
-		stage: c.canvas
+		stage: c.canvas,
 	};
 });

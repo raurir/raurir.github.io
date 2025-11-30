@@ -1,14 +1,13 @@
-'use strict';
+"use strict";
 
 define("infinite_scrolling_cogs", function () {
-
 	// this is a port of code from 21-07-2013: https://codepen.io/raurir/details/eknLg/
 
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 
 	function makeCanvas(w, h) {
-		var can = document.createElement('canvas');
+		var can = document.createElement("canvas");
 		can.width = w;
 		can.height = h;
 		return can;
@@ -17,8 +16,7 @@ define("infinite_scrolling_cogs", function () {
 	var stage = makeCanvas(sw, sh);
 
 	function init() {
-
-		var context = stage.getContext('2d');
+		var context = stage.getContext("2d");
 
 		var padding = 5; // canvas padding for cogs
 		var cogs = [];
@@ -32,7 +30,7 @@ define("infinite_scrolling_cogs", function () {
 		var ang = 0;
 		var speed = 0.02;
 		var cogNumber = 0;
-		var holeStyle = { fillStyle: "#000", lineWidth: 0 };
+		var holeStyle = {fillStyle: "#000", lineWidth: 0};
 		var curvature = 1.7;
 
 		function number(min, max) {
@@ -43,27 +41,43 @@ define("infinite_scrolling_cogs", function () {
 		}
 
 		function colourGrey(options) {
-			var defaults = { darkest: 0, lightest: 255, alpha: 1 };
+			var defaults = {darkest: 0, lightest: 255, alpha: 1};
 			for (var p in options) {
 				defaults[p] = options[p];
-			}var white = defaults.white ? defaults.white : integer(defaults.darkest, defaults.lightest);
+			}
+			var white = defaults.white
+				? defaults.white
+				: integer(defaults.darkest, defaults.lightest);
 			var r = white,
-			    g = white,
-			    b = white,
-			    a = defaults.alpha;
+				g = white,
+				b = white,
+				a = defaults.alpha;
 			return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 		}
 
 		// noise removed
 
-		function drawCircle(c, x, y, r, style, antiClockwise, renderNow) {
+		function drawCircle(
+			c,
+			x,
+			y,
+			r,
+			style,
+			antiClockwise,
+			renderNow,
+		) {
 			c.moveTo(x + r, y); // go to start of arc
 			if (antiClockwise == undefined) antiClockwise = false; // double negative love...
 			//con.log("drawCircle", x, y);
-			var defaults = { fillStyle: "#fff", lineWidth: 0, strokeStyle: "#000" };
+			var defaults = {
+				fillStyle: "#fff",
+				lineWidth: 0,
+				strokeStyle: "#000",
+			};
 			for (var p in style) {
 				defaults[p] = style[p];
-			}c.fillStyle = defaults.fillStyle;
+			}
+			c.fillStyle = defaults.fillStyle;
 			c.lineWidth = defaults.lineWidth;
 			c.strokeStyle = defaults.strokeStyle;
 			if (renderNow) c.beginPath();
@@ -76,7 +90,6 @@ define("infinite_scrolling_cogs", function () {
 		}
 
 		function createCog(forceX, forceY) {
-
 			var ctx; // cog context
 			var size;
 
@@ -124,35 +137,53 @@ define("infinite_scrolling_cogs", function () {
 				var i = j * step;
 				var topBottomLand = ~~mod % 2;
 				var r = topBottomLand * (maxRad - minRad) + minRad;
-				mod += .5;
+				mod += 0.5;
 				oddEven += 1;
 				var angle = i - step / 2; // offsets teeth a bit, making sure at angle 0, we are in the middle of a "bottom land" rather than "top land"
 				realX = r * Math.cos(angle);
 				realY = r * Math.sin(angle);
 				var v = void 0;
 				if (oddEven % 2 == 0) {
-					v = { tb: topBottomLand, ex: realX, ey: realY };
+					v = {tb: topBottomLand, ex: realX, ey: realY};
 				} else {
 					halfX = halfRadius * Math.cos(i - step);
 					halfY = halfRadius * Math.sin(i - step);
-					v = { tb: topBottomLand, mp: true, ex: realX, ey: realY, mx: halfX, my: halfY };
+					v = {
+						tb: topBottomLand,
+						mp: true,
+						ex: realX,
+						ey: realY,
+						mx: halfX,
+						my: halfY,
+					};
 				}
 				verts.push(v);
 				// con.log("coords", i, v.ex, v.ey, v.mx, v.my );
 			}
 			// con.log("=====================");
 
-
 			function drawBand(minRadius, maxRadius) {
 				if (number(0, 1) < 0.3) return;
 				var midRadius = (maxRadius + minRadius) / 2;
 				var bandSize = maxRadius - minRadius;
-				drawCircle(ctx, 0, 0, midRadius, {
-					fillStyle: null,
-					strokeStyle: colourGrey({ darkest: 0, lightest: 40, alpha: 0.5 }),
-					// colour rust removed from original
-					lineWidth: bandSize
-				}, false, true);
+				drawCircle(
+					ctx,
+					0,
+					0,
+					midRadius,
+					{
+						fillStyle: null,
+						strokeStyle: colourGrey({
+							darkest: 0,
+							lightest: 40,
+							alpha: 0.5,
+						}),
+						// colour rust removed from original
+						lineWidth: bandSize,
+					},
+					false,
+					true,
+				);
 			}
 
 			function drawCutouts(minRadius, maxRadius) {
@@ -167,40 +198,97 @@ define("infinite_scrolling_cogs", function () {
 
 			function generateHoles(midRadius, bandSize) {
 				//var holes = ~~(teeth * integer(1,3) / integer(1,2));
-				var holeSize = bandSize / 2 * number(0.6, 0.9);
-				var holes = ~~(number(0.5, 0.9) * pi2 * midRadius / holeSize / 2);
+				var holeSize = (bandSize / 2) * number(0.6, 0.9);
+				var holes = ~~(
+					(number(0.5, 0.9) * pi2 * midRadius) /
+					holeSize /
+					2
+				);
 				holeSize *= number(0.5, 0.9);
 				for (var i = 0; i < holes; i++) {
-					var angle = i / holes * pi2; // + step / 2;
-					drawCircle(ctx, midRadius * Math.cos(angle), midRadius * Math.sin(angle), holeSize, holeStyle, true);
+					var angle = (i / holes) * pi2; // + step / 2;
+					drawCircle(
+						ctx,
+						midRadius * Math.cos(angle),
+						midRadius * Math.sin(angle),
+						holeSize,
+						holeStyle,
+						true,
+					);
 				}
 			}
 
 			function generateSegment(midRadius, bandSize) {
 				// capped specifies segments to be rounded or angular... angular with many segments will be akin to spokes
 				var capped = integer(0, 1) == 0;
-				var segments = ~~Math.pow(teeth, 1 / (capped ? integer(2, 4) : integer(2, 3))) + 1;
+				var segments =
+					~~Math.pow(
+						teeth,
+						1 / (capped ? integer(2, 4) : integer(2, 3)),
+					) + 1;
 				var holeSize = number(0.5, 0.8) * bandSize;
 				// if capped, remove the capping from segment size... on second thoughts, otherwise remove a little anyway!
-				var segmentSize = (pi2 / segments - (Math.asin(holeSize / midRadius) * capped ? 1 : 0.5)) * number(0.5, 0.9);
+				var segmentSize =
+					(pi2 / segments -
+						(Math.asin(holeSize / midRadius) * capped
+							? 1
+							: 0.5)) *
+					number(0.5, 0.9);
 				var innerRadius = midRadius - holeSize / 2;
 				var outerRadius = midRadius + holeSize / 2;
 
 				for (var i = 0; i < segments; i++) {
-					var startAngle = i / segments * pi2;
+					var startAngle = (i / segments) * pi2;
 					var endAngle = startAngle + segmentSize;
-					ctx.moveTo(Math.cos(startAngle) * innerRadius, Math.sin(startAngle) * innerRadius);
-					ctx.arc(0, 0, innerRadius, startAngle, endAngle, false);
+					ctx.moveTo(
+						Math.cos(startAngle) * innerRadius,
+						Math.sin(startAngle) * innerRadius,
+					);
+					ctx.arc(
+						0,
+						0,
+						innerRadius,
+						startAngle,
+						endAngle,
+						false,
+					);
 					if (capped) {
-						ctx.arc(Math.cos(endAngle) * midRadius, Math.sin(endAngle) * midRadius, holeSize / 2, endAngle + pi, endAngle, true);
+						ctx.arc(
+							Math.cos(endAngle) * midRadius,
+							Math.sin(endAngle) * midRadius,
+							holeSize / 2,
+							endAngle + pi,
+							endAngle,
+							true,
+						);
 					} else {
-						ctx.lineTo(Math.cos(endAngle) * outerRadius, Math.sin(endAngle) * outerRadius);
+						ctx.lineTo(
+							Math.cos(endAngle) * outerRadius,
+							Math.sin(endAngle) * outerRadius,
+						);
 					}
-					ctx.arc(0, 0, outerRadius, endAngle, startAngle, true);
+					ctx.arc(
+						0,
+						0,
+						outerRadius,
+						endAngle,
+						startAngle,
+						true,
+					);
 					if (capped) {
-						ctx.arc(Math.cos(startAngle) * midRadius, Math.sin(startAngle) * midRadius, holeSize / 2, startAngle, startAngle + pi, true);
+						ctx.arc(
+							Math.cos(startAngle) * midRadius,
+							Math.sin(startAngle) * midRadius,
+							holeSize / 2,
+							startAngle,
+							startAngle + pi,
+							true,
+						);
 					} else {
-						ctx.lineTo(Math.cos(startAngle) * innerRadius, Math.sin(startAngle) * innerRadius);
+						ctx.lineTo(
+							Math.cos(startAngle) * innerRadius,
+							Math.sin(startAngle) * innerRadius,
+						);
 					}
 				}
 			}
@@ -213,12 +301,14 @@ define("infinite_scrolling_cogs", function () {
 				dir: dir,
 				xp: cx,
 				yp: cy,
-				canvas: null
+				canvas: null,
 			};
 
 			if (cogNumber) {
 				prevCog = cogs[cogNumber - 1];
-				cog.rotation = prevCog.teeth / cog.teeth * -prevCog.rotation + ang * (prevCog.teeth + cog.teeth) / cog.teeth;
+				cog.rotation =
+					(prevCog.teeth / cog.teeth) * -prevCog.rotation +
+					(ang * (prevCog.teeth + cog.teeth)) / cog.teeth;
 				if (cog.teeth % 2 == 0) {
 					cog.rotation += pi2 / (cog.teeth * 2);
 				}
@@ -228,7 +318,7 @@ define("infinite_scrolling_cogs", function () {
 				var dims = (this.size + padding) * 2;
 				this.canvas = makeCanvas(dims, dims);
 				//	document.body.appendChild( this.canvas );
-				ctx = this.canvas.getContext('2d');
+				ctx = this.canvas.getContext("2d");
 
 				ctx.save();
 				ctx.translate(this.size + padding, this.size + padding);
@@ -260,13 +350,25 @@ define("infinite_scrolling_cogs", function () {
 				ctx.closePath();
 
 				// dotty metal removed from original
-				ctx.fillStyle = colourGrey({ darkest: 70, lightest: 200, alpha: 1 });
+				ctx.fillStyle = colourGrey({
+					darkest: 70,
+					lightest: 200,
+					alpha: 1,
+				});
 				ctx.fill();
 				ctx.stroke();
 
 				if (Math.random() > 0.5) {
 					// maybe draw centre
-					drawCircle(ctx, 0, 0, minRad * 0.16, holeStyle, true, true);
+					drawCircle(
+						ctx,
+						0,
+						0,
+						minRad * 0.16,
+						holeStyle,
+						true,
+						true,
+					);
 				}
 
 				ctx.globalCompositeOperation = "source-atop";
@@ -284,12 +386,16 @@ define("infinite_scrolling_cogs", function () {
 				context.save();
 				context.translate(this.xp, this.yp);
 				context.rotate(this.rotation);
-				context.drawImage(this.canvas, -this.size - padding, -this.size - padding);
+				context.drawImage(
+					this.canvas,
+					-this.size - padding,
+					-this.size - padding,
+				);
 				context.restore();
 			};
 
 			cog.rotate = function () {
-				this.rotation += pi2 / this.teeth * this.dir * speed;
+				this.rotation += (pi2 / this.teeth) * this.dir * speed;
 				this.draw();
 			};
 
@@ -322,7 +428,9 @@ define("infinite_scrolling_cogs", function () {
 		var y = 0;
 		function incrementCog() {
 			// lean towards left or right depending on current trend away from centre
-			var newX = (cx < sw / 2 ? number(0, 3) : number(-3, 0)) * sw / 12;
+			var newX =
+				((cx < sw / 2 ? number(0, 3) : number(-3, 0)) * sw) /
+				12;
 			var x = cx + newX;
 			createCog(x, y);
 			y = cy + number(0, 200);
@@ -337,6 +445,6 @@ define("infinite_scrolling_cogs", function () {
 
 	return {
 		init: init,
-		stage: stage
+		stage: stage,
 	};
 });

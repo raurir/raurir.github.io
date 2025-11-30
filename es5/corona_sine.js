@@ -21,20 +21,20 @@ var corona_sine = function corona_sine() {
 				min: 1,
 				max: 30,
 				cur: 0,
-				type: "Number"
+				type: "Number",
 			},
 			rays: {
 				label: "Rays",
 				min: 12,
 				max: 312,
 				cur: 0,
-				type: "Number"
+				type: "Number",
 			},
 			background: {
 				type: "Boolean",
 				label: "Background",
-				cur: true
-			}
+				cur: true,
+			},
 		};
 
 		var size, sw, sh, stage, ctx, inner, bmp;
@@ -45,7 +45,7 @@ var corona_sine = function corona_sine() {
 		}
 
 		if (vector) {
-			stage = dom.svg("svg", { width: sw, height: sh });
+			stage = dom.svg("svg", {width: sw, height: sh});
 			inner = dom.svg("g");
 			stage.appendChild(inner);
 			ctx = stage;
@@ -56,14 +56,24 @@ var corona_sine = function corona_sine() {
 			ctx = bmp.ctx;
 		}
 
-		var lastGenerate, colourLayers, lengthLayers, colourBG, oscillators, oscs;
+		var lastGenerate,
+			colourLayers,
+			lengthLayers,
+			colourBG,
+			oscillators,
+			oscs;
 
 		function init(options) {
 			var _arguments = arguments;
 
-			progress = options.progress || function () {
-				console.log("corona_sine - no progress defined", _arguments);
-			};
+			progress =
+				options.progress ||
+				function () {
+					console.log(
+						"corona_sine - no progress defined",
+						_arguments,
+					);
+				};
 
 			r.setSeed(options.seed);
 
@@ -87,7 +97,14 @@ var corona_sine = function corona_sine() {
 		function oscillate(rotation, time) {
 			var t = 0;
 			for (var o = 0; o < oscillators; o++) {
-				t += (Math.sin(oscs[o].offset + time * oscs[o].speed + rotation * oscs[o].phase) + 1) / 2;
+				t +=
+					(Math.sin(
+						oscs[o].offset +
+							time * oscs[o].speed +
+							rotation * oscs[o].phase,
+					) +
+						1) /
+					2;
 			}
 			return t / oscillators;
 		}
@@ -99,15 +116,59 @@ var corona_sine = function corona_sine() {
 
 			if (vector) {
 				var curve = 1.6; // aprox hack to make a bezier like a circle
-				var d = ["M", start, ",", -width, " L", end, -width, " C", end + width * curve, ",", -width, " ", end + width * curve, ",", width, " ", end, ",", width,
-				// gave up with arc method, wtf?
-				// " A", width, ",", width, " 0 0,0 ", width * 2, ",", width * 2,   // ctx.arc(end, 0, width, -Math.PI / 2, Math.PI / 2, false); // draw cap
-				" L", end, ",", width, " L", start, ",", width, " C", start - width * curve, ",", width, " ", start - width * curve, ",", -width, " ", start, ",", -width].join("");
+				var d = [
+					"M",
+					start,
+					",",
+					-width,
+					" L",
+					end,
+					-width,
+					" C",
+					end + width * curve,
+					",",
+					-width,
+					" ",
+					end + width * curve,
+					",",
+					width,
+					" ",
+					end,
+					",",
+					width,
+					// gave up with arc method, wtf?
+					// " A", width, ",", width, " 0 0,0 ", width * 2, ",", width * 2,   // ctx.arc(end, 0, width, -Math.PI / 2, Math.PI / 2, false); // draw cap
+					" L",
+					end,
+					",",
+					width,
+					" L",
+					start,
+					",",
+					width,
+					" C",
+					start - width * curve,
+					",",
+					width,
+					" ",
+					start - width * curve,
+					",",
+					-width,
+					" ",
+					start,
+					",",
+					-width,
+				].join("");
 				var path = dom.svg("path", {
 					d: d,
 					fill: colour,
 					// stroke: "red", "stroke-width": 1,
-					transform: "translate(" + [sw / 2, sh / 2] + ") rotate(" + rotation * 180 / Math.PI + ")"
+					transform:
+						"translate(" +
+						[sw / 2, sh / 2] +
+						") rotate(" +
+						(rotation * 180) / Math.PI +
+						")",
 				});
 				inner.appendChild(path);
 			} else {
@@ -121,10 +182,24 @@ var corona_sine = function corona_sine() {
 
 				ctx.moveTo(start, -width);
 				ctx.lineTo(end, -width);
-				ctx.arc(end, 0, width, -Math.PI / 2, Math.PI / 2, false); // draw cap
+				ctx.arc(
+					end,
+					0,
+					width,
+					-Math.PI / 2,
+					Math.PI / 2,
+					false,
+				); // draw cap
 				ctx.lineTo(end, width);
 				ctx.lineTo(start, width);
-				ctx.arc(start, 0, width, Math.PI / 2, -Math.PI / 2, false); // draw cap
+				ctx.arc(
+					start,
+					0,
+					width,
+					Math.PI / 2,
+					-Math.PI / 2,
+					false,
+				); // draw cap
 
 				ctx.fill();
 				ctx.closePath();
@@ -133,14 +208,32 @@ var corona_sine = function corona_sine() {
 			}
 		}
 
-		function renderRay(frac, time, innerRadius, maxRadius, lineWidth) {
+		function renderRay(
+			frac,
+			time,
+			innerRadius,
+			maxRadius,
+			lineWidth,
+		) {
 			var layers = settings.layers.cur;
 			var rotation = frac * Math.PI * 2;
 			var oscLength = oscillate(rotation, time);
 			for (var l = 0; l < layers; l++) {
-				var start = innerRadius + oscLength * maxRadius * lengthLayers[l] + lineWidth * 2;
-				var end = innerRadius + oscLength * maxRadius * lengthLayers[l + 1] - lineWidth * 2;
-				renderLine(rotation, start, end, lineWidth, colourLayers[l]);
+				var start =
+					innerRadius +
+					oscLength * maxRadius * lengthLayers[l] +
+					lineWidth * 2;
+				var end =
+					innerRadius +
+					oscLength * maxRadius * lengthLayers[l + 1] -
+					lineWidth * 2;
+				renderLine(
+					rotation,
+					start,
+					end,
+					lineWidth,
+					colourLayers[l],
+				);
 			}
 		}
 
@@ -178,7 +271,7 @@ var corona_sine = function corona_sine() {
 				oscs.push({
 					offset: r.random() * Math.PI * 2,
 					phase: ~~(r.random() * 6),
-					speed: r.random() * 0.003
+					speed: r.random() * 0.003,
 				});
 			}
 
@@ -191,10 +284,11 @@ var corona_sine = function corona_sine() {
 			}
 
 			var minDimension = sw > sh ? sh : sw;
-			var innerRadius = minDimension / 2 * 0.2;
-			var outerRadius = minDimension / 2 * 1;
+			var innerRadius = (minDimension / 2) * 0.2;
+			var outerRadius = (minDimension / 2) * 1;
 			var maxRadius = outerRadius - innerRadius;
-			var lineWidth = innerRadius * Math.tan(1 / rays / 2 * Math.PI * 2); // ensure inner lines don't meet.
+			var lineWidth =
+				innerRadius * Math.tan((1 / rays / 2) * Math.PI * 2); // ensure inner lines don't meet.
 
 			// ctx.beginPath();
 			// ctx.fillStyle = "#666"
@@ -210,11 +304,17 @@ var corona_sine = function corona_sine() {
 			function renderBatch(batch) {
 				// console.log("renderBatch", batch);
 				var start = batch * batchSize,
-				    end = start + batchSize;
+					end = start + batchSize;
 				if (end > rays) end = rays;
 				for (var i = start; i < end; i++) {
 					var frac = i / rays;
-					renderRay(frac, time, innerRadius, maxRadius, lineWidth);
+					renderRay(
+						frac,
+						time,
+						innerRadius,
+						maxRadius,
+						lineWidth,
+					);
 				}
 				if (end < rays) {
 					progress("render:progress", end / rays);
@@ -238,7 +338,7 @@ var corona_sine = function corona_sine() {
 			render: render,
 			init: init,
 			settings: settings,
-			update: update
+			update: update,
 		};
 
 		return experiment;

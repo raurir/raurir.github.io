@@ -2,10 +2,10 @@
 
 var molecular_three = function molecular_three() {
 	var camera, scene, renderer;
-	var mouse = { x: 0, y: 0 };
-	var camPos = { x: 0, y: 0, z: 0 };
+	var mouse = {x: 0, y: 0};
+	var camPos = {x: 0, y: 0, z: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 
 	function num(min, max) {
 		return Math.random() * (max - min) + min;
@@ -34,25 +34,38 @@ var molecular_three = function molecular_three() {
 
 	function sphere(props) {
 		var widthSegments = 10,
-		    heightSegments = 10;
-		var material = new THREE.MeshLambertMaterial({ color: props.colour });
-		var geometry = new THREE.SphereGeometry(props.radius, widthSegments, heightSegments);
+			heightSegments = 10;
+		var material = new THREE.MeshLambertMaterial({
+			color: props.colour,
+		});
+		var geometry = new THREE.SphereGeometry(
+			props.radius,
+			widthSegments,
+			heightSegments,
+		);
 		var object = new THREE.Mesh(geometry, material);
 		return object;
 	}
 
 	function cylinder(props) {
 		var group = new THREE.Group();
-		var material = new THREE.MeshLambertMaterial({ color: props.colour });
+		var material = new THREE.MeshLambertMaterial({
+			color: props.colour,
+		});
 		//radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength
-		var geometry = new THREE.CylinderGeometry(props.radius, props.radius, props.height, 15);
+		var geometry = new THREE.CylinderGeometry(
+			props.radius,
+			props.radius,
+			props.height,
+			15,
+		);
 		var object = new THREE.Mesh(geometry, material);
 		object.position.y = props.height / 2;
 		group.add(object);
 		return {
 			colour: props.colour,
 			group: group,
-			object: object
+			object: object,
 		};
 	}
 
@@ -67,8 +80,13 @@ var molecular_three = function molecular_three() {
   con.log(v);
   }
   */
-		var end = cylinder.object.geometry.vertices[numVertices - 2];
-		return new THREE.Vector3(end.x + cylinder.object.position.x, end.y + cylinder.object.position.y, end.z + cylinder.object.position.z);
+		var end =
+			cylinder.object.geometry.vertices[numVertices - 2];
+		return new THREE.Vector3(
+			end.x + cylinder.object.position.x,
+			end.y + cylinder.object.position.y,
+			end.z + cylinder.object.position.z,
+		);
 	}
 
 	function init() {
@@ -88,7 +106,7 @@ var molecular_three = function molecular_three() {
 		lightLeft.position.set(-100, 0, 100);
 		scene.add(lightLeft);
 
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(sw, sh);
 
 		holder = new THREE.Group();
@@ -96,13 +114,20 @@ var molecular_three = function molecular_three() {
 
 		function checkDistance(reference) {
 			var globalPosition = new THREE.Vector3();
-			globalPosition.setFromMatrixPosition(reference.matrixWorld);
+			globalPosition.setFromMatrixPosition(
+				reference.matrixWorld,
+			);
 
 			var st = new Date().getTime();
 			var distance;
 			var distanceOk = true;
-			for (var i = 0, il = vectors.length; i < il && distanceOk; i++) {
-				if (globalPosition == vectors[i]) con.log("same one", globalPosition, vectors[i]);
+			for (
+				var i = 0, il = vectors.length;
+				i < il && distanceOk;
+				i++
+			) {
+				if (globalPosition == vectors[i])
+					con.log("same one", globalPosition, vectors[i]);
 
 				distance = globalPosition.distanceTo(vectors[i]);
 				if (distance < segmentLength - 5) {
@@ -115,20 +140,30 @@ var molecular_three = function molecular_three() {
 
 			return {
 				vector: globalPosition,
-				ok: distanceOk
+				ok: distanceOk,
 			};
 		}
 
 		function drawSection(parent, endPoint) {
 			var colour = c.mutateColour(parent.colour, 50);
 
-			var child = cylinder({ radius: segmentRadius, height: segmentLength, colour: colour });
-			child.group.position.set(endPoint.x, endPoint.y, endPoint.z);
-			child.group.rotation.z = num(-0.5, 0.5) * 2 * Math.PI * attempts / bail * branchingAngle;
+			var child = cylinder({
+				radius: segmentRadius,
+				height: segmentLength,
+				colour: colour,
+			});
+			child.group.position.set(
+				endPoint.x,
+				endPoint.y,
+				endPoint.z,
+			);
+			child.group.rotation.z =
+				((num(-0.5, 0.5) * 2 * Math.PI * attempts) / bail) *
+				branchingAngle;
 			child.group.rotation.y = num(0, 2) * Math.PI;
 
 			var end = getSectionEnd(child);
-			var endSphere = sphere({ radius: 3, colour: 0xff0000 }); // this is just the point to draw.
+			var endSphere = sphere({radius: 3, colour: 0xff0000}); // this is just the point to draw.
 			endSphere.position.set(end.x, end.y, end.z);
 			child.group.add(endSphere);
 
@@ -144,8 +179,12 @@ var molecular_three = function molecular_three() {
 
 				// colour = c.mutateColour(colour, 30);
 
-				var s = sphere({ radius: sphereRadius, colour: colour });
-				s.position.set(distance.vector.x, distance.vector.y, distance.vector.z);
+				var s = sphere({radius: sphereRadius, colour: colour});
+				s.position.set(
+					distance.vector.x,
+					distance.vector.y,
+					distance.vector.z,
+				);
 				holder.add(s);
 
 				return child;
@@ -171,7 +210,8 @@ var molecular_three = function molecular_three() {
 		function addSection(parent) {
 			attempts++;
 
-			segmentLength = (2 - attempts / bail) * segmentLengthInitial / 2;
+			segmentLength =
+				((2 - attempts / bail) * segmentLengthInitial) / 2;
 
 			if (attempts < bail) {
 				progress("render:progress", attempts / bail);
@@ -191,7 +231,9 @@ var molecular_three = function molecular_three() {
 							// con.log("timeout", timeout);
 							setTimeout(function () {
 								if (generationComplete) {
-									con.log("wanted to created another, but time out...");
+									con.log(
+										"wanted to created another, but time out...",
+									);
 								} else {
 									addSection(p);
 								}
@@ -210,12 +252,23 @@ var molecular_three = function molecular_three() {
 		var colour = c.getRandomColour();
 
 		for (var j = 0; j < seeds; j++) {
-			var baseSection = cylinder({ radius: segmentRadius, height: segmentLength, colour: colour });
-			baseSection.group.rotation.set(num(0, 2) * Math.PI, num(0, 2) * Math.PI, num(0, 2) * Math.PI);
+			var baseSection = cylinder({
+				radius: segmentRadius,
+				height: segmentLength,
+				colour: colour,
+			});
+			baseSection.group.rotation.set(
+				num(0, 2) * Math.PI,
+				num(0, 2) * Math.PI,
+				num(0, 2) * Math.PI,
+			);
 			holder.add(baseSection.group);
 
 			var end = getSectionEnd(baseSection);
-			var endSphere = sphere({ radius: sphereRadius, colour: colour });
+			var endSphere = sphere({
+				radius: sphereRadius,
+				colour: colour,
+			});
 			endSphere.position.set(end.x, end.y, end.z);
 			baseSection.group.add(endSphere);
 
@@ -251,8 +304,9 @@ var molecular_three = function molecular_three() {
 		// });
 		listen(["mousemove", "touchmove"], function (e) {
 			e.preventDefault();
-			if (e.changedTouches && e.changedTouches[0]) e = e.changedTouches[0];
-			mouse.x = e.clientX / sw * 2 - 1;
+			if (e.changedTouches && e.changedTouches[0])
+				e = e.changedTouches[0];
+			mouse.x = (e.clientX / sw) * 2 - 1;
 			mouse.y = -(e.clientY / sh) * 2 + 1;
 		});
 		// listen(["mouseup", "touchend"], function(e) {
@@ -280,7 +334,7 @@ var molecular_three = function molecular_three() {
 
 	return {
 		init: init,
-		resize: function resize() {}
+		resize: function resize() {},
 	};
 };
 

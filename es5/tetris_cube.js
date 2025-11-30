@@ -5,12 +5,12 @@ var tetris_cube = function tetris_cube() {
 	var stage = document.createElement("div");
 
 	var camera, scene, projector, renderer, holder;
-	var mouse = { x: 0, y: 0 };
+	var mouse = {x: 0, y: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 	// sw = sh = 400;
 	var theta = 0,
-	    gamma = 0;
+		gamma = 0;
 	var dim = 4;
 	var size = 40;
 	var cubes = [];
@@ -18,7 +18,7 @@ var tetris_cube = function tetris_cube() {
 	var available = [];
 
 	function cube() {
-		var material = new THREE.MeshLambertMaterial({ color: 0 });
+		var material = new THREE.MeshLambertMaterial({color: 0});
 		var geometry = new THREE.BoxGeometry(size, size, size);
 		return new THREE.Mesh(geometry, material);
 	}
@@ -52,12 +52,12 @@ var tetris_cube = function tetris_cube() {
 			var x = index % dim;
 			var y = Math.floor(index / dim) % dim;
 			var z = Math.floor(index / (dim * dim));
-			return { x: x, y: y, z: z };
+			return {x: x, y: y, z: z};
 		}
 		function getIndexFromPosition(_ref) {
 			var x = _ref.x,
-			    y = _ref.y,
-			    z = _ref.z;
+				y = _ref.y,
+				z = _ref.z;
 
 			return x + y * dim + z * dim * dim;
 		}
@@ -66,9 +66,9 @@ var tetris_cube = function tetris_cube() {
 			var c = cube();
 
 			var _getPositionFromIndex = getPositionFromIndex(i),
-			    x = _getPositionFromIndex.x,
-			    y = _getPositionFromIndex.y,
-			    z = _getPositionFromIndex.z;
+				x = _getPositionFromIndex.x,
+				y = _getPositionFromIndex.y,
+				z = _getPositionFromIndex.z;
 
 			// var index = getIndexFromPosition({x, y, z});
 			// con.log(i == index, i, index)
@@ -91,11 +91,17 @@ var tetris_cube = function tetris_cube() {
 		function checkNeighbours(sourceIndex) {
 			function checkNeighbour(targetPosition) {
 				var targetIndex = getIndexFromPosition(targetPosition);
-				if (checkMode === MODE_GROUP_EXPAND && cubes[targetIndex].groupId === 0) {
+				if (
+					checkMode === MODE_GROUP_EXPAND &&
+					cubes[targetIndex].groupId === 0
+				) {
 					// con.log("assigning groupId", cubes[targetIndex].groupId, "to", sourceIndex, "from", targetIndex)
 					setGroup(targetIndex, cubes[sourceIndex].groupId);
 					count++;
-				} else if (checkMode === MODE_LONER_UNITE && cubes[targetIndex].groupId > 0) {
+				} else if (
+					checkMode === MODE_LONER_UNITE &&
+					cubes[targetIndex].groupId > 0
+				) {
 					setGroup(sourceIndex, cubes[targetIndex].groupId);
 					count++;
 				} else {
@@ -103,10 +109,11 @@ var tetris_cube = function tetris_cube() {
 				}
 			}
 
-			var _getPositionFromIndex2 = getPositionFromIndex(sourceIndex),
-			    x = _getPositionFromIndex2.x,
-			    y = _getPositionFromIndex2.y,
-			    z = _getPositionFromIndex2.z;
+			var _getPositionFromIndex2 =
+					getPositionFromIndex(sourceIndex),
+				x = _getPositionFromIndex2.x,
+				y = _getPositionFromIndex2.y,
+				z = _getPositionFromIndex2.z;
 
 			var count = 0;
 			var queue = [];
@@ -116,33 +123,33 @@ var tetris_cube = function tetris_cube() {
 			// con.log("checkNeighbours sourceIndex", sourceIndex, x, y, z)
 			if (x === 0) {
 				// don't check x - 1
-				queueCheck({ x: x + 1, y: y, z: z });
+				queueCheck({x: x + 1, y: y, z: z});
 			} else if (x === dim - 1) {
 				// don't check x + 1
-				queueCheck({ x: x - 1, y: y, z: z });
+				queueCheck({x: x - 1, y: y, z: z});
 			} else {
-				queueCheck({ x: x - 1, y: y, z: z });
-				queueCheck({ x: x + 1, y: y, z: z });
+				queueCheck({x: x - 1, y: y, z: z});
+				queueCheck({x: x + 1, y: y, z: z});
 			}
 			if (y === 0) {
 				// don't check y - 1
-				queueCheck({ x: x, y: y + 1, z: z });
+				queueCheck({x: x, y: y + 1, z: z});
 			} else if (y === dim - 1) {
 				// don't check y + 1
-				queueCheck({ x: x, y: y - 1, z: z });
+				queueCheck({x: x, y: y - 1, z: z});
 			} else {
-				queueCheck({ x: x, y: y - 1, z: z });
-				queueCheck({ x: x, y: y + 1, z: z });
+				queueCheck({x: x, y: y - 1, z: z});
+				queueCheck({x: x, y: y + 1, z: z});
 			}
 			if (z === 0) {
 				// don't check z - 1
-				queueCheck({ x: x, y: y, z: z + 1 });
+				queueCheck({x: x, y: y, z: z + 1});
 			} else if (z === dim - 1) {
 				// don't check z + 1
-				queueCheck({ x: x, y: y, z: z - 1 });
+				queueCheck({x: x, y: y, z: z - 1});
 			} else {
-				queueCheck({ x: x, y: y, z: z - 1 });
-				queueCheck({ x: x, y: y, z: z + 1 });
+				queueCheck({x: x, y: y, z: z - 1});
+				queueCheck({x: x, y: y, z: z + 1});
 			}
 			rand.shuffle(queue);
 			for (var q = 0; q < queue.length; q++) {
@@ -157,7 +164,9 @@ var tetris_cube = function tetris_cube() {
 		}
 
 		function nextGroup() {
-			var availableIndex = Math.floor(available.length * Math.random());
+			var availableIndex = Math.floor(
+				available.length * Math.random(),
+			);
 			// con.log("nextGroup", available.length)
 			if (available.length) {
 				availableIndex = available[availableIndex];
@@ -185,16 +194,16 @@ var tetris_cube = function tetris_cube() {
 						// }, {x: 0, y: 0, z: 0});
 						var cols = 4;
 						var average = {
-							x: (-cols / 2 + groupIndex % cols) * size * 4,
+							x: (-cols / 2 + (groupIndex % cols)) * size * 4,
 							y: Math.floor(-1 + groupIndex / cols) * size * 4,
-							z: 0
+							z: 0,
 						};
 						group.forEach(function (mesh) {
 							TweenMax.to(mesh.position, 0.5, {
 								x: mesh.position.x + average.x,
 								y: mesh.position.y + average.y,
 								z: mesh.position.z + average.z,
-								delay: groupIndex * 0.1
+								delay: groupIndex * 0.1,
 							});
 						});
 					});
@@ -231,17 +240,21 @@ var tetris_cube = function tetris_cube() {
 		for (i = 0; i < cubes.length; i++) {
 			var c = cubes[i];
 			// con.log(i, c.groupId)
-			var r = c.groupId * 20 % 255;
+			var r = (c.groupId * 20) % 255;
 			var g = 100; //Math.round(100 + Math.random() * 15);
 			var b = 100; //Math.round(100 + Math.random() * 15);
-			var col = r << 16 | g << 8 | b;
+			var col = (r << 16) | (g << 8) | b;
 			c.material.color.setHex(col);
 			// c.position.x += c.groupId * size * dim;
 		}
 
 		stage.appendChild(renderer.domElement);
 
-		document.addEventListener("mousemove", onDocumentMouseMove, false);
+		document.addEventListener(
+			"mousemove",
+			onDocumentMouseMove,
+			false,
+		);
 
 		render();
 		animate();
@@ -249,7 +262,7 @@ var tetris_cube = function tetris_cube() {
 
 	function onDocumentMouseMove(event) {
 		event.preventDefault();
-		mouse.x = event.clientX / sw * 2 - 1;
+		mouse.x = (event.clientX / sw) * 2 - 1;
 		mouse.y = -(event.clientY / sh) * 2 + 1;
 	}
 
@@ -278,7 +291,7 @@ var tetris_cube = function tetris_cube() {
 
 	var experiment = {
 		stage: stage,
-		init: init
+		init: init,
 	};
 
 	return experiment;

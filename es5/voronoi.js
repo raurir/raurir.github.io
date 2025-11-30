@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 var isNode = typeof module !== "undefined";
-var voronoi = function () {
+var voronoi = (function () {
 	// voronoi code was largely lifted from http://rosettacode.org/wiki/Voronoi_diagram
 	// c ported to javascript
 
@@ -17,9 +17,9 @@ var voronoi = function () {
 	var dot = void 0; // pixel size
 	var sites = void 0;
 	var sizeX = void 0,
-	    sizeY = void 0;
+		sizeY = void 0;
 	var width = void 0,
-	    height = void 0;
+		height = void 0;
 
 	var debug = false;
 
@@ -33,14 +33,14 @@ var voronoi = function () {
 		debug = options.debug || false;
 		return {
 			width: width,
-			height: height
+			height: height,
 		};
 	}
 
 	// eslint-disable-next-line no-unused-vars
 	function sq2(x1, x2, y1, y2) {
 		var dx = x1 - x2,
-		    dy = y1 - y2;
+			dy = y1 - y2;
 		return dx * dx + dy * dy;
 	}
 
@@ -50,14 +50,16 @@ var voronoi = function () {
 	}
 	// eslint-disable-next-line no-unused-vars
 	function minkowsky(X1, X2, Y1, Y2) {
-		return (Math.abs(X2 - X1) * 3 + Math.abs(Y2 - Y1) * 3) * 0.33;
+		return (
+			(Math.abs(X2 - X1) * 3 + Math.abs(Y2 - Y1) * 3) * 0.33
+		);
 	}
 
 	function nearest_site(x1, y1) {
 		var k,
-		    ret = 0;
+			ret = 0;
 		var d,
-		    dist = 0;
+			dist = 0;
 		for (k = 0; k < sites && site[k]; k++) {
 			var x2 = site[k][0];
 			var y2 = site[k][1];
@@ -128,7 +130,10 @@ var voronoi = function () {
  */
 
 	function genPoints(pointIterator) {
-		if (pointIterator == undefined) return console.warn("need to pass in a pointIterator function, which returns an array");
+		if (pointIterator == undefined)
+			return console.warn(
+				"need to pass in a pointIterator function, which returns an array",
+			);
 		for (var k = 0; k < sites; k++) {
 			site[k] = pointIterator(k, sites);
 
@@ -153,7 +158,11 @@ var voronoi = function () {
 				index = i * sizeX + j;
 				nearest[index] = nearest_site(j, i);
 
-				if (debug && index % 100000 == 0) console.log("findSites", Math.round(index / pixels * 100) + "%");
+				if (debug && index % 100000 == 0)
+					console.log(
+						"findSites",
+						Math.round((index / pixels) * 100) + "%",
+					);
 			}
 		}
 
@@ -188,7 +197,11 @@ var voronoi = function () {
 					bounds[ns][3] = j;
 				}
 
-				if (debug && index % 100000 == 0) console.log("generatingRegion", Math.round(index / pixels * 100) + "%");
+				if (debug && index % 100000 == 0)
+					console.log(
+						"generatingRegion",
+						Math.round((index / pixels) * 100) + "%",
+					);
 
 				/*
     	// not really interested in antialiasing.
@@ -245,7 +258,8 @@ var voronoi = function () {
 
 	function drawRegions(renderRegion) {
 		var a = debug && new Date().getTime();
-		if (renderRegion == undefined) console.warn("need to pass in a renderRegion function.");
+		if (renderRegion == undefined)
+			console.warn("need to pass in a renderRegion function.");
 		// for (var k = 3; k < 4; k++) {
 		for (var k = 0; k < sites; k++) {
 			// for (var k = 0; k < 1; k++) {
@@ -254,7 +268,13 @@ var voronoi = function () {
 		}
 		var b = debug && new Date().getTime();
 
-		debug && console.log("Regions drawn in", b - a, "ms - av time per region:", (b - a) / sites);
+		debug &&
+			console.log(
+				"Regions drawn in",
+				b - a,
+				"ms - av time per region:",
+				(b - a) / sites,
+			);
 	}
 
 	function drawSites(ctx) {
@@ -263,7 +283,12 @@ var voronoi = function () {
 			var centreMarker = 2;
 			var x = site[k][0] * dot;
 			var y = site[k][1] * dot;
-			ctx.fillRect(x - centreMarker / 2, y - centreMarker / 2, centreMarker, centreMarker);
+			ctx.fillRect(
+				x - centreMarker / 2,
+				y - centreMarker / 2,
+				centreMarker,
+				centreMarker,
+			);
 		}
 	}
 
@@ -274,7 +299,7 @@ var voronoi = function () {
 				x: bounds[k][3] * dot,
 				y: bounds[k][0] * dot,
 				width: (bounds[k][1] - bounds[k][3]) * dot,
-				height: (bounds[k][2] - bounds[k][0]) * dot
+				height: (bounds[k][2] - bounds[k][0]) * dot,
 			};
 		}
 	}
@@ -292,7 +317,7 @@ var voronoi = function () {
 		drawSites: drawSites,
 		genMap: genMap,
 		genPoints: genPoints,
-		init: init
+		init: init,
 	};
-}();
+})();
 if (isNode) module.exports = voronoi;

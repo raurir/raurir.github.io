@@ -19,7 +19,7 @@ var squash_match_shirt = function squash_match_shirt() {
 
 		var stage = dom.canvas(1, 1);
 		var canvas = stage.canvas,
-		    ctx = stage.ctx;
+			ctx = stage.ctx;
 
 		var settings = {};
 
@@ -29,7 +29,7 @@ var squash_match_shirt = function squash_match_shirt() {
 
 		var sectors = 10;
 		// angle of each sector
-		var angle = 1 / sectors * Math.PI * 2;
+		var angle = (1 / sectors) * Math.PI * 2;
 
 		function renderRegion(rot) {
 			var settings = {
@@ -39,11 +39,16 @@ var squash_match_shirt = function squash_match_shirt() {
 				fg: "#F4502B",
 				shape: 1,
 				varyRotation: false,
-				wiggle: 0
+				wiggle: 0,
 			};
 			var d = size / 2;
 			// Math.sqrt(Math.pow(size / 2, 2) * 2); // diagonal distance
-			var pattern = fillDither({ c: c, r: r, size: d * 1, settings: settings });
+			var pattern = fillDither({
+				c: c,
+				r: r,
+				size: d * 1,
+				settings: settings,
+			});
 			var patternFill = ctx.createPattern(pattern, "no-repeat");
 
 			ctx.save();
@@ -65,10 +70,15 @@ var squash_match_shirt = function squash_match_shirt() {
 		function renderSquare() {
 			var settings = {
 				baseRotation: 0,
-				varyRotation: false
+				varyRotation: false,
 			};
 			var d = size;
-			var pattern = fillDither({ c: c, r: r, size: d, settings: settings });
+			var pattern = fillDither({
+				c: c,
+				r: r,
+				size: d,
+				settings: settings,
+			});
 			var patternFill = ctx.createPattern(pattern, "no-repeat");
 
 			ctx.fillStyle = patternFill;
@@ -119,13 +129,16 @@ var squash_match_shirt = function squash_match_shirt() {
 
 			ctx.globalCompositeOperation = "destination-out";
 			ctx.beginPath();
-			ctx.drawCircle(size / 2, size / 2, size / 2 * 0.6);
+			ctx.drawCircle(size / 2, size / 2, (size / 2) * 0.6);
 			ctx.closePath();
 			ctx.fill();
 			ctx.globalCompositeOperation = "source-over";
 
 			// made with https://ezgif.com/crop/
-			renderBMPFromFile("./SquashMatchIconCircleHiRes.png", size * 0.0004);
+			renderBMPFromFile(
+				"./SquashMatchIconCircleHiRes.png",
+				size * 0.0004,
+			);
 
 			renderLogo();
 
@@ -144,7 +157,7 @@ var squash_match_shirt = function squash_match_shirt() {
 			},
 			settings: settings,
 			stage: canvas,
-			update: function update() {}
+			update: function update() {},
 		};
 	};
 };
@@ -153,10 +166,14 @@ if (isNode) {
 	var ex = squash_match_shirt();
 	module.exports = ex;
 	var inst = ex();
-	inst.init({ size: 1500 });
+	inst.init({size: 1500});
 	console.log("render complete");
 	setTimeout(function () {
-		var filename = __dirname + "/../export/squash_match_shirt_" + new Date().getTime() + ".png";
+		var filename =
+			__dirname +
+			"/../export/squash_match_shirt_" +
+			new Date().getTime() +
+			".png";
 		inst.stage.toBuffer(function (err, buf) {
 			if (err) {
 				console.log("savecanvas err", err);

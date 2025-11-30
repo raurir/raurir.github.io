@@ -1,6 +1,9 @@
 "use strict";
 
-define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], function (cn, CannonDemo) {
+define("ball_and_chain", [
+	"lib/schteppe/cannon.0.6.2.min.js",
+	"cannon_demo",
+], function (cn, CannonDemo) {
 	/* this is 95+% hacked from schteppe's demos */
 
 	function go() {
@@ -12,35 +15,50 @@ define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], fu
 			var width = 1;
 			var wireSize = 0.3;
 			var pitch = 1;
-			var chainShape0 = new CANNON.Box(new CANNON.Vec3(width, wireSize, pitch));
-			var chainShape1 = new CANNON.Box(new CANNON.Vec3(wireSize, width, pitch));
+			var chainShape0 = new CANNON.Box(
+				new CANNON.Vec3(width, wireSize, pitch),
+			);
+			var chainShape1 = new CANNON.Box(
+				new CANNON.Vec3(wireSize, width, pitch),
+			);
 
 			var mass = 1;
 			var space = 0.3;
 			var N = 20,
-			    last;
+				last;
 
 			function join(body0, body1, offset) {
 				var cnX = width * 0.1,
-				    cnY = pitch + space + offset;
-				var c1 = new CANNON.PointToPointConstraint(body0, new CANNON.Vec3(-cnX, 0, cnY), body1, new CANNON.Vec3(-cnX, 0, -cnY));
-				var c2 = new CANNON.PointToPointConstraint(body0, new CANNON.Vec3(cnX, 0, cnY), body1, new CANNON.Vec3(cnX, 0, -cnY));
+					cnY = pitch + space + offset;
+				var c1 = new CANNON.PointToPointConstraint(
+					body0,
+					new CANNON.Vec3(-cnX, 0, cnY),
+					body1,
+					new CANNON.Vec3(-cnX, 0, -cnY),
+				);
+				var c2 = new CANNON.PointToPointConstraint(
+					body0,
+					new CANNON.Vec3(cnX, 0, cnY),
+					body1,
+					new CANNON.Vec3(cnX, 0, -cnY),
+				);
 				world.addConstraint(c1);
 				world.addConstraint(c2);
 			}
 
 			for (var i = 0; i < N; i++) {
 				var firstBody = i === 0,
-				    firstChainLink = i === 1,
-				    lastBody = i === N - 1;
+					firstChainLink = i === 1,
+					lastBody = i === N - 1;
 
-				var py = (N - i) * (pitch * 2 + 2 * space) + pitch * 2 + space;
+				var py =
+					(N - i) * (pitch * 2 + 2 * space) + pitch * 2 + space;
 
 				if (firstBody) {
 					// the ball
 
 					var sphereShape = new CANNON.Sphere(4);
-					var spherebody = new CANNON.Body({ mass: 3 });
+					var spherebody = new CANNON.Body({mass: 3});
 					spherebody.addShape(sphereShape);
 					spherebody.position.set(0, 0, py);
 
@@ -49,9 +67,9 @@ define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], fu
 					// the cuff
 
 					var L = 3,
-					    R = 2;
+						R = 2;
 					var cylinderShape = new CANNON.Cylinder(R, R, L, 12);
-					var cylinderBody = new CANNON.Body({ mass: 0.5 });
+					var cylinderBody = new CANNON.Body({mass: 0.5});
 					cylinderBody.addShape(cylinderShape);
 					cylinderBody.position.set(0, 0, py);
 
@@ -61,8 +79,10 @@ define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], fu
 				} else {
 					// the chain
 
-					var chainLinkBody = new CANNON.Body({ mass: 0.1 });
-					chainLinkBody.addShape(i % 2 ? chainShape0 : chainShape1);
+					var chainLinkBody = new CANNON.Body({mass: 0.1});
+					chainLinkBody.addShape(
+						i % 2 ? chainShape0 : chainShape1,
+					);
 					chainLinkBody.position.set(0, 0, py);
 					chainLinkBody.custom = true;
 					chainLinkBody.customType = "CHAIN_LINK";
@@ -74,7 +94,11 @@ define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], fu
 
 				world.add(last);
 				demo.addVisual(last);
-				last.velocity.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+				last.velocity.set(
+					Math.random() - 0.5,
+					Math.random() - 0.5,
+					Math.random() - 0.5,
+				);
 
 				last.linearDamping = 0.1;
 				last.angularDamping = 0.1;
@@ -89,7 +113,7 @@ define("ball_and_chain", ["lib/schteppe/cannon.0.6.2.min.js", "cannon_demo"], fu
 			world.solver.iterations = 10;
 			// ground plane
 			var groundShape = new CANNON.Plane();
-			var groundBody = new CANNON.Body({ mass: 0 });
+			var groundBody = new CANNON.Body({mass: 0});
 			groundBody.addShape(groundShape);
 			groundBody.position.set(0, 0, 1);
 			world.addBody(groundBody);

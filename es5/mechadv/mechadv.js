@@ -29,9 +29,10 @@ var allStyles = [BIKE];
 
 var getVariants = function getVariants(v) {
 	if (v < 0.6) return allStyles;
-	if (v < 0.9) return allStyles.filter(function () {
-		return number(0, 1) > 0.5;
-	});
+	if (v < 0.9)
+		return allStyles.filter(function () {
+			return number(0, 1) > 0.5;
+		});
 	return allStyles.splice(integer(0, allStyles.length - 1), 1);
 };
 
@@ -43,7 +44,7 @@ window.$fxhashFeatures = {
 	isZooming: fxrand() > 0.5,
 	// isZooming: false,
 	variants: getVariants(fxrand()),
-	speed: 0.01 + fxrand() * 0.03 // used to be const 0.02;
+	speed: 0.01 + fxrand() * 0.03, // used to be const 0.02;
 };
 
 var pi = Math.PI;
@@ -63,11 +64,11 @@ function mechadv() {
 		stage.height = sh;
 
 		var _window$$fxhashFeatur = window.$fxhashFeatures,
-		    isLight = _window$$fxhashFeatur.isLight,
-		    isSpinning = _window$$fxhashFeatur.isSpinning,
-		    isZooming = _window$$fxhashFeatur.isZooming,
-		    speed = _window$$fxhashFeatur.speed,
-		    variants = _window$$fxhashFeatur.variants;
+			isLight = _window$$fxhashFeatur.isLight,
+			isSpinning = _window$$fxhashFeatur.isSpinning,
+			isZooming = _window$$fxhashFeatur.isZooming,
+			speed = _window$$fxhashFeatur.speed,
+			variants = _window$$fxhashFeatur.variants;
 
 		console.log("$fxhashFeatures", window.$fxhashFeatures);
 		if (isLight) {
@@ -88,8 +89,14 @@ function mechadv() {
 		var curvature = 1.6; //1.7;
 
 		function createCog(cogIndex, forceX, forceY) {
-			var forceSize = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-			var preventOverlap = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+			var forceSize =
+				arguments.length > 3 && arguments[3] !== undefined
+					? arguments[3]
+					: undefined;
+			var preventOverlap =
+				arguments.length > 4 && arguments[4] !== undefined
+					? arguments[4]
+					: false;
 
 			var cogCanvas;
 			var ctx;
@@ -120,8 +127,8 @@ function mechadv() {
 				return;
 			}
 
-			var thisCX = prevCog && prevCog.cx || cx;
-			var thisCY = prevCog && prevCog.cy || cy;
+			var thisCX = (prevCog && prevCog.cx) || cx;
+			var thisCY = (prevCog && prevCog.cy) || cy;
 
 			// console.log(prevCog && prevCog.cx, prevCog && prevCog.cy);
 
@@ -158,7 +165,7 @@ function mechadv() {
 				var realY = r * Math.sin(angle);
 				var v = void 0;
 				if (oddEven % 2 == 0) {
-					v = { tb: topBottomLand, ex: realX, ey: realY };
+					v = {tb: topBottomLand, ex: realX, ey: realY};
 				} else {
 					var halfX = halfRadius * Math.cos(i - step);
 					var halfY = halfRadius * Math.sin(i - step);
@@ -168,7 +175,7 @@ function mechadv() {
 						ex: realX,
 						ey: realY,
 						mx: halfX,
-						my: halfY
+						my: halfY,
 					};
 				}
 				verts.push(v);
@@ -182,13 +189,26 @@ function mechadv() {
 
 			if (prevCog) {
 				// prevCog = cogs[cogNumber - 1];
-				rotation = prevCog.teeth / teeth * -prevCog.rotation + ang * (prevCog.teeth + teeth) / teeth;
+				rotation =
+					(prevCog.teeth / teeth) * -prevCog.rotation +
+					(ang * (prevCog.teeth + teeth)) / teeth;
 				if (teeth % 2 == 0) {
 					rotation += pi2 / (teeth * 2);
 				}
 			}
 
-			var cog = { cogDirection: cogDirection, spin: dir, wtf: magic, cx: thisCX, cy: thisCY, size: size, rotation: rotation, teeth: teeth, xp: xp, yp: yp };
+			var cog = {
+				cogDirection: cogDirection,
+				spin: dir,
+				wtf: magic,
+				cx: thisCX,
+				cy: thisCY,
+				size: size,
+				rotation: rotation,
+				teeth: teeth,
+				xp: xp,
+				yp: yp,
+			};
 
 			// console.log(angle, radius);
 
@@ -230,7 +250,8 @@ function mechadv() {
 				var dims = (size + padding) * 2;
 				var axleSize = minRad * 0.2;
 
-				var cutoutStyle = variants[integer(0, variants.length - 1)];
+				var cutoutStyle =
+					variants[integer(0, variants.length - 1)];
 
 				cogCanvas = makeCanvas(dims, dims);
 				//	document.body.appendChild( cogCanvas );
@@ -240,7 +261,7 @@ function mechadv() {
 				ctx.translate(size + padding, size + padding);
 
 				// draw teeth
-				ctx.fillStyle = colourGrey({ darkest: 20, lightest: 70 });
+				ctx.fillStyle = colourGrey({darkest: 20, lightest: 70});
 				ctx.beginPath();
 				var v = verts[0];
 				ctx.moveTo(v.ex, v.ey);
@@ -264,7 +285,9 @@ function mechadv() {
 				// ctx.fillRect(-200, -200, 400, 400);
 
 				// draw main circle
-				drawCircle(ctx, 0, 0, minRad, { fillStyle: colourGrey({ lightest: 20 }) });
+				drawCircle(ctx, 0, 0, minRad, {
+					fillStyle: colourGrey({lightest: 20}),
+				});
 
 				if (number(0, 1) > 0.5) {
 					// paint with dotty metal
@@ -282,7 +305,11 @@ function mechadv() {
 						drawCircle(ctx, 0, 0, number(axleSize, minRad), {
 							fillStyle: null,
 							lineWidth: 1,
-							strokeStyle: colourGrey({ darkest: 1, lightest: 200, alpha: number(0.01, 0.1) })
+							strokeStyle: colourGrey({
+								darkest: 1,
+								lightest: 200,
+								alpha: number(0.01, 0.1),
+							}),
 						});
 					}
 				}
@@ -305,17 +332,26 @@ function mechadv() {
 						// eslint-disable-next-line no-case-declarations
 						var innerRadius = number(axleSize, minRad / 2);
 						ctx.globalCompositeOperation = "destination-out";
-						drawCircle(ctx, 0, 0, outerRadius - 5, { fillStyle: "green" });
+						drawCircle(ctx, 0, 0, outerRadius - 5, {
+							fillStyle: "green",
+						});
 						ctx.globalCompositeOperation = "source-over";
-						ctx.fillStyle = colourGrey({ lightest: 70 });
+						ctx.fillStyle = colourGrey({lightest: 70});
 						drawSpokes(ctx, teeth, innerRadius, outerRadius);
 						// draw a circular cap to cover loose ends.
-						drawCircle(ctx, 0, 0, innerRadius + 5, { fillStyle: colourGrey() });
+						drawCircle(ctx, 0, 0, innerRadius + 5, {
+							fillStyle: colourGrey(),
+						});
 						break;
 
 					case CIRCLES:
 						ctx.globalCompositeOperation = "destination-out";
-						drawCutouts(ctx, teeth, axleSize + minRad * 0.1, minRad * 0.9);
+						drawCutouts(
+							ctx,
+							teeth,
+							axleSize + minRad * 0.1,
+							minRad * 0.9,
+						);
 						break;
 				}
 
@@ -330,7 +366,11 @@ function mechadv() {
 				ctx.globalCompositeOperation = "source-over";
 				// draw inner band
 				// if (number(0, 1) > 0.9) {
-				drawBand(ctx, axleSize, axleSize + minRad * number(0.02, 0.2));
+				drawBand(
+					ctx,
+					axleSize,
+					axleSize + minRad * number(0.02, 0.2),
+				);
 				// }
 				var outerBand = number(0, 1) > 0.8;
 				var outerBandMin = void 0;
@@ -341,9 +381,13 @@ function mechadv() {
 
 				if (outerBand && number(0, 1) > 0.8) {
 					// draw label
-					var distance = outerBandMin + (minRad - outerBandMin) / 2;
+					var distance =
+						outerBandMin + (minRad - outerBandMin) / 2;
 					ctx.font = "15px Courier";
-					ctx.fillStyle = colourGrey({ darkest: 0, lightest: 100 });
+					ctx.fillStyle = colourGrey({
+						darkest: 0,
+						lightest: 100,
+					});
 					fxhash.split("").forEach(function (chr, chrIndex) {
 						var angle = chrIndex * Math.asin(12 / distance);
 						ctx.save();
@@ -359,7 +403,9 @@ function mechadv() {
 				// drawCircle(ctx, 0, 0, axleSize, {fillStyle: "red"});
 				// drawCircle(ctx, 0, 0, axleSize, {fillStyle: "#fff"});
 				// drawCircle(ctx, 0, 0, axleSize, {fillStyle: colourGrey({lightest: 50})});
-				drawCircle(ctx, 0, 0, axleSize, { fillStyle: isLight ? "#fff" : "#000" });
+				drawCircle(ctx, 0, 0, axleSize, {
+					fillStyle: isLight ? "#fff" : "#000",
+				});
 			};
 
 			var draw = function draw() {
@@ -371,12 +417,17 @@ function mechadv() {
 				context.save();
 				context.translate(xp, yp);
 				context.rotate(rotation);
-				context.drawImage(cogCanvas, -size - padding, -size - padding);
+				context.drawImage(
+					cogCanvas,
+					-size - padding,
+					-size - padding,
+				);
 				context.restore();
 			};
 
 			cog.rotate = function () {
-				rotation += pi2 / teeth * cogDirection * speed * speedMod;
+				rotation +=
+					(pi2 / teeth) * cogDirection * speed * speedMod;
 				draw();
 			};
 
@@ -435,10 +486,10 @@ function mechadv() {
 
 		var grid = function grid(_ref2) {
 			var d = _ref2.d,
-			    size = _ref2.size,
-			    min = _ref2.min,
-			    total = _ref2.total,
-			    larger = _ref2.larger;
+				size = _ref2.size,
+				min = _ref2.min,
+				total = _ref2.total,
+				larger = _ref2.larger;
 
 			var max = stageSize - min;
 			cx = min + d;
@@ -456,17 +507,31 @@ function mechadv() {
 					cx += d;
 					dir *= -1;
 				}
-				var forceSize = larger == 1 ? size // larger = 1: all are the same size
-				: size * (((i + 1) % 2 == 1) + 1) * larger; // larger != 1: every second is different size
+				var forceSize =
+					larger == 1
+						? size // larger = 1: all are the same size
+						: size * (((i + 1) % 2 == 1) + 1) * larger; // larger != 1: every second is different size
 				createCog(i, cx, cy, forceSize);
 			}
 		};
 
 		var gridFixed = function gridFixed() {
-			return grid({ d: 150, size: 190, min: 100, total: 11 * 11, larger: 1 });
+			return grid({
+				d: 150,
+				size: 190,
+				min: 100,
+				total: 11 * 11,
+				larger: 1,
+			});
 		};
 		var gridAlternate = function gridAlternate() {
-			return grid({ d: 150, size: 40, min: 300, total: 8 * 8, larger: 4 });
+			return grid({
+				d: 150,
+				size: 40,
+				min: 300,
+				total: 8 * 8,
+				larger: 4,
+			});
 		};
 
 		var spiral = function spiral() {
@@ -483,8 +548,14 @@ function mechadv() {
 
 			// console.log({angleStart, angleBase, angleExponent, radiusStart, radiusBase, radiusExponent});
 			for (var i = 0; i < 15; i++) {
-				var angle = angleStart + angleDir * Math.pow(i * angleBase, angleExponent) * pi2;
-				var radius = radiusStart + Math.pow(i * radiusBase, radiusExponent);
+				var angle =
+					angleStart +
+					angleDir *
+						Math.pow(i * angleBase, angleExponent) *
+						pi2;
+				var radius =
+					radiusStart +
+					Math.pow(i * radiusBase, radiusExponent);
 				var x1 = sw * 0.5 + Math.sin(angle) * radius;
 				var y1 = sh * 0.5 + Math.cos(angle) * radius;
 				var x2 = sw * 0.5 + Math.sin(angle + pi) * radius;
@@ -510,16 +581,23 @@ function mechadv() {
 			var d = 750;
 			var depth = 8;
 
-			var sizes = Array(depth).fill().map(function () {
-				return number(100, 500);
-			});
+			var sizes = Array(depth)
+				.fill()
+				.map(function () {
+					return number(100, 500);
+				});
 
-			var directions = [{ x: 0, y: 1 }, { x: -1, y: 0 }, { x: 0, y: -1 }, { x: 1, y: 0 }];
+			var directions = [
+				{x: 0, y: 1},
+				{x: -1, y: 0},
+				{x: 0, y: -1},
+				{x: 1, y: 0},
+			];
 			createCog(n, sw * 0.5, sh * 0.5, 500); // 0
 
 			directions.forEach(function (_ref3, dirIndex) {
 				var x = _ref3.x,
-				    y = _ref3.y;
+					y = _ref3.y;
 
 				for (var i = 0; i < depth; i++) {
 					var xo = sw * 0.5 + x * (i + 1) * d;
@@ -530,7 +608,9 @@ function mechadv() {
 			});
 		};
 
-		var randomDistribution = function randomDistribution(symmetry) {
+		var randomDistribution = function randomDistribution(
+			symmetry,
+		) {
 			return function () {
 				var attempts = 0;
 				createCog(n, cx, cy, number(50, sw / 2));
@@ -538,11 +618,23 @@ function mechadv() {
 				while (attempts < 4000) {
 					var xo = number(0, sw);
 					var yo = number(0, sh);
-					var success = createCog(driverIndex, xo, yo, undefined, true);
+					var success = createCog(
+						driverIndex,
+						xo,
+						yo,
+						undefined,
+						true,
+					);
 					if (success) {
 						if (symmetry) {
 							// if symmetrical, try and connect every second cog with it's driver.
-							createCog(cogs.length > 2 ? driverIndex - 1 : 0, sw - xo, sh - yo, undefined, true);
+							createCog(
+								cogs.length > 2 ? driverIndex - 1 : 0,
+								sw - xo,
+								sh - yo,
+								undefined,
+								true,
+							);
 							driverIndex++;
 						}
 						driverIndex++;
@@ -555,7 +647,14 @@ function mechadv() {
 		var randomSymmetrical = randomDistribution(true);
 		var randomNonsensical = randomDistribution(false);
 
-		var funcs = [gridFixed, gridAlternate, randomSymmetrical, randomNonsensical, spiral, plus];
+		var funcs = [
+			gridFixed,
+			gridAlternate,
+			randomSymmetrical,
+			randomNonsensical,
+			spiral,
+			plus,
+		];
 		funcs[integer(0, funcs.length - 1)]();
 		// createCog(n, cx, cy, stageSize / 2 - 10);
 		// plus();
@@ -568,10 +667,11 @@ function mechadv() {
 		document.body.addEventListener("click", function (e) {
 			var direction = Math.floor(Math.random() * 2) * 2 - 1;
 			var yRatio = e.clientY / window.innerHeight;
-			speedModTarget = speed + Math.random() * yRatio * 10 * direction;
+			speedModTarget =
+				speed + Math.random() * yRatio * 10 * direction;
 			// console.log(speedModTarget);
 		});
 	}
 
-	return { init: init, stage: stage };
+	return {init: init, stage: stage};
 }

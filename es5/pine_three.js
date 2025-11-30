@@ -1,12 +1,11 @@
 "use strict";
 
 var pine_three = function pine_three() {
-
 	var camera, scene, renderer;
-	var mouse = { x: 0, y: 0 };
-	var camPos = { x: 0, y: 0, z: 0 };
+	var mouse = {x: 0, y: 0};
+	var camPos = {x: 0, y: 0, z: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 
 	function num(min, max) {
 		return Math.random() * (max - min) + min;
@@ -23,21 +22,27 @@ var pine_three = function pine_three() {
 
 	function cylinder(props) {
 		var group = new THREE.Group();
-		var material = new THREE.MeshLambertMaterial({ color: props.colour });
+		var material = new THREE.MeshLambertMaterial({
+			color: props.colour,
+		});
 		//radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength
-		var geometry = new THREE.CylinderGeometry(props.radius, props.radius, props.height, 15);
+		var geometry = new THREE.CylinderGeometry(
+			props.radius,
+			props.radius,
+			props.height,
+			15,
+		);
 		var object = new THREE.Mesh(geometry, material);
 		object.position.y = props.height / 2;
 		group.add(object);
 		return {
 			colour: props.colour,
 			group: group,
-			object: object
+			object: object,
 		};
 	}
 
 	function init() {
-
 		colours.getRandomPalette();
 
 		scene = new THREE.Scene();
@@ -54,18 +59,22 @@ var pine_three = function pine_three() {
 		lightLeft.position.set(-100, 0, 100);
 		scene.add(lightLeft);
 
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(sw, sh);
 
 		holder = new THREE.Group();
 		scene.add(holder);
 
 		var segmentRadius = 10,
-		    segmentLength = 50;
+			segmentLength = 50;
 
 		function drawSection(parent, endPoint) {
 			var colour = colours.mutateColour(parent.colour, 50);
-			var child = cylinder({ radius: segmentRadius, height: segmentLength, colour: colour });
+			var child = cylinder({
+				radius: segmentRadius,
+				height: segmentLength,
+				colour: colour,
+			});
 			// child.group.position.set(endPoint.x, endPoint.y, endPoint.z);
 			// child.group.rotation.z = num(-0.5, 0.5) * 2 * Math.PI * attempts / bail * branchingAngle;
 			// child.group.rotation.y = num(0, 2) * Math.PI;
@@ -80,7 +89,7 @@ var pine_three = function pine_three() {
 
 		var baseSection = {
 			colour: colour,
-			group: holder
+			group: holder,
 		};
 
 		var one = drawSection(baseSection, endPoint);
@@ -112,7 +121,6 @@ var pine_three = function pine_three() {
 	}
 
 	function render(time) {
-
 		//if (time > 10000 && holder.rotation.y < Math.PI * 2)
 		if (generationComplete) {
 			holder.rotation.y += 0.01;
@@ -129,7 +137,7 @@ var pine_three = function pine_three() {
 
 	return {
 		init: init,
-		resize: function resize() {}
+		resize: function resize() {},
 	};
 };
 

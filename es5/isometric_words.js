@@ -3,7 +3,8 @@
 define("isometric_words", [], function () {
 	rand.setSeed(Math.random());
 
-	var pic = "\n   \u2588\u2588\u2588\u2588\u2588        \u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n   \u2588\u2588\u2588\u2588\u2588        \u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\n";
+	var pic =
+		"\n   \u2588\u2588\u2588\u2588\u2588        \u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588         \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588  \u2588\u2588\u2588\u2588\n \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588    \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n   \u2588\u2588\u2588\u2588\u2588        \u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n\n";
 
 	var cubeSize = 10;
 
@@ -12,20 +13,26 @@ define("isometric_words", [], function () {
 		return {
 			x: -1 * d, // notice positive/negative units... see comments below regarding magic offset
 			y: 1 * d,
-			z: 1 * d
+			z: 1 * d,
 		};
 	}
 
 	var camera, scene, renderer;
 	var camPos = getCamera(1);
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 	var holder;
 
 	function cube() {
 		var colour = colours.getNextColour();
-		var material = new THREE.MeshLambertMaterial({ color: colour });
-		var geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+		var material = new THREE.MeshLambertMaterial({
+			color: colour,
+		});
+		var geometry = new THREE.BoxGeometry(
+			cubeSize,
+			cubeSize,
+			cubeSize,
+		);
 		return new THREE.Mesh(geometry, material);
 	}
 
@@ -38,7 +45,14 @@ define("isometric_words", [], function () {
 
 		scene = new THREE.Scene();
 
-		camera = new THREE.OrthographicCamera(sw / -2, sw / 2, sh / 2, sh / -2, 1, 20000);
+		camera = new THREE.OrthographicCamera(
+			sw / -2,
+			sw / 2,
+			sh / 2,
+			sh / -2,
+			1,
+			20000,
+		);
 		scene.add(camera);
 
 		camera.position.set(camPos.x, camPos.y, camPos.z);
@@ -59,12 +73,16 @@ define("isometric_words", [], function () {
 		var light = new THREE.AmbientLight(0x606060);
 		scene.add(light);
 
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(sw, sh);
 
 		holder = new THREE.Group();
 		scene.add(holder);
-		holder.rotation.set(randomRotate(), randomRotate(), randomRotate());
+		holder.rotation.set(
+			randomRotate(),
+			randomRotate(),
+			randomRotate(),
+		);
 
 		var lines = pic.split("\n");
 		var width = lines.reduce(function (a, b) {
@@ -78,9 +96,10 @@ define("isometric_words", [], function () {
 					var c = cube();
 					holder.add(c);
 					var magicOffset = rand.getInteger(-10, 10);
-					c.position.set((x - width / 2 + magicOffset) * cubeSize, // add magic offset
-					(-y + height / 2 - magicOffset) * cubeSize, // minus magic offset
-					-magicOffset * cubeSize // minus magic offset
+					c.position.set(
+						(x - width / 2 + magicOffset) * cubeSize, // add magic offset
+						(-y + height / 2 - magicOffset) * cubeSize, // minus magic offset
+						-magicOffset * cubeSize, // minus magic offset
 					);
 				}
 			});
@@ -99,7 +118,7 @@ define("isometric_words", [], function () {
 			y: rotateMod * randomRotate(),
 			z: rotateMod * randomRotate(),
 			ease: Quint.easeInOut,
-			onComplete: morph
+			onComplete: morph,
 		});
 	}
 	function render(time) {
@@ -108,6 +127,6 @@ define("isometric_words", [], function () {
 	}
 
 	return {
-		init: init
+		init: init,
 	};
 });

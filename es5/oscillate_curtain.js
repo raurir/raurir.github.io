@@ -1,14 +1,14 @@
 "use strict";
 
 var sw = 600,
-    sh = 600;
+	sh = 600;
 
 function genRan(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
 var o,
-    oscs = [];
+	oscs = [];
 
 var oscillators = 15;
 for (o = 0; o < oscillators; o++) {
@@ -41,8 +41,8 @@ var h = 0;
 var xRange = 30;
 var yRange = 30;
 
-var xGap = sw / xRange * 1;
-var yGap = sh / yRange * 1;
+var xGap = (sw / xRange) * 1;
+var yGap = (sh / yRange) * 1;
 
 var xHalf = xRange / 2;
 var yHalf = yRange / 2;

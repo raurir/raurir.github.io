@@ -1,16 +1,15 @@
 "use strict";
 
 define("cube_pixelator", [], function () {
-
 	var pixels = 48;
 	var cubeSize = 8;
 	var gridSize = 10;
 
 	var camera, scene, renderer;
-	var mouse = { x: 0, y: 0 };
-	var camPos = { x: 0, y: 0, z: 0 };
+	var mouse = {x: 0, y: 0};
+	var camPos = {x: 0, y: 0, z: 0};
 	var sw = window.innerWidth,
-	    sh = window.innerHeight;
+		sh = window.innerHeight;
 	var holder;
 	var controls;
 
@@ -21,16 +20,17 @@ define("cube_pixelator", [], function () {
 
 	function cube(w, h, d, colour) {
 		var geometry = new THREE.PlaneGeometry(w, h, 1);
-		var material = new THREE.MeshLambertMaterial({ color: colour });
+		var material = new THREE.MeshLambertMaterial({
+			color: colour,
+		});
 		// const material = new THREE.MeshLambertMaterial({color: colour});
 		// const geometry = new THREE.BoxGeometry(w, h, d);
 		return new THREE.Mesh(geometry, material);
 	}
 
 	function init() {
-
 		for (var p = 0; p < pixels * pixels; p++) {
-			rotations.push({ rotation: Math.random() });
+			rotations.push({rotation: Math.random()});
 		}
 
 		// yes i should use promises, thanks!
@@ -63,10 +63,15 @@ define("cube_pixelator", [], function () {
 			ctx.drawImage(img, 0, 0);
 			// document.body.appendChild(bmp.canvas);
 			var grayscale = [];
-			var pixelData = ctx.getImageData(0, 0, pixels, pixels).data;
+			var pixelData = ctx.getImageData(
+				0,
+				0,
+				pixels,
+				pixels,
+			).data;
 			for (var p = 0; p < pixelData.length; p += 4) {
 				var r = pixelData[p];
-				grayscale.push({ rotation: r / 255 });
+				grayscale.push({rotation: r / 255});
 			}
 			images.push(grayscale);
 			// con.log("grayscale", image, grayscale.length)
@@ -78,7 +83,6 @@ define("cube_pixelator", [], function () {
 	}
 
 	function createScene() {
-
 		scene = new THREE.Scene();
 
 		camera = new THREE.PerspectiveCamera(90, sw / sh, 1, 20000);
@@ -97,7 +101,7 @@ define("cube_pixelator", [], function () {
 		lightBelow.position.set(0, -1, 0.25);
 		scene.add(lightBelow);
 
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(sw, sh);
 
 		holder = new THREE.Group();
@@ -106,7 +110,7 @@ define("cube_pixelator", [], function () {
 		for (var p = 0; p < pixels * pixels; p++) {
 			var c = cube(cubeSize, cubeSize, cubeSize, 0xffffff);
 			holder.add(c);
-			var xi = p % pixels - pixels / 2 + 0.5;
+			var xi = (p % pixels) - pixels / 2 + 0.5;
 			var yi = Math.floor(p / pixels) - pixels / 2 + 0.5;
 			var x = xi * gridSize;
 			var y = -yi * gridSize;
@@ -138,7 +142,7 @@ define("cube_pixelator", [], function () {
 			TweenMax.to(rotations[i], 3, {
 				rotation: newRotations[i].rotation,
 				easing: Back.easeInOut,
-				delay: i * 0.001
+				delay: i * 0.001,
 			});
 		}
 	};
@@ -148,7 +152,8 @@ define("cube_pixelator", [], function () {
 			// c.rotation.y += c.rotateSpeed * 0.01;
 			//c.rotateSpeed -= 0.01;
 			// c.rotation.x = 0 - c.rotateAmount * Math.PI / 4;
-			c.rotation.x = Math.PI / 4 - rotations[index].rotation * Math.PI / 3;
+			c.rotation.x =
+				Math.PI / 4 - (rotations[index].rotation * Math.PI) / 3;
 		});
 		// holder.rotation.x += Math.PI * 0.005;
 		// camPos.z = 100; //ortho camera
@@ -164,6 +169,6 @@ define("cube_pixelator", [], function () {
 	}
 
 	return {
-		init: init
+		init: init,
 	};
 });

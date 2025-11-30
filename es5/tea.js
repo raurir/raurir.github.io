@@ -26,7 +26,7 @@ function createCanvas(w, h) {
 	var ctx = c.getContext("2d");
 	return {
 		canvas: c,
-		ctx: ctx
+		ctx: ctx,
 	};
 }
 
@@ -36,17 +36,23 @@ document.body.appendChild(bmp.canvas);
 
 for (var i = 0; i < w * w; i++) {
 	sum += 0x9e3779b9;
-	v0 += (v1 << 4) + 0xa341316c ^ v1 + sum ^ (v1 >> 5) + 0xc8013ea4;
-	v1 += (v0 << 4) + 0xad90777d ^ v0 + sum ^ (v0 >> 5) + 0x7e95761e;
+	v0 +=
+		((v1 << 4) + 0xa341316c) ^
+		(v1 + sum) ^
+		((v1 >> 5) + 0xc8013ea4);
+	v1 +=
+		((v0 << 4) + 0xad90777d) ^
+		(v0 + sum) ^
+		((v0 >> 5) + 0x7e95761e);
 
 	// sum += 0.1;
 	// v0 += ((v1 << 4) + 1) ^ (v1 + sum) ^ ((v1 >> 5) + 1);
 	// v1 += ((v0 << 4) + 1) ^ (v0 + sum) ^ ((v0 >> 5) + 1);
 
 	var index = i * 4,
-	    r = Math.abs(v0) % 0xff,
-	    g = 0,
-	    b = Math.abs(v1) % 0xff;
+		r = Math.abs(v0) % 0xff,
+		g = 0,
+		b = Math.abs(v1) % 0xff;
 
 	pixels.data[index + 0] = r;
 	pixels.data[index + 1] = g;
@@ -56,4 +62,5 @@ for (var i = 0; i < w * w; i++) {
 
 bmp.ctx.putImageData(pixels, 0, 0);
 
-if (typeof module !== "undefined") module.exports = { generate: generate };
+if (typeof module !== "undefined")
+	module.exports = {generate: generate};

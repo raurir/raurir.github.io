@@ -7,12 +7,14 @@ function lagrange(arr) {
 		throw new Error("need at least two points");
 	}
 
-	if (arr.every(function (_ref) {
-		var x = _ref.x,
-		    y = _ref.y;
+	if (
+		arr.every(function (_ref) {
+			var x = _ref.x,
+				y = _ref.y;
 
-		return typeof x === "number" && typeof y === "number";
-	}) === false) {
+			return typeof x === "number" && typeof y === "number";
+		}) === false
+	) {
 		throw new Error("all points need to have a numeric x & y");
 	}
 
@@ -35,13 +37,13 @@ function lagrange(arr) {
 	}
 
 	function addPoint(x, y) {
-		points.push({ x: x, y: y });
+		points.push({x: x, y: y});
 		calc();
 		return points.length - 1;
 	}
 
 	function changePoint(index, x, y) {
-		points[index] = { x: x, y: y };
+		points[index] = {x: x, y: y};
 		calc();
 	}
 
@@ -66,7 +68,11 @@ function lagrange(arr) {
 
 	calc();
 
-	return { addPoint: addPoint, changePoint: changePoint, valueOf: valueOf };
+	return {
+		addPoint: addPoint,
+		changePoint: changePoint,
+		valueOf: valueOf,
+	};
 }
 
 if (typeof module !== "undefined") module.exports = lagrange;

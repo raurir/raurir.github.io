@@ -17,14 +17,15 @@ var any_image_url = function any_image_url() {
 		// list a range of valid seeds.
 		var allowed = {
 			526: {
-				image: "https://blog.funkyvector.com/wp-content/uploads/2016/05/state_of_origin_52_6_22_d5243594_design.png",
-				scale: isNode ? 1 : 0.5
+				image:
+					"https://blog.funkyvector.com/wp-content/uploads/2016/05/state_of_origin_52_6_22_d5243594_design.png",
+				scale: isNode ? 1 : 0.5,
 			},
 			834199129: {
 				// GNR logo - this seed is numerical equivalent to 'gnr'
 				// image: "http://ajournalofmusicalthings.com/wp-content/uploads/Guns_N_Roses-logo.jpg",
-				scale: 0.8
-			}
+				scale: 0.8,
+			},
 		};
 
 		var size, sw, sh, cx, cy;
@@ -77,7 +78,9 @@ var any_image_url = function any_image_url() {
 		function renderSVGFromString(data, scale, width, height) {
 			var DOMURL = window.URL || window.webkitURL || window;
 			var img = new Image();
-			var svg = new Blob([data], { type: "image/svg+xml;charset=utf-8" });
+			var svg = new Blob([data], {
+				type: "image/svg+xml;charset=utf-8",
+			});
 			var url = DOMURL.createObjectURL(svg);
 			img.onload = function () {
 				ctx.translate(cx, cy);
@@ -93,7 +96,7 @@ var any_image_url = function any_image_url() {
 		function renderBMPFromURL(url, scale) {
 			function drawToContext(img) {
 				var width = img.width,
-				    height = img.height;
+					height = img.height;
 				// con.log("drawToContext");
 				ctx.translate(cx, cy);
 				ctx.scale(scale, scale);
@@ -105,16 +108,30 @@ var any_image_url = function any_image_url() {
 			if (isNode) {
 				// promise didn't work!
 				// console.log("calling loadImageURL, ");
-				loadImageURL(url, function (buffer) {
-					makeImage(buffer, function (img) {
-						// console.log("renderBMPFromURL - loadImageURL promise complete");
-						drawToContext(img);
-					}, function (err) {
-						con.log("renderBMPFromURL - makeImage fail", err);
-					});
-				}, function (err) {
-					con.log("renderBMPFromURL - loadImageURL fail", err);
-				});
+				loadImageURL(
+					url,
+					function (buffer) {
+						makeImage(
+							buffer,
+							function (img) {
+								// console.log("renderBMPFromURL - loadImageURL promise complete");
+								drawToContext(img);
+							},
+							function (err) {
+								con.log(
+									"renderBMPFromURL - makeImage fail",
+									err,
+								);
+							},
+						);
+					},
+					function (err) {
+						con.log(
+							"renderBMPFromURL - loadImageURL fail",
+							err,
+						);
+					},
+				);
 			} else {
 				var img = new Image();
 				img.onload = function () {
@@ -133,7 +150,7 @@ var any_image_url = function any_image_url() {
 			// console.log("loadImageURL", url);
 			protocol.get(url, function (res) {
 				var buffers = [],
-				    length = 0;
+					length = 0;
 				res.on("data", function (chunk) {
 					length += chunk.length;
 					// con.log("loadImageURL data", length);
@@ -167,7 +184,7 @@ var any_image_url = function any_image_url() {
 			stage: bmp.canvas,
 			init: init,
 			update: function update(_settings, _seed) {},
-			settings: {}
+			settings: {},
 		};
 
 		return experiment;

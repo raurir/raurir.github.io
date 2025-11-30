@@ -1,7 +1,7 @@
 "use strict";
 
 var sw = 600,
-    sh = 600;
+	sh = 600;
 
 var bmp = dom.canvas(sw, sh);
 document.body.appendChild(bmp.canvas);
@@ -29,7 +29,7 @@ function newLine() {
 		var radius = perc * ring;
 		return {
 			x: cx + Math.sin(angle) * radius,
-			y: cy + Math.cos(angle) * radius
+			y: cy + Math.cos(angle) * radius,
 		};
 	}
 

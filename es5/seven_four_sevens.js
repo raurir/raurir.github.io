@@ -9,14 +9,17 @@ define("seven_four_sevens", function () {
 	var rnd = rand.instance();
 	rnd.setSeed(Math.random());
 	var sw = 900,
-	    sh = 600;
+		sh = 600;
 	var canvas = dom.canvas(sw, sh);
 	canvas.canvas.style.width = "100%";
 	var images = [];
 	var planes = [];
 	var container = dom.element("div");
-	var text = dom.element("div", { innerText: "Click the canvas to make a new waypoint", style: { color: "white" } });
-	var button = dom.button("Add plane", { className: "button" });
+	var text = dom.element("div", {
+		innerText: "Click the canvas to make a new waypoint",
+		style: {color: "white"},
+	});
+	var button = dom.button("Add plane", {className: "button"});
 	container.appendChild(canvas.canvas);
 	container.appendChild(text);
 	container.appendChild(button);
@@ -27,23 +30,33 @@ define("seven_four_sevens", function () {
 		var scaleY = canvas.canvas.height / rect.height;
 		var x = (e.clientX - rect.left) * scaleX;
 		var y = (e.clientY - rect.top) * scaleY;
-		_root.holdingpattern.push({ _x: x, _y: y });
+		_root.holdingpattern.push({_x: x, _y: y});
 	});
 	dom.on(button, ["click"], function (e) {
 		planes.push(Plane());
 	});
 
 	var _root = {
-		holdingpattern: [{ _x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh) }, { _x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh) }, { _x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh) }],
+		holdingpattern: [
+			{_x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh)},
+			{_x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh)},
+			{_x: rnd.getNumber(0, sw), _y: rnd.getNumber(0, sh)},
+		],
 		createSmoke: function createSmoke() {
 			// this used to draw chem trails
-		}
+		},
 	};
 
 	function Plane() {
 		var PI = Math.PI;
 		var PI2 = Math.PI * 2;
-		var xdelta, ydelta, angle, targetangle, distance, deltaangle, planeframe;
+		var xdelta,
+			ydelta,
+			angle,
+			targetangle,
+			distance,
+			deltaangle,
+			planeframe;
 		var arrow = {}; // was some shape that draw an arrow to next waypoint
 		var tAngle = 0;
 		var turnMax, turnRate;
@@ -55,7 +68,7 @@ define("seven_four_sevens", function () {
 				shape._currentframe = frame;
 			},
 			_currentframe: 1,
-			_rotation: 0
+			_rotation: 0,
 		};
 
 		var _x = Math.random() * sw;
@@ -67,12 +80,16 @@ define("seven_four_sevens", function () {
 		var turnRate = turnMax / 20;
 		// onEnterFrame = moveIt; // RIP :)
 
-		var holdingpatternpos = Math.floor(Math.random() * _root.holdingpattern.length);
+		var holdingpatternpos = Math.floor(
+			Math.random() * _root.holdingpattern.length,
+		);
 		var targ = _root.holdingpattern[holdingpatternpos];
 
 		function moveIt() {
 			if (!targ) {
-				holdingpatternpos = Math.floor(Math.random() * _root.holdingpattern.length);
+				holdingpatternpos = Math.floor(
+					Math.random() * _root.holdingpattern.length,
+				);
 				targ = _root.holdingpattern[holdingpatternpos];
 			}
 
@@ -80,7 +97,9 @@ define("seven_four_sevens", function () {
 			ydelta = _y - targ._y;
 
 			// calculate distance
-			distance = Math.sqrt(Math.pow(xdelta, 2) + Math.pow(ydelta, 2));
+			distance = Math.sqrt(
+				Math.pow(xdelta, 2) + Math.pow(ydelta, 2),
+			);
 			if (distance < 75) {
 				holdingpatternpos++;
 				if (holdingpatternpos >= _root.holdingpattern.length) {
@@ -102,10 +121,10 @@ define("seven_four_sevens", function () {
 			deltaangle = dir - targetangle;
 			if (Math.abs(deltaangle) > PI) {
 				if (deltaangle < 0) {
-					deltaangle = deltaangle % PI + PI;
+					deltaangle = (deltaangle % PI) + PI;
 					dir = dir + PI2;
 				} else {
-					deltaangle = deltaangle % PI - PI;
+					deltaangle = (deltaangle % PI) - PI;
 					dir = dir - PI2;
 				}
 			}
@@ -119,7 +138,9 @@ define("seven_four_sevens", function () {
 					tAngle = turnMax;
 				}
 
-				shape.gotoAndStop(58 - (Math.round(tAngle / turnMax * 29) + 28));
+				shape.gotoAndStop(
+					58 - (Math.round((tAngle / turnMax) * 29) + 28),
+				);
 			} else if (deltaangle < -0.1) {
 				if (tAngle > -turnMax) {
 					tAngle -= turnRate;
@@ -127,7 +148,9 @@ define("seven_four_sevens", function () {
 					tAngle = -turnMax;
 				}
 
-				shape.gotoAndStop(58 - (Math.round(tAngle / turnMax * 29) + 28));
+				shape.gotoAndStop(
+					58 - (Math.round((tAngle / turnMax) * 29) + 28),
+				);
 			} else {
 				tAngle = deltaangle / 50;
 
@@ -140,7 +163,7 @@ define("seven_four_sevens", function () {
 
 			dir -= tAngle;
 
-			arrow._rotation = -targetangle * 180 / PI; // flash used degrees.
+			arrow._rotation = (-targetangle * 180) / PI; // flash used degrees.
 
 			shape._rotation = -dir;
 			_x += Math.sin(dir) * speed;
@@ -176,7 +199,7 @@ define("seven_four_sevens", function () {
 
 	function init() {
 		var frames = 10,
-		    loaded = 0;
+			loaded = 0;
 		function loadComplete() {
 			loaded++;
 			if (loaded == frames * 2) {
@@ -185,19 +208,32 @@ define("seven_four_sevens", function () {
 					var mask;
 					// done this before, but lazy so using copy pasta from
 					// https://stackoverflow.com/questions/43251544/html-canvas-use-greyscale-image-as-mask
-					var mask = dom.canvas(maskImage.width, maskImage.height);
+					var mask = dom.canvas(
+						maskImage.width,
+						maskImage.height,
+					);
 					mask.ctx.drawImage(maskImage, 0, 0);
-					var data = mask.ctx.getImageData(0, 0, maskImage.width, maskImage.height);
+					var data = mask.ctx.getImageData(
+						0,
+						0,
+						maskImage.width,
+						maskImage.height,
+					);
 					var i = 0;
 					while (i < data.data.length) {
-						var rgb = data.data[i++] + data.data[i++] + data.data[i++];
+						var rgb =
+							data.data[i++] + data.data[i++] + data.data[i++];
 						data.data[i++] = 255 - rgb / 3;
 					}
 					mask.ctx.putImageData(data, 0, 0);
 
-					var masked = dom.canvas(maskImage.width, maskImage.height);
+					var masked = dom.canvas(
+						maskImage.width,
+						maskImage.height,
+					);
 					masked.ctx.drawImage(images[f].plane, 0, 0);
-					masked.ctx.globalCompositeOperation = "destination-out";
+					masked.ctx.globalCompositeOperation =
+						"destination-out";
 					masked.ctx.drawImage(mask.canvas, 0, 0);
 					masked.ctx.globalCompositeOperation = "source-over";
 					images[f].masked = masked;
@@ -225,7 +261,11 @@ define("seven_four_sevens", function () {
 					canvas.ctx.beginPath();
 					canvas.ctx.fillStyle = "white";
 					canvas.ctx.font = "18px Helvetica";
-					canvas.ctx.fillText(i + 1, waypoint._x - 5, waypoint._y + 5);
+					canvas.ctx.fillText(
+						i + 1,
+						waypoint._x - 5,
+						waypoint._y + 5,
+					);
 					canvas.ctx.fill();
 				}
 				for (i = 0; i < planes.length; i++) {
@@ -240,20 +280,26 @@ define("seven_four_sevens", function () {
 			// in flash these assets were used with one masking the other, so gotta replicate!
 			var plane = new Image();
 			plane.onload = loadComplete;
-			plane.src = "/assets/seven_four_sevens/Image " + (i + 1) + " at frame 0.jpg";
+			plane.src =
+				"/assets/seven_four_sevens/Image " +
+				(i + 1) +
+				" at frame 0.jpg";
 			var mask = new Image();
 			mask.onload = loadComplete;
-			mask.src = "/assets/seven_four_sevens/Image " + (i + 1) + " alpha channel at frame 0.png";
+			mask.src =
+				"/assets/seven_four_sevens/Image " +
+				(i + 1) +
+				" alpha channel at frame 0.png";
 			images[i] = {
 				plane: plane,
 				mask: mask,
-				masked: null // generate these after all loaded
+				masked: null, // generate these after all loaded
 			};
 		}
 	}
 
 	return {
 		init: init,
-		stage: container
+		stage: container,
 	};
 });

@@ -31,10 +31,10 @@ var overflow = function overflow() {
 			ctx.beginPath();
 			poly.points.forEach(function (_ref, i) {
 				var x = _ref.x,
-				    y = _ref.y;
+					y = _ref.y;
 
 				var xs = x * sw,
-				    ys = y * sh;
+					ys = y * sh;
 				if (i) {
 					ctx.lineTo(xs, ys);
 				} else {
@@ -51,16 +51,19 @@ var overflow = function overflow() {
 			ctx.beginPath();
 			poly.points.forEach(function (_ref2, i) {
 				var x = _ref2.x,
-				    y = _ref2.y;
+					y = _ref2.y;
 
 				var xs = x * sw,
-				    ys = y * sh;
+					ys = y * sh;
 
 				polys.forEach(function (otherPoly) {
 					if (poly === otherPoly) {
 						// ignore
 					} else {
-						var inside = geom.pointInPolygon(otherPoly.points, { x: x, y: y });
+						var inside = geom.pointInPolygon(otherPoly.points, {
+							x: x,
+							y: y,
+						});
 						if (inside) {
 							ctx.fillStyle = "#ff000080";
 							ctx.fillRect(xs - 10, ys - 10, 20, 20);
@@ -74,7 +77,7 @@ var overflow = function overflow() {
 	function createPolygon() {
 		var poly = {
 			colour: c.getRandomColour(),
-			points: []
+			points: [],
 		};
 
 		var sides = r.getInteger(3, 17);
@@ -82,17 +85,17 @@ var overflow = function overflow() {
 		var cx = r.getNumber(0, 1);
 		var cy = r.getNumber(0, 1);
 		for (var i = 0; i < sides; i++) {
-			var angle = i / sides * TAU;
+			var angle = (i / sides) * TAU;
 			var x = cx + Math.sin(angle) * radius;
 			var y = cy + Math.cos(angle) * radius;
-			poly.points.push({ x: x, y: y });
+			poly.points.push({x: x, y: y});
 		}
 		polys.push(poly);
 	}
 
 	var experiment = {
 		stage: stage.canvas,
-		init: init
+		init: init,
 	};
 
 	progress("render:complete", stage.canvas);

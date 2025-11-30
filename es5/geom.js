@@ -5,72 +5,86 @@
 // alternative
 // compared algorithm: https://flupe.github.io/blog/2016/07/29/intersection-of-two-segments/
 // is the same as below including peformance.
-var intersectionBetweenPoints = function intersectionBetweenPoints(p0, p1, p2, p3) {
-	// compares line p0>p1 with line p2>p3
+var intersectionBetweenPoints =
+	function intersectionBetweenPoints(p0, p1, p2, p3) {
+		// compares line p0>p1 with line p2>p3
 
-	var p0_x = p0.x,
-	    p0_y = p0.y,
-	    p1_x = p1.x,
-	    p1_y = p1.y,
-	    p2_x = p2.x,
-	    p2_y = p2.y,
-	    p3_x = p3.x,
-	    p3_y = p3.y;
+		var p0_x = p0.x,
+			p0_y = p0.y,
+			p1_x = p1.x,
+			p1_y = p1.y,
+			p2_x = p2.x,
+			p2_y = p2.y,
+			p3_x = p3.x,
+			p3_y = p3.y;
 
-	if (p0_x == p2_x && p0_y == p2_y) return null; // if first point is same as third point
-	if (p0_x == p3_x && p0_y == p3_y) return null; // if first point is same as fourth point
-	if (p1_x == p2_x && p1_y == p2_y) return null; // if second point is same as third point
-	if (p1_x == p3_x && p1_y == p3_y) return null; // if second point is same as fourth point
+		if (p0_x == p2_x && p0_y == p2_y) return null; // if first point is same as third point
+		if (p0_x == p3_x && p0_y == p3_y) return null; // if first point is same as fourth point
+		if (p1_x == p2_x && p1_y == p2_y) return null; // if second point is same as third point
+		if (p1_x == p3_x && p1_y == p3_y) return null; // if second point is same as fourth point
 
-	var s1_x, s1_y, s2_x, s2_y;
-	s1_x = p1_x - p0_x;
-	s1_y = p1_y - p0_y;
-	s2_x = p3_x - p2_x;
-	s2_y = p3_y - p2_y;
+		var s1_x, s1_y, s2_x, s2_y;
+		s1_x = p1_x - p0_x;
+		s1_y = p1_y - p0_y;
+		s2_x = p3_x - p2_x;
+		s2_y = p3_y - p2_y;
 
-	var s, t;
-	s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
-	t = (s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+		var s, t;
+		s =
+			(-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) /
+			(-s2_x * s1_y + s1_x * s2_y);
+		t =
+			(s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) /
+			(-s2_x * s1_y + s1_x * s2_y);
 
-	if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
-		// Collision detected
-		return {
-			x: p0_x + t * s1_x,
-			y: p0_y + t * s1_y
-		};
-	}
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+			// Collision detected
+			return {
+				x: p0_x + t * s1_x,
+				y: p0_y + t * s1_y,
+			};
+		}
 
-	return null; // No collision
-};
+		return null; // No collision
+	};
 
 // get the equation of a line that goes through two points, ie slope and intercept.
 // doesn't currently deal with divide by zero!
-var linearEquationFromPoints = function linearEquationFromPoints(p0, p1) {
-	var dx = p1.x - p0.x;
-	var dy = p1.y - p0.y;
-	// occasionally finding an irregularity - turns out dx was 0.0000000000003141611368683772161603
-	// which for all intents and purposes is 0.
-	if (dx == 0 || dx > -0.000001 && dx < 0.000001) {
-		// console.warn("divide by zero error in geom.linearEquationFromPoints");
-		// equation is in the form x = number, rather than y = mx + c
+var linearEquationFromPoints =
+	function linearEquationFromPoints(p0, p1) {
+		var dx = p1.x - p0.x;
+		var dy = p1.y - p0.y;
+		// occasionally finding an irregularity - turns out dx was 0.0000000000003141611368683772161603
+		// which for all intents and purposes is 0.
+		if (dx == 0 || (dx > -0.000001 && dx < 0.000001)) {
+			// console.warn("divide by zero error in geom.linearEquationFromPoints");
+			// equation is in the form x = number, rather than y = mx + c
+			return {
+				c: null,
+				m:
+					dy > 0
+						? Number.POSITIVE_INFINITY
+						: Number.NEGATIVE_INFINITY,
+				x: p0.x, // so define x intercept, equation is x = p0.x
+			};
+		}
+		var m = dy / dx;
+		// y = mx + c
+		// intercept c = y - mx
+		var c = p0.y - m * p0.x; // which is same as p1.y - slope * p1.x
 		return {
-			c: null,
-			m: dy > 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY,
-			x: p0.x // so define x intercept, equation is x = p0.x
+			c: c,
+			m: m,
 		};
-	}
-	var m = dy / dx;
-	// y = mx + c
-	// intercept c = y - mx
-	var c = p0.y - m * p0.x; // which is same as p1.y - slope * p1.x
-	return {
-		c: c,
-		m: m
 	};
-};
 
 // http://www.softwareandfinance.com/Turbo_C/Intersection_Two_lines_EndPoints.html might be more suitable.
-var intersectionAnywhere = function intersectionAnywhere(p0, p1, p2, p3) {
+var intersectionAnywhere = function intersectionAnywhere(
+	p0,
+	p1,
+	p2,
+	p3,
+) {
 	var intersectionX, intersectionY;
 	// console.log("intersectionAnywhere", p0, p1, p2, p3);
 	var line0 = linearEquationFromPoints(p0, p1);
@@ -106,7 +120,7 @@ var intersectionAnywhere = function intersectionAnywhere(p0, p1, p2, p3) {
 
 	return {
 		x: intersectionX,
-		y: intersectionY
+		y: intersectionY,
 	};
 };
 
@@ -115,27 +129,46 @@ var intersectionAnywhere = function intersectionAnywhere(p0, p1, p2, p3) {
 // tests show polygon with 10,000,000 points takes < 200ms, 1e6 < 20ms
 var pointInPolygon = function pointInPolygon(polygon, point) {
 	var nvert = polygon.length;
-	if (nvert && nvert >= 3 && point.x !== undefined && point.y !== undefined) {
+	if (
+		nvert &&
+		nvert >= 3 &&
+		point.x !== undefined &&
+		point.y !== undefined
+	) {
 		var testx = point.x;
 		var testy = point.y;
 		var i,
-		    j,
-		    c = false;
+			j,
+			c = false;
 		for (i = 0, j = nvert - 1; i < nvert; j = i++) {
 			var vxi = polygon[i].x;
 			var vyi = polygon[i].y;
 			var vxj = polygon[j].x;
 			var vyj = polygon[j].y;
-			if (vyi > testy != vyj > testy && testx < (vxj - vxi) * (testy - vyi) / (vyj - vyi) + vxi) {
+			if (
+				vyi > testy != vyj > testy &&
+				testx <
+					((vxj - vxi) * (testy - vyi)) / (vyj - vyi) + vxi
+			) {
 				c = !c;
 			}
 		}
 		return c;
 	} else {
 		if (nvert < 3) {
-			console.warn("pointInPolygon error - polygon has less than 3 points", polygon);
+			console.warn(
+				"pointInPolygon error - polygon has less than 3 points",
+				polygon,
+			);
 		} else {
-			console.warn("pointInPolygon error - invalid data vertices:", nvert, "polygon:", polygon, "point:", point);
+			console.warn(
+				"pointInPolygon error - invalid data vertices:",
+				nvert,
+				"polygon:",
+				polygon,
+				"point:",
+				point,
+			);
 		}
 		return null;
 	}
@@ -145,10 +178,10 @@ var polygonArea = function polygonArea(points) {
 	var len = points.length;
 	var area = points.reduce(function (sum, point, index) {
 		var x = point.x,
-		    y = point.y;
+			y = point.y;
 		var _points = points[(index + 1) % len],
-		    xn = _points.x,
-		    yn = _points.y;
+			xn = _points.x,
+			yn = _points.y;
 
 		return sum + (xn + x) * (yn - y);
 	}, 0);
@@ -159,38 +192,46 @@ var polygonPerimeter = function polygonPerimeter(points) {
 	var len = points.length;
 	return points.reduce(function (sum, point, index) {
 		var x = point.x,
-		    y = point.y;
+			y = point.y;
 		var _points2 = points[(index + 1) % len],
-		    xn = _points2.x,
-		    yn = _points2.y;
+			xn = _points2.x,
+			yn = _points2.y;
 
 		return sum + Math.hypot(x - xn, y - yn);
 	}, 0);
 };
 
-var linearInterpolate = function linearInterpolate(a, b, ratio) {
+var linearInterpolate = function linearInterpolate(
+	a,
+	b,
+	ratio,
+) {
 	return {
 		x: a.x + (b.x - a.x) * ratio,
-		y: a.y + (b.y - a.y) * ratio
+		y: a.y + (b.y - a.y) * ratio,
 	};
 };
 
 // http://stackoverflow.com/questions/17195055/calculate-a-perpendicular-offset-from-a-diagonal-line
-var perpendincularPoint = function perpendincularPoint(a, b, distance) {
+var perpendincularPoint = function perpendincularPoint(
+	a,
+	b,
+	distance,
+) {
 	var p = {
 		x: a.x - b.x,
-		y: a.y - b.y
+		y: a.y - b.y,
 	};
 	var n = {
 		x: -p.y,
-		y: p.x
+		y: p.x,
 	};
 	var normalisedLength = Math.sqrt(n.x * n.x + n.y * n.y);
 	n.x /= normalisedLength;
 	n.y /= normalisedLength;
 	return {
 		x: distance * n.x,
-		y: distance * n.y
+		y: distance * n.y,
 	};
 };
 
@@ -198,18 +239,18 @@ var parallelPoints = function parallelPoints(p0, p1, offset) {
 	var per = perpendincularPoint(p0, p1, offset);
 	var parrallel0 = {
 		x: p0.x + per.x,
-		y: p0.y + per.y
+		y: p0.y + per.y,
 	};
 	var parrallel1 = {
 		x: p1.x + per.x,
-		y: p1.y + per.y
+		y: p1.y + per.y,
 	};
 	return [parrallel0, parrallel1];
 };
 
 var insetPoints = function insetPoints(points, offset) {
 	var parallels = [],
-	    insets = [];
+		insets = [];
 	for (var i = 0, il = points.length; i < il; i++) {
 		var pp0 = points[i];
 		var pp1 = points[(i + 1) % il]; // wrap back to 0 at end of loop!
@@ -220,7 +261,12 @@ var insetPoints = function insetPoints(points, offset) {
 	for (i = 0, il = parallels.length; i < il; i++) {
 		var parallel0 = parallels[i]; // start of line
 		var parallel1 = parallels[(i + 1) % il]; // end of line
-		var intersection = intersectionAnywhere(parallel0[0], parallel0[1], parallel1[0], parallel1[1]);
+		var intersection = intersectionAnywhere(
+			parallel0[0],
+			parallel0[1],
+			parallel1[0],
+			parallel1[1],
+		);
 		// console.log("intersection", intersection);
 		var inside = pointInPolygon(points, intersection);
 		if (inside) {
@@ -240,7 +286,7 @@ var insetPoints = function insetPoints(points, offset) {
 var deltaBetweenPoints = function deltaBetweenPoints(a, b) {
 	return {
 		x: a.x - b.x,
-		y: a.y - b.y
+		y: a.y - b.y,
 	};
 };
 
@@ -254,9 +300,16 @@ were of the same sign, the polygons are similar
 https://www.reddit.com/user/raurir/comments/9mo1b9/insetting_polygon_issue/
 https://i.redd.it/5pjqdydk15r11.jpg
 */
-var polygonsSimilar = function polygonsSimilar(pointsA, pointsB) {
+var polygonsSimilar = function polygonsSimilar(
+	pointsA,
+	pointsB,
+) {
 	if (pointsA.length != pointsB.length) {
-		console.warn("geom.polygonsSimilar invalid arrays, not equal in length!", pointsA, pointsB);
+		console.warn(
+			"geom.polygonsSimilar invalid arrays, not equal in length!",
+			pointsA,
+			pointsB,
+		);
 		return false;
 	}
 	for (var i = 0, il = pointsA.length; i < il; i++) {
@@ -293,7 +346,9 @@ var polygonsSimilar = function polygonsSimilar(pointsA, pointsB) {
 };
 
 // do any lines cross basically.
-var polygonSelfIntersecting = function polygonSelfIntersecting(points) {
+var polygonSelfIntersecting = function polygonSelfIntersecting(
+	points,
+) {
 	var len = points.length;
 	for (var j = 0; j < len - 1; j++) {
 		var indexA = j;
@@ -306,7 +361,12 @@ var polygonSelfIntersecting = function polygonSelfIntersecting(points) {
 			var indexD = (i + 1) % len;
 			var pointC = points[indexC];
 			var pointD = points[indexD];
-			var intersects = intersectionBetweenPoints(pointA, pointB, pointC, pointD);
+			var intersects = intersectionBetweenPoints(
+				pointA,
+				pointB,
+				pointC,
+				pointD,
+			);
 			if (intersects) {
 				return true;
 			}
@@ -329,7 +389,7 @@ var geom = {
 	polygonArea: polygonArea,
 	polygonSelfIntersecting: polygonSelfIntersecting,
 	polygonPerimeter: polygonPerimeter,
-	polygonsSimilar: polygonsSimilar
+	polygonsSimilar: polygonsSimilar,
 };
 
 if (typeof module !== "undefined") module.exports = geom;

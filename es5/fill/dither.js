@@ -6,42 +6,65 @@ if (isNode) {
 	var dom = require("../dom.js");
 }
 
-var shapes = [1, // circle
-2, // square
-3, // diamond
-4, // dither alg 1
-5, // dither alg 2
-6];
+var shapes = [
+	1, // circle
+	2, // square
+	3, // diamond
+	4, // dither alg 1
+	5, // dither alg 2
+	6,
+];
 
 var fillDither = function fillDither(args) {
 	var c = args.c,
-	    r = args.r,
-	    size = args.size,
-	    settings = args.settings;
+		r = args.r,
+		size = args.size,
+		settings = args.settings;
 
 	var checkArgs = Object.keys(args).sort().join(",");
 	if (checkArgs !== "c,r,settings,size") {
-		console.warn("fillDither `args` are not ok... received:", checkArgs);
+		console.warn(
+			"fillDither `args` are not ok... received:",
+			checkArgs,
+		);
 	}
 
 	var checkSettings = Object.keys(settings).sort().join("\n");
-	if (checkSettings !== "alternate\nbaseRotation\nbg\nfg\nshape\nvaryRotation\nwiggle") {
-		console.warn("fillDither argument `settings` is not ok... received:", checkSettings);
+	if (
+		checkSettings !==
+		"alternate\nbaseRotation\nbg\nfg\nshape\nvaryRotation\nwiggle"
+	) {
+		console.warn(
+			"fillDither argument `settings` is not ok... received:",
+			checkSettings,
+		);
 	}
 
 	var _settings$alternate = settings.alternate,
-	    alternate = _settings$alternate === undefined ? r.getNumber(0, 1) > 0.5 : _settings$alternate,
-	    baseRotation = settings.baseRotation,
-	    _settings$bg = settings.bg,
-	    bg = _settings$bg === undefined ? c.getRandomColour() : _settings$bg,
-	    _settings$fg = settings.fg,
-	    fg = _settings$fg === undefined ? c.getRandomColour(true) : _settings$fg,
-	    _settings$shape = settings.shape,
-	    shape = _settings$shape === undefined ? shapes[r.getInteger(0, shapes.length - 1)] : _settings$shape,
-	    varyRotation = settings.varyRotation,
-	    _settings$wiggle = settings.wiggle,
-	    wiggle = _settings$wiggle === undefined ? 10 : _settings$wiggle;
-
+		alternate =
+			_settings$alternate === undefined
+				? r.getNumber(0, 1) > 0.5
+				: _settings$alternate,
+		baseRotation = settings.baseRotation,
+		_settings$bg = settings.bg,
+		bg =
+			_settings$bg === undefined
+				? c.getRandomColour()
+				: _settings$bg,
+		_settings$fg = settings.fg,
+		fg =
+			_settings$fg === undefined
+				? c.getRandomColour(true)
+				: _settings$fg,
+		_settings$shape = settings.shape,
+		shape =
+			_settings$shape === undefined
+				? shapes[r.getInteger(0, shapes.length - 1)]
+				: _settings$shape,
+		varyRotation = settings.varyRotation,
+		_settings$wiggle = settings.wiggle,
+		wiggle =
+			_settings$wiggle === undefined ? 10 : _settings$wiggle;
 
 	var half = size / 2;
 	var padding = Math.sqrt(half * half * 2) - half; // the gaps between the corner when rotated 45 degrees
@@ -50,7 +73,7 @@ var fillDither = function fillDither(args) {
 
 	var stage = dom.canvas(size, size);
 	var ctx = stage.ctx,
-	    canvas = stage.canvas;
+		canvas = stage.canvas;
 	// document.body.appendChild(canvas);
 
 	ctx.translate(half, half);
@@ -94,18 +117,27 @@ var fillDither = function fillDither(args) {
 
 		var x = min - (alternate && row % 2 === 0 ? xJump / 2 : 0);
 		while (x < max) {
-			var wiggleX = wiggle * r.getNumber(-xJump, xJump) / 2;
-			var wiggleY = wiggle * r.getNumber(-yJump, yJump) / 2;
+			var wiggleX = (wiggle * r.getNumber(-xJump, xJump)) / 2;
+			var wiggleY = (wiggle * r.getNumber(-yJump, yJump)) / 2;
 
 			if (shape === 1) {
 				// circle
 				ctx.beginPath();
-				ctx.drawCircle(x + wiggleX, y + wiggleY, ditherAmount * 0.7);
+				ctx.drawCircle(
+					x + wiggleX,
+					y + wiggleY,
+					ditherAmount * 0.7,
+				);
 				ctx.closePath();
 				ctx.fill();
 			} else if (shape === 2) {
 				// square
-				ctx.fillRect(x + wiggleX, y + wiggleY, ditherAmount, ditherAmount);
+				ctx.fillRect(
+					x + wiggleX,
+					y + wiggleY,
+					ditherAmount,
+					ditherAmount,
+				);
 			} else if (shape === 3) {
 				// diamond
 				ctx.save();
@@ -128,17 +160,24 @@ var fillDither = function fillDither(args) {
 				for (i = 0; i < Math.pow(blocks, 2); i++) {
 					if (Math.random() > ditherRatio) continue;
 					var overlap = 0.3; // slight bleed
-					var _xd = x + i % blocks * blocksize;
+					var _xd = x + (i % blocks) * blocksize;
 					var _yd = y + Math.floor(i / blocks) * blocksize;
-					ctx.fillRect(_xd - overlap, _yd - overlap, blocksize + overlap * 2, blocksize + overlap * 2);
+					ctx.fillRect(
+						_xd - overlap,
+						_yd - overlap,
+						blocksize + overlap * 2,
+						blocksize + overlap * 2,
+					);
 				}
 			} else if (shape === 6) {
 				// dither - crosshatches
 				for (i = 0; i < ditherAmount; i++) {
 					var angle = r.getNumber(0, Math.PI * 2);
 					var distance = ditherRatio * jump * 3;
-					var d1 = r.getNumber(1, 1) * Math.sin(angle) * distance;
-					var d2 = r.getNumber(1, 1) * Math.cos(angle) * distance;
+					var d1 =
+						r.getNumber(1, 1) * Math.sin(angle) * distance;
+					var d2 =
+						r.getNumber(1, 1) * Math.cos(angle) * distance;
 
 					var xs = x + xJump / 2 - d1;
 					var ys = y + yJump / 2 - d2;
