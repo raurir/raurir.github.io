@@ -3,78 +3,78 @@
 /* eslint-disable no-console */
 var isNode = typeof module !== "undefined";
 var voronoi = (function () {
-	// voronoi code was largely lifted from http://rosettacode.org/wiki/Voronoi_diagram
-	// c ported to javascript
+  // voronoi code was largely lifted from http://rosettacode.org/wiki/Voronoi_diagram
+  // c ported to javascript
 
-	// proper (ie vector) voronoi code is here: https://code.google.com/p/javascript-voronoi/downloads/detail?name=JSVoronoi.zip
+  // proper (ie vector) voronoi code is here: https://code.google.com/p/javascript-voronoi/downloads/detail?name=JSVoronoi.zip
 
-	var site = [];
-	// var rgb = [];
-	// var edges = [];
-	var regions = [];
-	var bounds = [];
+  var site = [];
+  // var rgb = [];
+  // var edges = [];
+  var regions = [];
+  var bounds = [];
 
-	var dot = void 0; // pixel size
-	var sites = void 0;
-	var sizeX = void 0,
-		sizeY = void 0;
-	var width = void 0,
-		height = void 0;
+  var dot = void 0; // pixel size
+  var sites = void 0;
+  var sizeX = void 0,
+    sizeY = void 0;
+  var width = void 0,
+    height = void 0;
 
-	var debug = false;
+  var debug = false;
 
-	function init(options) {
-		dot = options.dot || 1;
-		sites = options.sites || 10;
-		sizeX = options.sizeX || 200;
-		sizeY = options.sizeY || 200;
-		width = sizeX * dot;
-		height = sizeY * dot;
-		debug = options.debug || false;
-		return {
-			width: width,
-			height: height,
-		};
-	}
+  function init(options) {
+    dot = options.dot || 1;
+    sites = options.sites || 10;
+    sizeX = options.sizeX || 200;
+    sizeY = options.sizeY || 200;
+    width = sizeX * dot;
+    height = sizeY * dot;
+    debug = options.debug || false;
+    return {
+      width: width,
+      height: height,
+    };
+  }
 
-	// eslint-disable-next-line no-unused-vars
-	function sq2(x1, x2, y1, y2) {
-		var dx = x1 - x2,
-			dy = y1 - y2;
-		return dx * dx + dy * dy;
-	}
+  // eslint-disable-next-line no-unused-vars
+  function sq2(x1, x2, y1, y2) {
+    var dx = x1 - x2,
+      dy = y1 - y2;
+    return dx * dx + dy * dy;
+  }
 
-	// eslint-disable-next-line no-unused-vars
-	function manhattan(x, x2, y, y2) {
-		return Math.abs(x - x2) + Math.abs(y - y2);
-	}
-	// eslint-disable-next-line no-unused-vars
-	function minkowsky(X1, X2, Y1, Y2) {
-		return (
-			(Math.abs(X2 - X1) * 3 + Math.abs(Y2 - Y1) * 3) * 0.33
-		);
-	}
+  // eslint-disable-next-line no-unused-vars
+  function manhattan(x, x2, y, y2) {
+    return Math.abs(x - x2) + Math.abs(y - y2);
+  }
+  // eslint-disable-next-line no-unused-vars
+  function minkowsky(X1, X2, Y1, Y2) {
+    return (
+      (Math.abs(X2 - X1) * 3 + Math.abs(Y2 - Y1) * 3) * 0.33
+    );
+  }
 
-	function nearest_site(x1, y1) {
-		var k,
-			ret = 0;
-		var d,
-			dist = 0;
-		for (k = 0; k < sites && site[k]; k++) {
-			var x2 = site[k][0];
-			var y2 = site[k][1];
+  function nearest_site(x1, y1) {
+    var k,
+      ret = 0;
+    var d,
+      dist = 0;
+    for (k = 0; k < sites && site[k]; k++) {
+      var x2 = site[k][0];
+      var y2 = site[k][1];
 
-			d = sq2(x1, x2, y1, y2); // exchange this for manhattan...
+      d = sq2(x1, x2, y1, y2); // exchange this for manhattan...
 
-			if (!k || d < dist) {
-				dist = d;
-				ret = k;
-			}
-		}
-		return ret;
-	}
+      if (!k || d < dist) {
+        dist = d;
+        ret = k;
+      }
+    }
+    return ret;
+  }
 
-	/*
+  /*
  // see if a pixel is different from any neighboring ones
  function at_edge(color, y, x) {
  	var i, j, c = color[y * sizeX + x];
@@ -129,81 +129,81 @@ var voronoi = (function () {
  }
  */
 
-	function genPoints(pointIterator) {
-		if (pointIterator == undefined)
-			return console.warn(
-				"need to pass in a pointIterator function, which returns an array",
-			);
-		for (var k = 0; k < sites; k++) {
-			site[k] = pointIterator(k, sites);
+  function genPoints(pointIterator) {
+    if (pointIterator == undefined)
+      return console.warn(
+        "need to pass in a pointIterator function, which returns an array",
+      );
+    for (var k = 0; k < sites; k++) {
+      site[k] = pointIterator(k, sites);
 
-			// edges[k] = [];
-			regions[k] = [];
-			bounds[k] = []; // top, right, bottom, left
-		}
-	}
+      // edges[k] = [];
+      regions[k] = [];
+      bounds[k] = []; // top, right, bottom, left
+    }
+  }
 
-	function genMap() {
-		var i = void 0;
-		var j = void 0;
-		var nearest = [];
-		// let color;
-		var index = void 0;
-		var pixels = sizeX * sizeY;
+  function genMap() {
+    var i = void 0;
+    var j = void 0;
+    var nearest = [];
+    // let color;
+    var index = void 0;
+    var pixels = sizeX * sizeY;
 
-		var a = debug && new Date().getTime();
+    var a = debug && new Date().getTime();
 
-		for (i = 0; i < sizeY; i++) {
-			for (j = 0; j < sizeX; j++) {
-				index = i * sizeX + j;
-				nearest[index] = nearest_site(j, i);
+    for (i = 0; i < sizeY; i++) {
+      for (j = 0; j < sizeX; j++) {
+        index = i * sizeX + j;
+        nearest[index] = nearest_site(j, i);
 
-				if (debug && index % 100000 == 0)
-					console.log(
-						"findSites",
-						Math.round((index / pixels) * 100) + "%",
-					);
-			}
-		}
+        if (debug && index % 100000 == 0)
+          console.log(
+            "findSites",
+            Math.round((index / pixels) * 100) + "%",
+          );
+      }
+    }
 
-		var b = debug && new Date().getTime();
+    var b = debug && new Date().getTime();
 
-		debug && console.log("Found sites in", b - a, "ms");
+    debug && console.log("Found sites in", b - a, "ms");
 
-		for (i = 0; i < sizeY; i++) {
-			for (j = 0; j < sizeX; j++) {
-				index = i * sizeX + j;
-				var ns = nearest[index];
-				regions[ns].push([j, i]);
+    for (i = 0; i < sizeY; i++) {
+      for (j = 0; j < sizeX; j++) {
+        index = i * sizeX + j;
+        var ns = nearest[index];
+        regions[ns].push([j, i]);
 
-				if (bounds[ns][0] == undefined) {
-					bounds[ns][0] = i;
-				} else if (i < bounds[ns][0]) {
-					bounds[ns][0] = i;
-				}
-				if (bounds[ns][1] == undefined) {
-					bounds[ns][1] = j;
-				} else if (j > bounds[ns][1]) {
-					bounds[ns][1] = j;
-				}
-				if (bounds[ns][2] == undefined) {
-					bounds[ns][2] = i;
-				} else if (i > bounds[ns][2]) {
-					bounds[ns][2] = i;
-				}
-				if (bounds[ns][3] == undefined) {
-					bounds[ns][3] = j;
-				} else if (j < bounds[ns][3]) {
-					bounds[ns][3] = j;
-				}
+        if (bounds[ns][0] == undefined) {
+          bounds[ns][0] = i;
+        } else if (i < bounds[ns][0]) {
+          bounds[ns][0] = i;
+        }
+        if (bounds[ns][1] == undefined) {
+          bounds[ns][1] = j;
+        } else if (j > bounds[ns][1]) {
+          bounds[ns][1] = j;
+        }
+        if (bounds[ns][2] == undefined) {
+          bounds[ns][2] = i;
+        } else if (i > bounds[ns][2]) {
+          bounds[ns][2] = i;
+        }
+        if (bounds[ns][3] == undefined) {
+          bounds[ns][3] = j;
+        } else if (j < bounds[ns][3]) {
+          bounds[ns][3] = j;
+        }
 
-				if (debug && index % 100000 == 0)
-					console.log(
-						"generatingRegion",
-						Math.round((index / pixels) * 100) + "%",
-					);
+        if (debug && index % 100000 == 0)
+          console.log(
+            "generatingRegion",
+            Math.round((index / pixels) * 100) + "%",
+          );
 
-				/*
+        /*
     	// not really interested in antialiasing.
     // ... but the at edge function is fascinatingly rudimentary
     	var color = rgb[nearest[index]];
@@ -219,19 +219,19 @@ var voronoi = (function () {
     	// color = color.map(function(v) { return v * 1.5} );
     	}
     */
-			}
-		}
+      }
+    }
 
-		var c = debug && new Date().getTime();
+    var c = debug && new Date().getTime();
 
-		debug && console.log("Generated regions in", c - b, "ms");
+    debug && console.log("Generated regions in", c - b, "ms");
 
-		// sites = 1;
+    // sites = 1;
 
-		calcRegionBounds();
-	}
+    calcRegionBounds();
+  }
 
-	/*
+  /*
  function gen_edges() {
  	// somwhat failed attempt at getting polygons from pixels, but vertices were out of order, so i gave up.
  	// a more intelligent approach is required to get vectors.
@@ -256,68 +256,68 @@ var voronoi = (function () {
  }
  */
 
-	function drawRegions(renderRegion) {
-		var a = debug && new Date().getTime();
-		if (renderRegion == undefined)
-			console.warn("need to pass in a renderRegion function.");
-		// for (var k = 3; k < 4; k++) {
-		for (var k = 0; k < sites; k++) {
-			// for (var k = 0; k < 1; k++) {
-			renderRegion(regions[k], bounds[k]);
-			// debug && console.log("drawRegions", Math.round((k / sites) * 100) + "%");
-		}
-		var b = debug && new Date().getTime();
+  function drawRegions(renderRegion) {
+    var a = debug && new Date().getTime();
+    if (renderRegion == undefined)
+      console.warn("need to pass in a renderRegion function.");
+    // for (var k = 3; k < 4; k++) {
+    for (var k = 0; k < sites; k++) {
+      // for (var k = 0; k < 1; k++) {
+      renderRegion(regions[k], bounds[k]);
+      // debug && console.log("drawRegions", Math.round((k / sites) * 100) + "%");
+    }
+    var b = debug && new Date().getTime();
 
-		debug &&
-			console.log(
-				"Regions drawn in",
-				b - a,
-				"ms - av time per region:",
-				(b - a) / sites,
-			);
-	}
+    debug &&
+      console.log(
+        "Regions drawn in",
+        b - a,
+        "ms - av time per region:",
+        (b - a) / sites,
+      );
+  }
 
-	function drawSites(ctx) {
-		for (var k = 0; k < sites; k++) {
-			ctx.fillStyle = "blue";
-			var centreMarker = 2;
-			var x = site[k][0] * dot;
-			var y = site[k][1] * dot;
-			ctx.fillRect(
-				x - centreMarker / 2,
-				y - centreMarker / 2,
-				centreMarker,
-				centreMarker,
-			);
-		}
-	}
+  function drawSites(ctx) {
+    for (var k = 0; k < sites; k++) {
+      ctx.fillStyle = "blue";
+      var centreMarker = 2;
+      var x = site[k][0] * dot;
+      var y = site[k][1] * dot;
+      ctx.fillRect(
+        x - centreMarker / 2,
+        y - centreMarker / 2,
+        centreMarker,
+        centreMarker,
+      );
+    }
+  }
 
-	function calcRegionBounds() {
-		for (var k = 0; k < sites; k++) {
-			bounds[k] = {
-				// overwriting bounds... no need for xmax or ymax at this point.
-				x: bounds[k][3] * dot,
-				y: bounds[k][0] * dot,
-				width: (bounds[k][1] - bounds[k][3]) * dot,
-				height: (bounds[k][2] - bounds[k][0]) * dot,
-			};
-		}
-	}
-	function drawRegionBounds(ctx) {
-		for (var k = 0; k < sites; k++) {
-			ctx.fillStyle = "rgba(0,0,255,0.2)";
-			var b = bounds[k];
-			ctx.fillRect(b.x, b.y, b.width, b.height);
-		}
-	}
+  function calcRegionBounds() {
+    for (var k = 0; k < sites; k++) {
+      bounds[k] = {
+        // overwriting bounds... no need for xmax or ymax at this point.
+        x: bounds[k][3] * dot,
+        y: bounds[k][0] * dot,
+        width: (bounds[k][1] - bounds[k][3]) * dot,
+        height: (bounds[k][2] - bounds[k][0]) * dot,
+      };
+    }
+  }
+  function drawRegionBounds(ctx) {
+    for (var k = 0; k < sites; k++) {
+      ctx.fillStyle = "rgba(0,0,255,0.2)";
+      var b = bounds[k];
+      ctx.fillRect(b.x, b.y, b.width, b.height);
+    }
+  }
 
-	return {
-		drawRegionBounds: drawRegionBounds,
-		drawRegions: drawRegions,
-		drawSites: drawSites,
-		genMap: genMap,
-		genPoints: genPoints,
-		init: init,
-	};
+  return {
+    drawRegionBounds: drawRegionBounds,
+    drawRegions: drawRegions,
+    drawSites: drawSites,
+    genMap: genMap,
+    genPoints: genPoints,
+    init: init,
+  };
 })();
 if (isNode) module.exports = voronoi;

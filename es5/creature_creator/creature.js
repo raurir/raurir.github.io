@@ -10,50 +10,50 @@ var isNode = typeof module !== "undefined";
 // }
 
 var creature = function creature() {
-	// con.log("creature constructor");
+  // con.log("creature constructor");
 
-	var sw = 400;
-	var sh = 400;
+  var sw = 400;
+  var sh = 400;
 
-	var bmp = dom.canvas(sw, sh);
-	var ctx = bmp.ctx;
+  var bmp = dom.canvas(sw, sh);
+  var ctx = bmp.ctx;
 
-	// require(["creature_creator", "human"], function(creature_creator, human) {
-	// 	creature_creator.init(bmp, ctx, human.body, human.limbs);
-	// });
+  // require(["creature_creator", "human"], function(creature_creator, human) {
+  // 	creature_creator.init(bmp, ctx, human.body, human.limbs);
+  // });
 
-	require.config({
-		paths: {
-			arachnid: "creature_creator/arachnid",
-			creature_creator: "creature_creator/creature_creator",
-			human: "creature_creator/human",
-		},
-	});
-	// require(["creature_creator", "arachnid"], function(creature_creator, arachnid) {
-	// creature_creator.init(bmp, ctx, arachnid.body, arachnid.limbs);
-	require(["creature_creator", "human"], function (
-		creature_creator,
-		human,
-	) {
-		creature_creator.init(bmp, ctx, human.body, human.limbs);
-	});
+  require.config({
+    paths: {
+      arachnid: "creature_creator/arachnid",
+      creature_creator: "creature_creator/creature_creator",
+      human: "creature_creator/human",
+    },
+  });
+  // require(["creature_creator", "arachnid"], function(creature_creator, arachnid) {
+  // creature_creator.init(bmp, ctx, arachnid.body, arachnid.limbs);
+  require(["creature_creator", "human"], function (
+    creature_creator,
+    human,
+  ) {
+    creature_creator.init(bmp, ctx, human.body, human.limbs);
+  });
 
-	var experiment = {
-		stage: bmp.canvas,
-		inner: null,
-		resize: function resize() {},
-		init: function init() {
-			// con.log("creature init");
-			// con.log(creature_creator);
-		},
-		kill: function kill() {},
-	};
+  var experiment = {
+    stage: bmp.canvas,
+    inner: null,
+    resize: function resize() {},
+    init: function init() {
+      // con.log("creature init");
+      // con.log(creature_creator);
+    },
+    kill: function kill() {},
+  };
 
-	return experiment;
+  return experiment;
 };
 
 if (isNode) {
-	module.exports = creature();
+  module.exports = creature();
 } else {
-	define("creature", creature);
+  define("creature", creature);
 }

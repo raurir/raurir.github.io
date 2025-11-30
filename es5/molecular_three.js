@@ -1,77 +1,77 @@
 "use strict";
 
 var molecular_three = function molecular_three() {
-	var camera, scene, renderer;
-	var mouse = {x: 0, y: 0};
-	var camPos = {x: 0, y: 0, z: 0};
-	var sw = window.innerWidth,
-		sh = window.innerHeight;
+  var camera, scene, renderer;
+  var mouse = {x: 0, y: 0};
+  var camPos = {x: 0, y: 0, z: 0};
+  var sw = window.innerWidth,
+    sh = window.innerHeight;
 
-	function num(min, max) {
-		return Math.random() * (max - min) + min;
-	}
+  function num(min, max) {
+    return Math.random() * (max - min) + min;
+  }
 
-	var r = rand.instance();
-	r.setSeed(Math.random());
-	var c = colours.instance(r);
+  var r = rand.instance();
+  r.setSeed(Math.random());
+  var c = colours.instance(r);
 
-	var segmentCreationInterval = 0;
-	var segmentLastCreated;
+  var segmentCreationInterval = 0;
+  var segmentLastCreated;
 
-	var segmentLengthInitial = 50;
-	var segmentLength = segmentLengthInitial;
-	var segmentRadius = num(4, 15);
-	var sphereRadius = segmentRadius * num(1, 3);
+  var segmentLengthInitial = 50;
+  var segmentLength = segmentLengthInitial;
+  var segmentRadius = num(4, 15);
+  var sphereRadius = segmentRadius * num(1, 3);
 
-	var branchingAngle = num(0, 10);
+  var branchingAngle = num(0, 10);
 
-	var holder;
-	var vectors = [];
-	var generationComplete = false;
+  var holder;
+  var vectors = [];
+  var generationComplete = false;
 
-	var attempts = 0;
-	var bail = 300;
+  var attempts = 0;
+  var bail = 300;
 
-	function sphere(props) {
-		var widthSegments = 10,
-			heightSegments = 10;
-		var material = new THREE.MeshLambertMaterial({
-			color: props.colour,
-		});
-		var geometry = new THREE.SphereGeometry(
-			props.radius,
-			widthSegments,
-			heightSegments,
-		);
-		var object = new THREE.Mesh(geometry, material);
-		return object;
-	}
+  function sphere(props) {
+    var widthSegments = 10,
+      heightSegments = 10;
+    var material = new THREE.MeshLambertMaterial({
+      color: props.colour,
+    });
+    var geometry = new THREE.SphereGeometry(
+      props.radius,
+      widthSegments,
+      heightSegments,
+    );
+    var object = new THREE.Mesh(geometry, material);
+    return object;
+  }
 
-	function cylinder(props) {
-		var group = new THREE.Group();
-		var material = new THREE.MeshLambertMaterial({
-			color: props.colour,
-		});
-		//radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength
-		var geometry = new THREE.CylinderGeometry(
-			props.radius,
-			props.radius,
-			props.height,
-			15,
-		);
-		var object = new THREE.Mesh(geometry, material);
-		object.position.y = props.height / 2;
-		group.add(object);
-		return {
-			colour: props.colour,
-			group: group,
-			object: object,
-		};
-	}
+  function cylinder(props) {
+    var group = new THREE.Group();
+    var material = new THREE.MeshLambertMaterial({
+      color: props.colour,
+    });
+    //radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength
+    var geometry = new THREE.CylinderGeometry(
+      props.radius,
+      props.radius,
+      props.height,
+      15,
+    );
+    var object = new THREE.Mesh(geometry, material);
+    object.position.y = props.height / 2;
+    group.add(object);
+    return {
+      colour: props.colour,
+      group: group,
+      object: object,
+    };
+  }
 
-	function getSectionEnd(cylinder) {
-		var numVertices = cylinder.object.geometry.vertices.length;
-		/*
+  function getSectionEnd(cylinder) {
+    var numVertices = cylinder.object.geometry.vertices.length;
+    /*
   for (var k = 0, kl = c.geometry.vertices.length; k < kl; k++) {
   var v = c.geometry.vertices[k];
   var s = sphere({radius: 1});
@@ -80,262 +80,262 @@ var molecular_three = function molecular_three() {
   con.log(v);
   }
   */
-		var end =
-			cylinder.object.geometry.vertices[numVertices - 2];
-		return new THREE.Vector3(
-			end.x + cylinder.object.position.x,
-			end.y + cylinder.object.position.y,
-			end.z + cylinder.object.position.z,
-		);
-	}
+    var end =
+      cylinder.object.geometry.vertices[numVertices - 2];
+    return new THREE.Vector3(
+      end.x + cylinder.object.position.x,
+      end.y + cylinder.object.position.y,
+      end.z + cylinder.object.position.z,
+    );
+  }
 
-	function init() {
-		c.getRandomPalette();
+  function init() {
+    c.getRandomPalette();
 
-		scene = new THREE.Scene();
-		scene.fog = new THREE.FogExp2(0x000000, 0.0015);
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.0015);
 
-		camera = new THREE.PerspectiveCamera(80, sw / sh, 1, 10000);
-		scene.add(camera);
+    camera = new THREE.PerspectiveCamera(80, sw / sh, 1, 10000);
+    scene.add(camera);
 
-		var lightAbove = new THREE.DirectionalLight(0xffffff, 1.5);
-		lightAbove.position.set(0, 200, 100);
-		scene.add(lightAbove);
+    var lightAbove = new THREE.DirectionalLight(0xffffff, 1.5);
+    lightAbove.position.set(0, 200, 100);
+    scene.add(lightAbove);
 
-		var lightLeft = new THREE.DirectionalLight(0xffffff, 4);
-		lightLeft.position.set(-100, 0, 100);
-		scene.add(lightLeft);
+    var lightLeft = new THREE.DirectionalLight(0xffffff, 4);
+    lightLeft.position.set(-100, 0, 100);
+    scene.add(lightLeft);
 
-		renderer = new THREE.WebGLRenderer({antialias: true});
-		renderer.setSize(sw, sh);
+    renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(sw, sh);
 
-		holder = new THREE.Group();
-		scene.add(holder);
+    holder = new THREE.Group();
+    scene.add(holder);
 
-		function checkDistance(reference) {
-			var globalPosition = new THREE.Vector3();
-			globalPosition.setFromMatrixPosition(
-				reference.matrixWorld,
-			);
+    function checkDistance(reference) {
+      var globalPosition = new THREE.Vector3();
+      globalPosition.setFromMatrixPosition(
+        reference.matrixWorld,
+      );
 
-			var st = new Date().getTime();
-			var distance;
-			var distanceOk = true;
-			for (
-				var i = 0, il = vectors.length;
-				i < il && distanceOk;
-				i++
-			) {
-				if (globalPosition == vectors[i])
-					con.log("same one", globalPosition, vectors[i]);
+      var st = new Date().getTime();
+      var distance;
+      var distanceOk = true;
+      for (
+        var i = 0, il = vectors.length;
+        i < il && distanceOk;
+        i++
+      ) {
+        if (globalPosition == vectors[i])
+          con.log("same one", globalPosition, vectors[i]);
 
-				distance = globalPosition.distanceTo(vectors[i]);
-				if (distance < segmentLength - 5) {
-					distanceOk = false;
-				}
-			}
-			var en = new Date().getTime();
-			var proc = en - st;
-			if (proc > 3) con.warn("proc time = ", proc);
+        distance = globalPosition.distanceTo(vectors[i]);
+        if (distance < segmentLength - 5) {
+          distanceOk = false;
+        }
+      }
+      var en = new Date().getTime();
+      var proc = en - st;
+      if (proc > 3) con.warn("proc time = ", proc);
 
-			return {
-				vector: globalPosition,
-				ok: distanceOk,
-			};
-		}
+      return {
+        vector: globalPosition,
+        ok: distanceOk,
+      };
+    }
 
-		function drawSection(parent, endPoint) {
-			var colour = c.mutateColour(parent.colour, 50);
+    function drawSection(parent, endPoint) {
+      var colour = c.mutateColour(parent.colour, 50);
 
-			var child = cylinder({
-				radius: segmentRadius,
-				height: segmentLength,
-				colour: colour,
-			});
-			child.group.position.set(
-				endPoint.x,
-				endPoint.y,
-				endPoint.z,
-			);
-			child.group.rotation.z =
-				((num(-0.5, 0.5) * 2 * Math.PI * attempts) / bail) *
-				branchingAngle;
-			child.group.rotation.y = num(0, 2) * Math.PI;
+      var child = cylinder({
+        radius: segmentRadius,
+        height: segmentLength,
+        colour: colour,
+      });
+      child.group.position.set(
+        endPoint.x,
+        endPoint.y,
+        endPoint.z,
+      );
+      child.group.rotation.z =
+        ((num(-0.5, 0.5) * 2 * Math.PI * attempts) / bail) *
+        branchingAngle;
+      child.group.rotation.y = num(0, 2) * Math.PI;
 
-			var end = getSectionEnd(child);
-			var endSphere = sphere({radius: 3, colour: 0xff0000}); // this is just the point to draw.
-			endSphere.position.set(end.x, end.y, end.z);
-			child.group.add(endSphere);
+      var end = getSectionEnd(child);
+      var endSphere = sphere({radius: 3, colour: 0xff0000}); // this is just the point to draw.
+      endSphere.position.set(end.x, end.y, end.z);
+      child.group.add(endSphere);
 
-			parent.group.add(child.group);
-			parent.group.updateMatrixWorld();
+      parent.group.add(child.group);
+      parent.group.updateMatrixWorld();
 
-			var distance = checkDistance(endSphere);
+      var distance = checkDistance(endSphere);
 
-			child.group.remove(endSphere); // done with calc ditch it...
+      child.group.remove(endSphere); // done with calc ditch it...
 
-			if (distance.ok) {
-				vectors.push(distance.vector);
+      if (distance.ok) {
+        vectors.push(distance.vector);
 
-				// colour = c.mutateColour(colour, 30);
+        // colour = c.mutateColour(colour, 30);
 
-				var s = sphere({radius: sphereRadius, colour: colour});
-				s.position.set(
-					distance.vector.x,
-					distance.vector.y,
-					distance.vector.z,
-				);
-				holder.add(s);
+        var s = sphere({radius: sphereRadius, colour: colour});
+        s.position.set(
+          distance.vector.x,
+          distance.vector.y,
+          distance.vector.z,
+        );
+        holder.add(s);
 
-				return child;
-			} else {
-				// con.warn("bad distance", distance);
+        return child;
+      } else {
+        // con.warn("bad distance", distance);
 
-				child.group.remove(endSphere);
-				parent.group.remove(child.group);
+        child.group.remove(endSphere);
+        parent.group.remove(child.group);
 
-				return null;
-			}
-		}
+        return null;
+      }
+    }
 
-		segmentCreationInterval = setInterval(function () {
-			if (new Date().getTime() - segmentLastCreated > 3000) {
-				con.log("more than 3 seconds... bailing!");
-				generationComplete = true;
-				progress("render:complete", renderer.domElement);
-				clearInterval(segmentCreationInterval);
-			}
-		}, 500);
+    segmentCreationInterval = setInterval(function () {
+      if (new Date().getTime() - segmentLastCreated > 3000) {
+        con.log("more than 3 seconds... bailing!");
+        generationComplete = true;
+        progress("render:complete", renderer.domElement);
+        clearInterval(segmentCreationInterval);
+      }
+    }, 500);
 
-		function addSection(parent) {
-			attempts++;
+    function addSection(parent) {
+      attempts++;
 
-			segmentLength =
-				((2 - attempts / bail) * segmentLengthInitial) / 2;
+      segmentLength =
+        ((2 - attempts / bail) * segmentLengthInitial) / 2;
 
-			if (attempts < bail) {
-				progress("render:progress", attempts / bail);
+      if (attempts < bail) {
+        progress("render:progress", attempts / bail);
 
-				// TODO maybe parent can specify it's end point in generation. (drawSection/cylinder returns endpoint)
-				var endPoint = getSectionEnd(parent);
+        // TODO maybe parent can specify it's end point in generation. (drawSection/cylinder returns endpoint)
+        var endPoint = getSectionEnd(parent);
 
-				var kids = parseInt(num(1, 3));
-				for (var i = 0; i < kids; i++) {
-					var newSection = drawSection(parent, endPoint);
+        var kids = parseInt(num(1, 3));
+        for (var i = 0; i < kids; i++) {
+          var newSection = drawSection(parent, endPoint);
 
-					if (newSection) {
-						segmentLastCreated = new Date().getTime();
+          if (newSection) {
+            segmentLastCreated = new Date().getTime();
 
-						(function (a, p) {
-							var timeout = a * 10;
-							// con.log("timeout", timeout);
-							setTimeout(function () {
-								if (generationComplete) {
-									con.log(
-										"wanted to created another, but time out...",
-									);
-								} else {
-									addSection(p);
-								}
-							}, timeout);
-						})(attempts, newSection);
-					}
-				}
-			} else {
-				generationComplete = true;
-				progress("render:complete", renderer.domElement);
-			}
-		}
+            (function (a, p) {
+              var timeout = a * 10;
+              // con.log("timeout", timeout);
+              setTimeout(function () {
+                if (generationComplete) {
+                  con.log(
+                    "wanted to created another, but time out...",
+                  );
+                } else {
+                  addSection(p);
+                }
+              }, timeout);
+            })(attempts, newSection);
+          }
+        }
+      } else {
+        generationComplete = true;
+        progress("render:complete", renderer.domElement);
+      }
+    }
 
-		var seeds = parseInt(num(10, 50));
+    var seeds = parseInt(num(10, 50));
 
-		var colour = c.getRandomColour();
+    var colour = c.getRandomColour();
 
-		for (var j = 0; j < seeds; j++) {
-			var baseSection = cylinder({
-				radius: segmentRadius,
-				height: segmentLength,
-				colour: colour,
-			});
-			baseSection.group.rotation.set(
-				num(0, 2) * Math.PI,
-				num(0, 2) * Math.PI,
-				num(0, 2) * Math.PI,
-			);
-			holder.add(baseSection.group);
+    for (var j = 0; j < seeds; j++) {
+      var baseSection = cylinder({
+        radius: segmentRadius,
+        height: segmentLength,
+        colour: colour,
+      });
+      baseSection.group.rotation.set(
+        num(0, 2) * Math.PI,
+        num(0, 2) * Math.PI,
+        num(0, 2) * Math.PI,
+      );
+      holder.add(baseSection.group);
 
-			var end = getSectionEnd(baseSection);
-			var endSphere = sphere({
-				radius: sphereRadius,
-				colour: colour,
-			});
-			endSphere.position.set(end.x, end.y, end.z);
-			baseSection.group.add(endSphere);
+      var end = getSectionEnd(baseSection);
+      var endSphere = sphere({
+        radius: sphereRadius,
+        colour: colour,
+      });
+      endSphere.position.set(end.x, end.y, end.z);
+      baseSection.group.add(endSphere);
 
-			baseSection.group.updateMatrixWorld();
+      baseSection.group.updateMatrixWorld();
 
-			var distance = checkDistance(endSphere);
-			if (distance.ok) {
-				vectors.push(distance.vector);
-				addSection(baseSection);
-			} else {
-				baseSection.group.remove(endSphere);
-				holder.remove(baseSection.group);
-			}
-		}
+      var distance = checkDistance(endSphere);
+      if (distance.ok) {
+        vectors.push(distance.vector);
+        addSection(baseSection);
+      } else {
+        baseSection.group.remove(endSphere);
+        holder.remove(baseSection.group);
+      }
+    }
 
-		document.body.appendChild(renderer.domElement);
+    document.body.appendChild(renderer.domElement);
 
-		function listen(eventNames, callback) {
-			for (var i = 0; i < eventNames.length; i++) {
-				window.addEventListener(eventNames[i], callback);
-			}
-		}
-		listen(["resize"], function (e) {
-			sw = window.innerWidth;
-			sh = window.innerHeight;
-			camera.aspect = sw / sh;
-			camera.updateProjectionMatrix();
-			renderer.setSize(sw, sh);
-		});
-		// listen(["mousedown", "touchstart"], function(e) {
-		// 	e.preventDefault();
-		// 	isMouseDown = true;
-		// });
-		listen(["mousemove", "touchmove"], function (e) {
-			e.preventDefault();
-			if (e.changedTouches && e.changedTouches[0])
-				e = e.changedTouches[0];
-			mouse.x = (e.clientX / sw) * 2 - 1;
-			mouse.y = -(e.clientY / sh) * 2 + 1;
-		});
-		// listen(["mouseup", "touchend"], function(e) {
-		// 	e.preventDefault();
-		// 	isMouseDown = false;
-		// });
+    function listen(eventNames, callback) {
+      for (var i = 0; i < eventNames.length; i++) {
+        window.addEventListener(eventNames[i], callback);
+      }
+    }
+    listen(["resize"], function (e) {
+      sw = window.innerWidth;
+      sh = window.innerHeight;
+      camera.aspect = sw / sh;
+      camera.updateProjectionMatrix();
+      renderer.setSize(sw, sh);
+    });
+    // listen(["mousedown", "touchstart"], function(e) {
+    // 	e.preventDefault();
+    // 	isMouseDown = true;
+    // });
+    listen(["mousemove", "touchmove"], function (e) {
+      e.preventDefault();
+      if (e.changedTouches && e.changedTouches[0])
+        e = e.changedTouches[0];
+      mouse.x = (e.clientX / sw) * 2 - 1;
+      mouse.y = -(e.clientY / sh) * 2 + 1;
+    });
+    // listen(["mouseup", "touchend"], function(e) {
+    // 	e.preventDefault();
+    // 	isMouseDown = false;
+    // });
 
-		render(0);
-	}
+    render(0);
+  }
 
-	function render(time) {
-		//if (time > 10000 && holder.rotation.y < Math.PI * 2)
-		if (generationComplete) {
-			holder.rotation.y += 0.01;
-		}
+  function render(time) {
+    //if (time > 10000 && holder.rotation.y < Math.PI * 2)
+    if (generationComplete) {
+      holder.rotation.y += 0.01;
+    }
 
-		// camPos.x = mouse.x * 100;
-		// camPos.y = mouse.y * 100;
-		camPos.z = 1000;
-		camera.position.set(camPos.x, camPos.y, camPos.z);
-		camera.lookAt(scene.position);
-		renderer.render(scene, camera);
-		requestAnimationFrame(render);
-	}
+    // camPos.x = mouse.x * 100;
+    // camPos.y = mouse.y * 100;
+    camPos.z = 1000;
+    camera.position.set(camPos.x, camPos.y, camPos.z);
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+  }
 
-	return {
-		init: init,
-		resize: function resize() {},
-	};
+  return {
+    init: init,
+    resize: function resize() {},
+  };
 };
 
 define("molecular_three", molecular_three);
