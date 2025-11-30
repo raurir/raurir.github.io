@@ -10,7 +10,6 @@ var isNode = typeof module !== "undefined";
 // }
 
 var creature = function creature() {
-
 	// con.log("creature constructor");
 
 	var sw = 400;
@@ -25,9 +24,9 @@ var creature = function creature() {
 
 	require.config({
 		paths: {
-			"arachnid": "creature_creator/arachnid",
-			"creature_creator": "creature_creator/creature_creator",
-			"human": "creature_creator/human"
+			arachnid: "creature_creator/arachnid",
+			creature_creator: "creature_creator/creature_creator",
+			human: "creature_creator/human"
 		}
 	});
 	// require(["creature_creator", "arachnid"], function(creature_creator, arachnid) {
